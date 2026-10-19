@@ -1,0 +1,36 @@
+name: Ingest sponsor register
+
+on:
+  schedule:
+    # gov.uk usually updates the register mid-morning UK time; 11:15 UTC runs after that.
+    - cron: "15 11 * * *"
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Extra flags, e.g. --dry-run, --force, --allow-mass-removal"
+        required: false
+        default: ""
+
+concurrency:
+  group: ingest-register
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Flags go through an env var, never interpolated into the script, to avoid injection.
+      - run: npm run ingest:register -- $INGEST_ARGS
+        env:
+          INGEST_ARGS: ${{ inputs.args }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
