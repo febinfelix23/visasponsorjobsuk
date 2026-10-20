@@ -2,14 +2,15 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { diffRegister, type ExistingSponsor } from "./diff";
 import { normaliseOrgName, registerKey, splitTradingName } from "./normalise";
-import { groupSponsors, parseCsv, parseRegisterCsv, parseTypeAndRating } from "./register";
+import { groupSponsors, parseRegisterCsv, parseTypeAndRating } from "./register";
+import { CsvParser, parseCsv } from "@/lib/csv";
 
 describe("normaliseOrgName", () => {
   it("drops legal suffixes, punctuation and case", () => {
     assert.equal(normaliseOrgName("MONZO BANK LIMITED"), "monzo bank");
     assert.equal(normaliseOrgName("Monzo Bank Ltd."), "monzo bank");
     assert.equal(normaliseOrgName("The Bank of London plc"), "bank of london");
-    assert.equal(normaliseOrgName("Smith & Sons (UK) Ltd"), "smith and sons");
+    assert.equal(normaliseOrgName("Smith & Sons (UK) Ltd"), "smith and sons uk");
     assert.equal(normaliseOrgName("Café Nero"), "cafe nero");
   });
 
@@ -42,6 +43,23 @@ describe("parseCsv", () => {
       ["a", "b"],
       ["x, y", 'say "hi"'],
       ["last", ""],
+    ]);
+  });
+
+  it("gives the same rows however the input is chunked", () => {
+    const text = '﻿a,"b ""q"", c"\r\n"multi\nline",x\r\nend,""\n';
+    const expected = parseCsv(text);
+    for (let size = 1; size <= text.length; size++) {
+      const rows: string[][] = [];
+      const parser = new CsvParser((r) => rows.push(r));
+      for (let i = 0; i < text.length; i += size) parser.push(text.slice(i, i + size));
+      parser.end();
+      assert.deepEqual(rows, expected, `chunk size ${size}`);
+    }
+    assert.deepEqual(expected, [
+      ["a", 'b "q", c'],
+      ["multi\nline", "x"],
+      ["end", ""],
     ]);
   });
 });

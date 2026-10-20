@@ -1,0 +1,45 @@
+name: Tag sponsor sectors
+
+on:
+  schedule:
+    # Weekly, so sponsors added to the register get tagged. Companies House refreshes
+    # its bulk data monthly; the job always uses the latest month.
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Extra flags, e.g. --dry-run"
+        required: false
+        default: ""
+
+concurrency:
+  group: tag-sectors
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Check secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Repository secret DATABASE_URL is missing. Add it under Settings → Secrets and variables → Actions → Repository secrets (Supabase transaction pooler URL, port 6543)."
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm ci
+      # Flags go through an env var, never interpolated into the script, to avoid injection.
+      - run: npm run tag:sectors -- $TAG_ARGS
+        env:
+          TAG_ARGS: ${{ inputs.args }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

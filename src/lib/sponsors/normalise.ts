@@ -2,7 +2,8 @@ const TRADING_AS = /\s+(?:t\/a|t\/as|trading\s+as)\s+/i;
 
 // Legal-form and filler words dropped from the end of names, so that
 // "Monzo Bank Ltd" and "MONZO BANK LIMITED" both become "monzo bank".
-const TRAILING_NOISE = new Set(["ltd", "limited", "plc", "llp", "lp", "inc", "llc", "uk", "the"]);
+// "uk" is kept: dropping it merges e.g. "AstraZeneca UK Limited" with other AstraZeneca companies.
+const TRAILING_NOISE = new Set(["ltd", "limited", "plc", "llp", "lp", "inc", "llc", "the"]);
 
 export function collapseWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim();

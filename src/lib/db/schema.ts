@@ -22,6 +22,7 @@ import {
 
 export const sponsorStatus = pgEnum("sponsor_status", ["active", "removed"]);
 export const sector = pgEnum("sector", ["tech", "finance", "engineering", "healthcare", "other"]);
+export const sectorSource = pgEnum("sector_source", ["nhs_name", "known_employer", "sic", "name_keyword", "manual"]);
 export const sponsorEventType = pgEnum("sponsor_event_type", [
   "added",
   "removed",
@@ -81,8 +82,12 @@ export const sponsors = snakeCase.table.withRLS(
     removedOn: date({ mode: "string" }),
     // Enrichment (Phase 0.3+)
     sector: sector(),
+    /** How the sector was decided. "manual" rows are never overwritten by the tagging job. */
+    sectorSource: sectorSource(),
     inScope: boolean().notNull().default(false),
     sicCodes: text().array(),
+    /** 0 = micro/unknown … 3 = large, from the Companies House accounts category. */
+    sizeBand: smallint().notNull().default(0),
     companyNumber: text(),
     domain: text(),
     matchConfidence: real(),

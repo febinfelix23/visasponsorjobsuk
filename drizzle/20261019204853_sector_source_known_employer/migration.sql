@@ -1,0 +1,1 @@
+ALTER TYPE "sector_source" ADD VALUE 'known_employer' BEFORE 'sic';

@@ -23,11 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
+      - name: Check secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Repository secret DATABASE_URL is missing. Add it under Settings → Secrets and variables → Actions → Repository secrets (Supabase transaction pooler URL, port 6543)."
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
       - run: npm ci
       # Flags go through an env var, never interpolated into the script, to avoid injection.
       - run: npm run ingest:register -- $INGEST_ARGS

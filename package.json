@@ -10,7 +10,8 @@
     "test": "tsx --test 'src/**/*.test.ts'",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "ingest:register": "tsx scripts/ingest-register.ts"
+    "ingest:register": "tsx scripts/ingest-register.ts",
+    "tag:sectors": "tsx scripts/tag-sectors.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
