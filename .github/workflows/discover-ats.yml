@@ -1,0 +1,44 @@
+name: Discover job boards
+
+on:
+  schedule:
+    # Daily after the register ingest: probes the next 3,000 in-scope sponsors due a check.
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Extra flags, e.g. --limit 500 --dry-run"
+        required: false
+        default: ""
+
+concurrency:
+  group: discover-ats
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Check secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Repository secret DATABASE_URL is missing. Add it under Settings → Secrets and variables → Actions → Repository secrets (Supabase transaction pooler URL, port 6543)."
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm ci
+      # Flags go through an env var, never interpolated into the script, to avoid injection.
+      - run: npm run discover:ats -- $DISCOVER_ARGS
+        env:
+          DISCOVER_ARGS: ${{ inputs.args }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

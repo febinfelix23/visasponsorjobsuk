@@ -39,7 +39,8 @@ export const atsType = pgEnum("ats_type", [
   "workday",
   "nhs_jobs",
 ]);
-export const sourceStatus = pgEnum("source_status", ["active", "failing", "disabled"]);
+/** "unverified": found by slug probing but not yet confirmed to belong to the sponsor. */
+export const sourceStatus = pgEnum("source_status", ["active", "unverified", "failing", "disabled"]);
 export const jobStatus = pgEnum("job_status", ["live", "expired"]);
 export const seniority = pgEnum("seniority", ["graduate", "entry", "junior", "mid", "senior", "unknown"]);
 export const sponsorability = pgEnum("sponsorability", [
@@ -92,6 +93,8 @@ export const sponsors = snakeCase.table.withRLS(
     domain: text(),
     matchConfidence: real(),
     priorityScore: real().notNull().default(0),
+    /** Last time ATS discovery probed this sponsor's slugs (Phase 0.4). */
+    atsProbedAt: timestamp({ withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -156,6 +159,8 @@ export const jobSources = snakeCase.table.withRLS(
     identifier: text().notNull(),
     careersUrl: text(),
     status: sourceStatus().notNull().default("active"),
+    /** How the source was found: slug tried, board name, verification method. */
+    discovery: jsonb().$type<Record<string, unknown>>(),
     consecutiveFailures: smallint().notNull().default(0),
     lastError: text(),
     lastCrawledAt: timestamp({ withTimezone: true }),
