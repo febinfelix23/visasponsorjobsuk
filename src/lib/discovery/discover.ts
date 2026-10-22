@@ -1,6 +1,9 @@
 import { HostBlockedError } from "./http";
 import { countUkJobs, NAMED_ATS, PROBES, type BoardHit, type ProbeAts } from "./probes";
-import { droppedWords, isDistinctiveSlug, nameEvidence, slugCandidates, type SlugCandidate } from "./slugs";
+import { droppedWords, fullName, isDistinctiveSlug, nameEvidence, slugCandidates, type SlugCandidate } from "./slugs";
+
+/** Board names shorter than this (letters, ignoring spaces) need the scraper's job-text check. */
+const MIN_TRUSTED_NAME = 4;
 
 /** Most common in UK tech/finance first, so early exits save the most requests. */
 export const PROBE_ORDER: ProbeAts[] = ["greenhouse", "lever", "ashby", "smartrecruiters"];
@@ -43,7 +46,10 @@ export async function judgeHit(
   if (NAMED_ATS.has(hit.ats) && hit.boardName) {
     const evidence = nameEvidence(hit.boardName, names);
     if (evidence === "none") return null;
-    if (evidence === "exact") {
+    if (fullName(hit.boardName).replace(/ /g, "").length < MIN_TRUSTED_NAME) {
+      // "MAP", "IMC": too short to identify a company on name alone.
+      strongName = false;
+    } else if (evidence === "exact") {
       strongName = true;
     } else {
       // Only the distinctive part matched. Fine if the dropped words were structural

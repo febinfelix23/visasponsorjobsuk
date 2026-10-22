@@ -12,6 +12,7 @@ import { appendFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { and, desc, eq, ilike, inArray, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
+import { startRun } from "@/lib/db/runs";
 import { crawlRuns, jobSources, sponsors } from "@/lib/db/schema";
 import { discoverSponsor, memoisedProbe, type Verdict } from "@/lib/discovery/discover";
 import { getBlockedHosts } from "@/lib/discovery/http";
@@ -33,9 +34,9 @@ async function main() {
   if (!Number.isInteger(limit) || limit < 1) throw new Error("--limit must be a positive integer");
 
   const db = createDb(undefined, { max: 2 });
-  const [run] = await db.insert(crawlRuns).values({ kind: "ats_discovery" }).returning({ id: crawlRuns.id });
+  const runId = await startRun(db, "ats_discovery");
   const finish = (status: "succeeded" | "failed", stats: Record<string, unknown>, error?: string) =>
-    db.update(crawlRuns).set({ status, stats, error, finishedAt: new Date() }).where(eq(crawlRuns.id, run.id));
+    db.update(crawlRuns).set({ status, stats, error, finishedAt: new Date() }).where(eq(crawlRuns.id, runId));
 
   try {
     // isNotNull matters: NOT IN against a subquery containing NULL matches nothing.

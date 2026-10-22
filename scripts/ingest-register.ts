@@ -15,6 +15,7 @@ import { appendFile, readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { eq, inArray, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
+import { startRun } from "@/lib/db/runs";
 import { crawlRuns, registerSnapshots, sponsorEvents, sponsors } from "@/lib/db/schema";
 import { diffRegister, type ExistingSponsor } from "@/lib/sponsors/diff";
 import { fetchRegisterMetadata, groupSponsors, parseRegisterCsv } from "@/lib/sponsors/register";
@@ -60,12 +61,12 @@ async function loadRegister() {
 
 async function main() {
   const db = createDb(undefined, { max: 1 });
-  const [run] = await db.insert(crawlRuns).values({ kind: "register_ingest" }).returning({ id: crawlRuns.id });
+  const runId = await startRun(db, "register_ingest");
   const finish = (status: "succeeded" | "failed" | "skipped", stats: Record<string, unknown>, error?: string) =>
     db
       .update(crawlRuns)
       .set({ status, stats, error, finishedAt: new Date() })
-      .where(eq(crawlRuns.id, run.id));
+      .where(eq(crawlRuns.id, runId));
 
   try {
     const register = await loadRegister();

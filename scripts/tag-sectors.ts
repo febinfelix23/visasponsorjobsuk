@@ -19,6 +19,7 @@ import type { ReadableStream as WebReadableStream } from "node:stream/web";
 import { parseArgs } from "node:util";
 import { eq } from "drizzle-orm";
 import { createDb } from "@/lib/db";
+import { startRun } from "@/lib/db/runs";
 import { crawlRuns, sponsors } from "@/lib/db/schema";
 import { chooseMatch, fetchBulkPartUrls, streamCompaniesFromZip, type ChCompany } from "@/lib/sponsors/companies-house";
 import { normaliseOrgName, splitTradingName } from "@/lib/sponsors/normalise";
@@ -70,9 +71,9 @@ function countBy<T>(items: T[], key: (item: T) => string): Record<string, number
 
 async function main() {
   const db = createDb(undefined, { max: 1 });
-  const [run] = await db.insert(crawlRuns).values({ kind: "sector_tagging" }).returning({ id: crawlRuns.id });
+  const runId = await startRun(db, "sector_tagging");
   const finish = (status: "succeeded" | "failed", stats: Record<string, unknown>, error?: string) =>
-    db.update(crawlRuns).set({ status, stats, error, finishedAt: new Date() }).where(eq(crawlRuns.id, run.id));
+    db.update(crawlRuns).set({ status, stats, error, finishedAt: new Date() }).where(eq(crawlRuns.id, runId));
 
   try {
     const active = await db

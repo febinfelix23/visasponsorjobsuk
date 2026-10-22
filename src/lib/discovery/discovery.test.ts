@@ -80,6 +80,12 @@ describe("judgeHit", () => {
     assert.deepEqual([v?.status, v?.reason], ["active", "core_name_confirmed_uk_jobs"]);
   });
 
+  it("doesn't trust very short board names on their own", async () => {
+    const map = { id: 5, name: "MAP GROUP (UK) LIMITED", tradingName: null };
+    const v = await judgeHit(hit("greenhouse", "MAP", "map"), { slug: "map", kind: "core", words: 1 }, map, ukJobs(4));
+    assert.deepEqual([v?.status, v?.reason], ["unverified", "needs_job_check"]);
+  });
+
   it("drops a board that belongs to a different company", async () => {
     assert.equal(await judgeHit(hit("greenhouse", "Monzo Pizza Co"), core, sponsor, ukJobs(5)), null);
   });
