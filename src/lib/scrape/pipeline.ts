@@ -213,9 +213,10 @@ export async function crawlSource(
           applyUrl: sql`coalesce(excluded.apply_url, ${jobs.applyUrl})`,
           locationText: sql`coalesce(excluded.location_text, ${jobs.locationText})`,
           isRemote: sql`excluded.is_remote or ${jobs.isRemote}`,
-          salaryMin: sql`coalesce(excluded.salary_min, ${jobs.salaryMin})`,
-          salaryMax: sql`coalesce(excluded.salary_max, ${jobs.salaryMax})`,
-          salaryPeriod: sql`coalesce(excluded.salary_period, ${jobs.salaryPeriod})`,
+          // ATS-supplied pay only (Lever, Ashby), always taken fresh; those adapters never send partial rows.
+          salaryMin: sql`excluded.salary_min`,
+          salaryMax: sql`excluded.salary_max`,
+          salaryPeriod: sql`excluded.salary_period`,
           salaryText: sql`coalesce(excluded.salary_text, ${jobs.salaryText})`,
           employmentType: sql`coalesce(excluded.employment_type, ${jobs.employmentType})`,
           department: sql`coalesce(excluded.department, ${jobs.department})`,

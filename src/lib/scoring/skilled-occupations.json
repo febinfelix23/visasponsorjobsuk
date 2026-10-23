@@ -1,0 +1,4940 @@
+{
+ "source": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-skilled-occupations",
+ "licence": "Open Government Licence v3.0",
+ "sourceUpdatedAt": "2025-11-11T12:41:03+00:00",
+ "occupations": {
+  "1111": {
+   "title": "Chief executives and senior officials",
+   "eligibility": "eligible",
+   "goingRate": 88100,
+   "newEntrantRate": 61600,
+   "exampleTitles": [
+    "Chairpersons",
+    "Chief executives",
+    "Diplomats and foreign office officials",
+    "Senior public service officials",
+    "Chief executives and senior officials not elsewhere classified"
+   ]
+  },
+  "1112": {
+   "title": "Elected officers and representatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Councillor (local government)",
+    "Member of Parliament"
+   ]
+  },
+  "1121": {
+   "title": "Production managers and directors in manufacturing",
+   "eligibility": "eligible",
+   "goingRate": 55000,
+   "newEntrantRate": 38500,
+   "exampleTitles": [
+    "Production managers and directors in manufacturing"
+   ]
+  },
+  "1122": {
+   "title": "Production managers and directors in construction",
+   "eligibility": "eligible",
+   "goingRate": 53400,
+   "newEntrantRate": 37400,
+   "exampleTitles": [
+    "Production managers and directors in construction"
+   ]
+  },
+  "1123": {
+   "title": "Production managers and directors in mining and energy",
+   "eligibility": "eligible",
+   "goingRate": 54000,
+   "newEntrantRate": 37800,
+   "exampleTitles": [
+    "Managers and directors in the extraction of fossil fuels",
+    "Managers and directors in the production of energy",
+    "Production managers and directors in mining and energy not elsewhere classified"
+   ]
+  },
+  "1131": {
+   "title": "Financial managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 75100,
+   "newEntrantRate": 52600,
+   "exampleTitles": [
+    "Bank, building society and post office managers",
+    "Company secretaries and finance managers and directors",
+    "Investment bankers and directors",
+    "Financial managers and directors not elsewhere classified"
+   ]
+  },
+  "1132": {
+   "title": "Marketing, sales and advertising directors",
+   "eligibility": "eligible",
+   "goingRate": 87300,
+   "newEntrantRate": 61100,
+   "exampleTitles": [
+    "Advertising and marketing directors",
+    "Sales directors",
+    "Marketing, sales and advertising directors not elsewhere classified"
+   ]
+  },
+  "1133": {
+   "title": "Public relations and communications directors",
+   "eligibility": "eligible",
+   "goingRate": 77200,
+   "newEntrantRate": 54000,
+   "exampleTitles": [
+    "Public relations and communications directors"
+   ]
+  },
+  "1134": {
+   "title": "Purchasing managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 54700,
+   "newEntrantRate": 38300,
+   "exampleTitles": [
+    "Estimating managers and directors",
+    "Procurement and purchasing managers and directors",
+    "Purchasing managers and directors not elsewhere classified"
+   ]
+  },
+  "1135": {
+   "title": "Charitable organisation managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 44300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Charitable organisation managers and directors"
+   ]
+  },
+  "1136": {
+   "title": "Human resource managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 52900,
+   "newEntrantRate": 37100,
+   "exampleTitles": [
+    "Employee relations managers",
+    "Equality, diversity and inclusion managers",
+    "Learning and development managers and directors",
+    "Recruitment managers and directors",
+    "Human resources managers and directors not elsewhere classified"
+   ]
+  },
+  "1137": {
+   "title": "Information technology directors",
+   "eligibility": "eligible",
+   "goingRate": 86000,
+   "newEntrantRate": 60200,
+   "exampleTitles": [
+    "Information security directors",
+    "Information technology operations directors",
+    "Information technology programme managers and directors",
+    "Information technology technical directors",
+    "Information technology directors not elsewhere classified"
+   ]
+  },
+  "1139": {
+   "title": "Functional managers and directors not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 74700,
+   "newEntrantRate": 52300,
+   "exampleTitles": [
+    "Accounts directors",
+    "Administration directors",
+    "Complaints and customer service directors",
+    "Events directors",
+    "Intellectual property managers and directors",
+    "Municipal clerks",
+    "Research and development (R&D) directors",
+    "Functional managers and directors not elsewhere classified"
+   ]
+  },
+  "1140": {
+   "title": "Directors in logistics, warehousing and transport",
+   "eligibility": "eligible",
+   "goingRate": 81400,
+   "newEntrantRate": 57000,
+   "exampleTitles": [
+    "Supply chain directors",
+    "Directors in logistics, warehousing and transport not elsewhere classified"
+   ]
+  },
+  "1150": {
+   "title": "Managers and directors in retail and wholesale",
+   "eligibility": "limited",
+   "goingRate": 36400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Managers and directors in retail and wholesale"
+   ]
+  },
+  "1161": {
+   "title": "Officers in armed forces",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Army officer",
+    "Commander (armed forces)",
+    "Flight-lieutenant",
+    "Royal Navy officer",
+    "Squadron-leader"
+   ]
+  },
+  "1162": {
+   "title": "Senior police officers",
+   "eligibility": "eligible",
+   "goingRate": 64000,
+   "newEntrantRate": 44800,
+   "exampleTitles": [
+    "Chief, deputy chief and assistant chief constables",
+    "Chief inspectors",
+    "Chief superintendents",
+    "Senior police officers not elsewhere classified"
+   ]
+  },
+  "1163": {
+   "title": "Senior officers in fire, ambulance, prison and related services",
+   "eligibility": "eligible",
+   "goingRate": 61600,
+   "newEntrantRate": 43100,
+   "exampleTitles": [
+    "Senior officers in ambulance services",
+    "Senior officers in fire services",
+    "Senior officers in immigration services",
+    "Senior officers in prison services",
+    "Senior officers in revenue and customs"
+   ]
+  },
+  "1171": {
+   "title": "Health services and public health managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 50300,
+   "newEntrantRate": 35200,
+   "exampleTitles": [
+    "Clinical governance and information managers",
+    "Healthcare service managers and directors"
+   ]
+  },
+  "1172": {
+   "title": "Social services managers and directors",
+   "eligibility": "eligible",
+   "goingRate": 43000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Social services managers and directors"
+   ]
+  },
+  "1211": {
+   "title": "Managers and proprietors in agriculture and horticulture",
+   "eligibility": "limited",
+   "goingRate": 35900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Managers and proprietors in agriculture and horticulture"
+   ]
+  },
+  "1212": {
+   "title": "Managers and proprietors in forestry, fishing and related services",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Cattery and kennel managers and proprietors",
+    "Fisheries managers and proprietors",
+    "Forestry managers",
+    "Livery yard and stud farm managers and proprietors",
+    "Racehorse trainers"
+   ]
+  },
+  "1221": {
+   "title": "Hotel and accommodation managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 38300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Hotel and accommodation managers and proprietors"
+   ]
+  },
+  "1222": {
+   "title": "Restaurant and catering establishment managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Café and restaurant managers and proprietors",
+    "Catering operations managers",
+    "Takeaway managers and proprietors"
+   ]
+  },
+  "1223": {
+   "title": "Publicans and managers of licensed premises",
+   "eligibility": "limited",
+   "goingRate": 36300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Publicans and managers of licensed premises"
+   ]
+  },
+  "1224": {
+   "title": "Leisure and sports managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 34100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Cinema managers and proprietors",
+    "Golf course managers",
+    "Gym, fitness and leisure services managers and proprietors",
+    "Marina managers",
+    "Museum managers and proprietors",
+    "Parks and gardens managers",
+    "Theatre managers (excludes hospital service)",
+    "Leisure and sports managers and proprietors not elsewhere classified"
+   ]
+  },
+  "1225": {
+   "title": "Travel agency managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 36000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Travel agency managers and proprietors"
+   ]
+  },
+  "1231": {
+   "title": "Health care practice managers",
+   "eligibility": "limited",
+   "goingRate": 40400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Dental practice managers",
+    "Medical practice managers",
+    "Opticians managers",
+    "Veterinary practice managers",
+    "Health care practice managers not elsewhere classified"
+   ]
+  },
+  "1232": {
+   "title": "Residential, day and domiciliary care managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 40400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Day care managers",
+    "Home care managers",
+    "Residential care managers and proprietors"
+   ]
+  },
+  "1233": {
+   "title": "Early education and childcare services proprietors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Early education and childcare services proprietors"
+   ]
+  },
+  "1241": {
+   "title": "Managers in transport and distribution",
+   "eligibility": "eligible",
+   "goingRate": 44900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Airport managers",
+    "Depot and fleet managers",
+    "Dispatch and distribution managers",
+    "Harbour and port managers",
+    "Road traffic managers",
+    "Managers in transport and distribution not elsewhere classified"
+   ]
+  },
+  "1242": {
+   "title": "Managers in storage and warehousing",
+   "eligibility": "limited",
+   "goingRate": 35100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Managers in storage and warehousing"
+   ]
+  },
+  "1243": {
+   "title": "Managers in logistics",
+   "eligibility": "limited",
+   "goingRate": 44900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Managers in logistics"
+   ]
+  },
+  "1251": {
+   "title": "Property, housing and estate managers",
+   "eligibility": "limited",
+   "goingRate": 42600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Facilities managers",
+    "Landlords, property and housing managers",
+    "Property investors and developers",
+    "Sales and lettings managers",
+    "Shopping centre managers",
+    "Property, housing and estate managers not elsewhere classified"
+   ]
+  },
+  "1252": {
+   "title": "Garage managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 45600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Garage managers and proprietors"
+   ]
+  },
+  "1253": {
+   "title": "Hairdressing and beauty salon managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Beauty salon managers and proprietors",
+    "Hairdressing managers and proprietors",
+    "Hairdressing and beauty salon managers and proprietors not elsewhere classified"
+   ]
+  },
+  "1254": {
+   "title": "Waste disposal and environmental services managers",
+   "eligibility": "eligible",
+   "goingRate": 48300,
+   "newEntrantRate": 33800,
+   "exampleTitles": [
+    "Landfill site managers",
+    "Recycling managers",
+    "Scrap yard managers",
+    "Sewage works and water treatment managers",
+    "Waste disposal and environmental services managers not elsewhere classified"
+   ]
+  },
+  "1255": {
+   "title": "Managers and directors in the creative industries",
+   "eligibility": "eligible",
+   "goingRate": 44900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Art gallery managers and directors",
+    "Film and television production managers",
+    "Publishing managers and directors",
+    "Radio production managers",
+    "Sport and talent agents",
+    "Theatre production managers",
+    "Managers and directors in the creative industries not elsewhere classified"
+   ]
+  },
+  "1256": {
+   "title": "Betting shop and gambling establishment managers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Betting shop managers",
+    "Bingo hall managers",
+    "Casino managers",
+    "Betting shop and gambling establishment managers not elsewhere classified"
+   ]
+  },
+  "1257": {
+   "title": "Hire services managers and proprietors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Hire services managers and proprietors"
+   ]
+  },
+  "1258": {
+   "title": "Directors in consultancy services",
+   "eligibility": "limited",
+   "goingRate": 70100,
+   "newEntrantRate": 49100,
+   "exampleTitles": [
+    "Design consultancy directors",
+    "Environmental consultancy directors",
+    "Management consultancy directors",
+    "Surveying consultancy directors",
+    "Directors in consultancy services not elsewhere classified"
+   ]
+  },
+  "1259": {
+   "title": "Managers and proprietors in other services not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 41700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Cleaning and hygiene services managers and proprietors",
+    "Educational establishment managers and proprietors",
+    "Funeral services and crematorium managers and proprietors",
+    "Library managers",
+    "Recruitment agency managers and proprietors",
+    "Security services managers and proprietors",
+    "Managers and proprietors in other services not elsewhere classified"
+   ]
+  },
+  "2111": {
+   "title": "Chemical scientists",
+   "eligibility": "eligible",
+   "goingRate": 39900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Analytical chemists",
+    "Industrial chemists",
+    "Nuclear and radiochemists",
+    "Research and development chemists",
+    "Chemical scientists not elsewhere classified"
+   ]
+  },
+  "2112": {
+   "title": "Biological scientists",
+   "eligibility": "eligible",
+   "goingRate": 40300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Agricultural scientists",
+    "Biologists",
+    "Botanical and horticultural scientists",
+    "Microbiologists and bacteriologists",
+    "Pathologists",
+    "Pharmacologists",
+    "Zoological scientists",
+    "Biological scientists not elsewhere classified"
+   ]
+  },
+  "2113": {
+   "title": "Biochemists and biomedical scientists",
+   "eligibility": "eligible",
+   "goingRate": 45900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Biochemists",
+    "Biomedical scientists",
+    "Biotechnologists",
+    "Clinical scientists",
+    "Biochemists and biomedical scientists not elsewhere classified"
+   ]
+  },
+  "2114": {
+   "title": "Physical scientists",
+   "eligibility": "eligible",
+   "goingRate": 54600,
+   "newEntrantRate": 38200,
+   "exampleTitles": [
+    "Geologists",
+    "Geophysicists",
+    "Hydrogeologists and hydrologists",
+    "Meteorologists",
+    "Physical scientists not elsewhere classified"
+   ]
+  },
+  "2115": {
+   "title": "Social and humanities scientists",
+   "eligibility": "eligible",
+   "goingRate": 40400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Anthropologists",
+    "Archaeologists",
+    "Behavioural scientists",
+    "Epidemiologists",
+    "Genealogists",
+    "Geographic information systems (GIS) analysts",
+    "Historians",
+    "Political scientists",
+    "Public health analysts",
+    "Social and humanities scientists not elsewhere classified"
+   ]
+  },
+  "2119": {
+   "title": "Natural and social science professionals not elsewhere classified Note: For Skilled Worker purposes, SOC 2020 occupation code 2119 includes researchers in research organisations other than universities.",
+   "eligibility": "eligible",
+   "goingRate": 41500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Sports scientists",
+    "Natural and social science professionals not elsewhere classified"
+   ]
+  },
+  "2121": {
+   "title": "Civil engineers",
+   "eligibility": "eligible",
+   "goingRate": 50400,
+   "newEntrantRate": 35200,
+   "exampleTitles": [
+    "Building and building services engineers",
+    "Geotechnical engineers",
+    "Mining engineers",
+    "Structural engineers",
+    "Transportation engineers",
+    "Water engineers (professional)",
+    "Civil engineers not elsewhere classified"
+   ]
+  },
+  "2122": {
+   "title": "Mechanical engineers",
+   "eligibility": "eligible",
+   "goingRate": 46800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Automotive engineers (professional)",
+    "Marine engineers and naval architects",
+    "Mechanical design engineers",
+    "Mechanical engineers not elsewhere classified"
+   ]
+  },
+  "2123": {
+   "title": "Electrical engineers",
+   "eligibility": "eligible",
+   "goingRate": 58700,
+   "newEntrantRate": 41100,
+   "exampleTitles": [
+    "Laser engineers",
+    "Power systems engineers",
+    "Railway signalling engineers",
+    "Electrical engineers not elsewhere classified"
+   ]
+  },
+  "2124": {
+   "title": "Electronics engineers",
+   "eligibility": "eligible",
+   "goingRate": 52000,
+   "newEntrantRate": 36400,
+   "exampleTitles": [
+    "Broadcast engineers (professional)",
+    "Telecommunications engineers (professional)",
+    "Electronics engineers not elsewhere classified"
+   ]
+  },
+  "2125": {
+   "title": "Production and process engineers",
+   "eligibility": "eligible",
+   "goingRate": 45000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Chemical engineers",
+    "Control and instrumentation engineers",
+    "Industrial and production engineers",
+    "Production and process engineers not elsewhere classified"
+   ]
+  },
+  "2126": {
+   "title": "Aerospace engineers",
+   "eligibility": "eligible",
+   "goingRate": 52400,
+   "newEntrantRate": 36700,
+   "exampleTitles": [
+    "Aeronautical engineers (professional)",
+    "Aircraft engineers (professional)",
+    "Avionics engineers",
+    "Aerospace engineers not elsewhere classified"
+   ]
+  },
+  "2127": {
+   "title": "Engineering project managers and project engineers",
+   "eligibility": "eligible",
+   "goingRate": 51900,
+   "newEntrantRate": 36300,
+   "exampleTitles": [
+    "Engineering project managers and project engineers"
+   ]
+  },
+  "2129": {
+   "title": "Engineering professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 46100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Acoustic engineers",
+    "Biomedical engineers",
+    "Brewers (qualified)",
+    "Clinical Engineers",
+    "Energy engineers",
+    "Food technologists",
+    "Gas engineers (professional)",
+    "Heating and ventilating engineers (professional)",
+    "Materials engineers",
+    "Mechatronic engineers",
+    "Nuclear engineers",
+    "Patent engineers",
+    "Robotics engineers",
+    "Traffic engineers",
+    "Engineering professionals not elsewhere classified"
+   ]
+  },
+  "2131": {
+   "title": "IT project managers",
+   "eligibility": "eligible",
+   "goingRate": 58200,
+   "newEntrantRate": 40700,
+   "exampleTitles": [
+    "IT project managers"
+   ]
+  },
+  "2132": {
+   "title": "IT managers",
+   "eligibility": "eligible",
+   "goingRate": 55000,
+   "newEntrantRate": 38500,
+   "exampleTitles": [
+    "IT information managers",
+    "IT product managers",
+    "IT service delivery managers",
+    "IT systems managers",
+    "IT test managers",
+    "Network managers",
+    "Software development managers",
+    "Technical support managers",
+    "IT managers not elsewhere classified"
+   ]
+  },
+  "2133": {
+   "title": "IT business analysts, architects and systems designers",
+   "eligibility": "eligible",
+   "goingRate": 54900,
+   "newEntrantRate": 38400,
+   "exampleTitles": [
+    "Computer analysts and scientists",
+    "Data architects",
+    "Data engineers",
+    "IT systems architects",
+    "IT business analysts",
+    "IT solutions architects and designers",
+    "IT business analysts, architects and systems designers not elsewhere classified"
+   ]
+  },
+  "2134": {
+   "title": "Programmers and software development professionals",
+   "eligibility": "eligible",
+   "goingRate": 54700,
+   "newEntrantRate": 38300,
+   "exampleTitles": [
+    "Computer games designers",
+    "Computer programmers",
+    "Software developers",
+    "Programmers and software development professionals not elsewhere classified"
+   ]
+  },
+  "2135": {
+   "title": "Cyber security professionals",
+   "eligibility": "eligible",
+   "goingRate": 48500,
+   "newEntrantRate": 34000,
+   "exampleTitles": [
+    "Cyber operational defence specialists",
+    "Cyber security management and governance specialists",
+    "Forensic computer specialists",
+    "Secure system development specialists",
+    "Cyber security professionals not elsewhere classified"
+   ]
+  },
+  "2136": {
+   "title": "IT quality and testing professionals",
+   "eligibility": "eligible",
+   "goingRate": 41200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "IT quality and testing professionals"
+   ]
+  },
+  "2137": {
+   "title": "IT network professionals",
+   "eligibility": "eligible",
+   "goingRate": 45600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "IT network professionals"
+   ]
+  },
+  "2139": {
+   "title": "Information technology professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 52300,
+   "newEntrantRate": 36600,
+   "exampleTitles": [
+    "DevOps engineers",
+    "IT consultants",
+    "Webmasters and website managers",
+    "Information technology professionals not elsewhere classified"
+   ]
+  },
+  "2141": {
+   "title": "Web design professionals",
+   "eligibility": "eligible",
+   "goingRate": 43800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Application designers",
+    "UI and UX designers and researchers",
+    "Web designers",
+    "Web design professionals not elsewhere classified"
+   ]
+  },
+  "2142": {
+   "title": "Graphic and multimedia designers",
+   "eligibility": "eligible",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Multimedia animators",
+    "Graphic and multimedia designers not elsewhere classified"
+   ]
+  },
+  "2151": {
+   "title": "Conservation professionals",
+   "eligibility": "eligible",
+   "goingRate": 36000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Conservationists",
+    "Ecologists",
+    "Heritage officers",
+    "Conservation professionals not elsewhere classified"
+   ]
+  },
+  "2152": {
+   "title": "Environment professionals",
+   "eligibility": "eligible",
+   "goingRate": 37200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Energy managers",
+    "Environmental and geo-environmental engineers",
+    "Environmental consultants",
+    "Environmental scientists",
+    "Sustainability officers",
+    "Environmental professionals not elsewhere classified"
+   ]
+  },
+  "2161": {
+   "title": "Research and development (R&D) managers",
+   "eligibility": "eligible",
+   "goingRate": 54400,
+   "newEntrantRate": 38100,
+   "exampleTitles": [
+    "Laboratory managers",
+    "Research and development (R&D) design managers",
+    "Research and development (R&D) managers not elsewhere classified"
+   ]
+  },
+  "2162": {
+   "title": "Other researchers, unspecified discipline",
+   "eligibility": "eligible",
+   "goingRate": 43600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Other researchers, unspecified discipline"
+   ]
+  },
+  "2211": {
+   "title": "Generalist medical practitioners (England)",
+   "eligibility": "national_pay_scale",
+   "goingRate": 36616,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Doctor",
+    "General practitioner",
+    "House officer (hospital service)",
+    "Medical practitioner",
+    "Physician"
+   ]
+  },
+  "2212": {
+   "title": "Specialist medical practitioners",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Anaesthetist",
+    "Consultant (hospital service)",
+    "Homeopath (medically qualified)",
+    "Medical acupuncturist",
+    "Paediatrician",
+    "Psychiatrist",
+    "Radiologist",
+    "Surgeon"
+   ]
+  },
+  "2221": {
+   "title": "Physiotherapists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Electro-therapist",
+    "Physiotherapist",
+    "Physiotherapy practitioner"
+   ]
+  },
+  "2222": {
+   "title": "Occupational therapists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Community occupational therapist",
+    "Occupational therapist",
+    "Paediatric occupational therapist"
+   ]
+  },
+  "2223": {
+   "title": "Speech and language therapists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Communication therapist",
+    "Language therapist",
+    "Speech and language therapist",
+    "Speech therapist"
+   ]
+  },
+  "2224": {
+   "title": "Psychotherapists and cognitive behaviour therapists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cognitive behavioural therapist",
+    "Psycho-analyst",
+    "Psychological counsellor",
+    "Psychotherapist"
+   ]
+  },
+  "2225": {
+   "title": "Clinical psychologists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Clinical psychologist",
+    "Consultant clinical psychologist"
+   ]
+  },
+  "2226": {
+   "title": "Other psychologists",
+   "eligibility": "national_pay_scale",
+   "goingRate": 56763,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Educational psychologist",
+    "Forensic psychologist",
+    "Occupational psychologist",
+    "Psychologist",
+    "Psychometrist"
+   ]
+  },
+  "2229": {
+   "title": "Therapy professionals not elsewhere classified",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Acupuncturist",
+    "Art therapist",
+    "Chiropractor",
+    "Dance movement therapist",
+    "Family therapist",
+    "Genetic counsellor",
+    "Nutritionist",
+    "Osteopath",
+    "Sports massage therapist",
+    "Sports therapist"
+   ]
+  },
+  "2231": {
+   "title": "Midwifery nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Delivery suite manager",
+    "Midwife",
+    "Midwifery manager"
+   ]
+  },
+  "2232": {
+   "title": "Registered community nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Community care nurse",
+    "District nurse",
+    "Health visitor",
+    "Practice nurse"
+   ]
+  },
+  "2233": {
+   "title": "Registered specialist nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Advanced primary care nurse",
+    "Intensive care nurse",
+    "Clinical nurse specialist",
+    "Theatre manager (hospital service)"
+   ]
+  },
+  "2234": {
+   "title": "Registered nurse practitioners",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Health care practitioner",
+    "Mental health practitioner",
+    "Practitioner (nursing)"
+   ]
+  },
+  "2235": {
+   "title": "Registered mental health nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Community mental health nurse",
+    "Psychiatric nurse"
+   ]
+  },
+  "2236": {
+   "title": "Registered children’s nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Community children’s nurse",
+    "Neonatal nurse",
+    "Paediatric nurse",
+    "School nurse"
+   ]
+  },
+  "2237": {
+   "title": "Other registered nursing professionals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Clinical lead nurse",
+    "Matron (care/residential home)",
+    "Nurse",
+    "Nurse educator",
+    "Occupational health nurse",
+    "Staff nurse",
+    "Team leader (nursing)",
+    "Ward manager"
+   ]
+  },
+  "2240": {
+   "title": "Veterinarians",
+   "eligibility": "eligible",
+   "goingRate": 49500,
+   "newEntrantRate": 34600,
+   "exampleTitles": [
+    "Veterinarians"
+   ]
+  },
+  "2251": {
+   "title": "Pharmacists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Chemist (pharmaceutical)",
+    "Dispensary manager",
+    "Pharmaceutical chemist",
+    "Pharmacist",
+    "Pharmacy manager"
+   ]
+  },
+  "2252": {
+   "title": "Optometrists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Doctor of optometry",
+    "Ophthalmic optician",
+    "Optician"
+   ]
+  },
+  "2253": {
+   "title": "Dental practitioners (England)",
+   "eligibility": "national_pay_scale",
+   "goingRate": 38472,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dental surgeon",
+    "Dentist",
+    "Orthodontist",
+    "Periodontist"
+   ]
+  },
+  "2254": {
+   "title": "Medical radiographers",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Medical photographer",
+    "Nuclear medicine practitioner",
+    "Radiographer",
+    "Sonographer",
+    "Therapeutic radiographer",
+    "Vascular technologist"
+   ]
+  },
+  "2255": {
+   "title": "Paramedics",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Ambulance paramedic",
+    "Emergency care practitioner",
+    "Paramedic",
+    "Paramedic-ECP"
+   ]
+  },
+  "2256": {
+   "title": "Podiatrists",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Chiropodist",
+    "Foot health practitioner (qualified)",
+    "Podiatrist"
+   ]
+  },
+  "2259": {
+   "title": "Other health professionals not elsewhere classified",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Audiologist",
+    "Clinical physiologist",
+    "Dietician-nutritionist",
+    "Family planner",
+    "Occupational health adviser",
+    "Operating theatre practitioner",
+    "Physiologist"
+   ]
+  },
+  "2311": {
+   "title": "Higher education teaching professionals",
+   "eligibility": "eligible",
+   "goingRate": 52600,
+   "newEntrantRate": 36800,
+   "exampleTitles": [
+    "Higher education teaching professionals"
+   ]
+  },
+  "2312": {
+   "title": "Further education teaching professionals (England)",
+   "eligibility": "national_pay_scale",
+   "goingRate": 22387,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "FE College lecturer",
+    "Lecturer (further education)",
+    "Teacher (further education)",
+    "Tutor (further education)"
+   ]
+  },
+  "2313": {
+   "title": "Secondary education teaching professionals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Curriculum leader (secondary school)",
+    "Deputy head teacher (secondary school)",
+    "Head of year (secondary school)",
+    "Secondary school teacher",
+    "Sixth form teacher",
+    "Teacher (secondary school)"
+   ]
+  },
+  "2314": {
+   "title": "Primary education teaching professionals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Deputy head teacher (primary school)",
+    "Infant teacher",
+    "Junior school teacher",
+    "Primary school teacher"
+   ]
+  },
+  "2315": {
+   "title": "Nursery education teaching professionals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Kindergarten teacher (professional)",
+    "Nursery school teacher",
+    "Pre-school teacher"
+   ]
+  },
+  "2316": {
+   "title": "Special and additional needs education teaching professionals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Behaviour support teacher",
+    "Deputy head teacher (special/additional needs school)",
+    "Learning support teacher",
+    "Special educational needs coordinator",
+    "Special needs teacher"
+   ]
+  },
+  "2317": {
+   "title": "Teachers of English as a foreign language",
+   "eligibility": "eligible",
+   "goingRate": 36200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Teachers of English as a Foreign Language"
+   ]
+  },
+  "2319": {
+   "title": "Teaching professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Adult education tutors",
+    "Dance and drama school principals and owners",
+    "Private music and singing teachers",
+    "Private tutors",
+    "Teaching professionals not elsewhere classified"
+   ]
+  },
+  "2321": {
+   "title": "Head teachers and principals",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Head master (secondary school)",
+    "Head teacher (primary school)",
+    "Principal (further education)",
+    "Rector (university)"
+   ]
+  },
+  "2322": {
+   "title": "Education managers",
+   "eligibility": "eligible",
+   "goingRate": 43900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Education managers"
+   ]
+  },
+  "2323": {
+   "title": "Education advisers and school inspectors",
+   "eligibility": "eligible",
+   "goingRate": 42200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Educational advisers",
+    "School inspectors"
+   ]
+  },
+  "2324": {
+   "title": "Early education and childcare services managers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Early education and childcare services managers"
+   ]
+  },
+  "2329": {
+   "title": "Other educational professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 40600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Bursars",
+    "Educational administrators",
+    "Examiners and markers",
+    "Other educational professionals not elsewhere classified"
+   ]
+  },
+  "2411": {
+   "title": "Barristers and judges",
+   "eligibility": "eligible",
+   "goingRate": 59400,
+   "newEntrantRate": 41600,
+   "exampleTitles": [
+    "Barristers and advocates",
+    "Judges",
+    "Barristers and judges not elsewhere classified"
+   ]
+  },
+  "2412": {
+   "title": "Solicitors and lawyers",
+   "eligibility": "eligible",
+   "goingRate": 51600,
+   "newEntrantRate": 36100,
+   "exampleTitles": [
+    "Commercial solicitors and lawyers",
+    "Criminal solicitors and lawyers",
+    "Family solicitors and lawyers",
+    "Property solicitors and lawyers",
+    "Solicitors and lawyers not elsewhere classified"
+   ]
+  },
+  "2419": {
+   "title": "Legal professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Conveyancers",
+    "Litigation executives",
+    "Paralegals",
+    "Patent and trademark attorneys",
+    "Legal professionals not elsewhere classified"
+   ]
+  },
+  "2421": {
+   "title": "Chartered and certified accountants",
+   "eligibility": "eligible",
+   "goingRate": 49200,
+   "newEntrantRate": 34500,
+   "exampleTitles": [
+    "Auditors (qualified accountant)",
+    "Financial accountants (qualified)",
+    "Forensic accountants",
+    "Fund accountants",
+    "Insolvency practitioners",
+    "Chartered and certified accountants not elsewhere classified"
+   ]
+  },
+  "2422": {
+   "title": "Finance and investment analysts and advisers",
+   "eligibility": "eligible",
+   "goingRate": 45800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Credit analysts",
+    "Financial advisers and planners",
+    "Financial analysts",
+    "Mortgage advisers",
+    "Finance and investment analysts and advisers not elsewhere classified"
+   ]
+  },
+  "2423": {
+   "title": "Taxation experts",
+   "eligibility": "eligible",
+   "goingRate": 48500,
+   "newEntrantRate": 34000,
+   "exampleTitles": [
+    "Taxation experts"
+   ]
+  },
+  "2431": {
+   "title": "Management consultants and business analysts",
+   "eligibility": "eligible",
+   "goingRate": 50200,
+   "newEntrantRate": 35100,
+   "exampleTitles": [
+    "Business analysts and consultants",
+    "Management advisers and consultants",
+    "Risk analysts",
+    "Management consultants and business analysts not elsewhere classified"
+   ]
+  },
+  "2432": {
+   "title": "Marketing and commercial managers",
+   "eligibility": "eligible",
+   "goingRate": 50100,
+   "newEntrantRate": 35000,
+   "exampleTitles": [
+    "Commercial managers",
+    "Marketing managers",
+    "Marketing and commercial managers not elsewhere classified"
+   ]
+  },
+  "2433": {
+   "title": "Actuaries, economists and statisticians",
+   "eligibility": "eligible",
+   "goingRate": 55100,
+   "newEntrantRate": 38600,
+   "exampleTitles": [
+    "Actuaries and actuarial analysts",
+    "Economists",
+    "Mathematicians",
+    "Statistical data scientists",
+    "Statisticians",
+    "Actuaries, economists and statisticians not elsewhere classified"
+   ]
+  },
+  "2434": {
+   "title": "Business and related research professionals",
+   "eligibility": "eligible",
+   "goingRate": 38800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Intelligence analysts",
+    "Researchers in media and entertainment",
+    "Business and related research professionals not elsewhere classified"
+   ]
+  },
+  "2435": {
+   "title": "Professional/chartered company secretaries",
+   "eligibility": "eligible",
+   "goingRate": 58200,
+   "newEntrantRate": 40700,
+   "exampleTitles": [
+    "Professional/chartered company secretaries"
+   ]
+  },
+  "2439": {
+   "title": "Business, research and administrative professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 56600,
+   "newEntrantRate": 39600,
+   "exampleTitles": [
+    "Policy officers",
+    "Business, research and administrative professionals not elsewhere classified"
+   ]
+  },
+  "2440": {
+   "title": "Business and financial project management professionals",
+   "eligibility": "eligible",
+   "goingRate": 56500,
+   "newEntrantRate": 39500,
+   "exampleTitles": [
+    "Business change managers",
+    "Clinical trials coordinators",
+    "Risk managers"
+   ]
+  },
+  "2451": {
+   "title": "Architects",
+   "eligibility": "eligible",
+   "goingRate": 47600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Architects",
+    "Landscape architects and designers"
+   ]
+  },
+  "2452": {
+   "title": "Chartered architectural technologists, planning officers and consultants",
+   "eligibility": "eligible",
+   "goingRate": 35800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Chartered architectural technologists",
+    "Town planning officers",
+    "Urban designers"
+   ]
+  },
+  "2453": {
+   "title": "Quantity surveyors",
+   "eligibility": "eligible",
+   "goingRate": 48600,
+   "newEntrantRate": 34100,
+   "exampleTitles": [
+    "Quantity surveyors"
+   ]
+  },
+  "2454": {
+   "title": "Chartered surveyors",
+   "eligibility": "eligible",
+   "goingRate": 43800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Building control surveyors",
+    "Hydrographic surveyors",
+    "Land surveyors",
+    "Property surveyors",
+    "Chartered surveyors not elsewhere classified"
+   ]
+  },
+  "2455": {
+   "title": "Construction project managers and related professionals",
+   "eligibility": "eligible",
+   "goingRate": 44300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Construction project and contract managers",
+    "Transport planners"
+   ]
+  },
+  "2461": {
+   "title": "Social workers",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Independent review officer (social worker)",
+    "Mental health social worker",
+    "Senior practitioner (local government: social services)",
+    "Social worker",
+    "Team leader (local government: social services)"
+   ]
+  },
+  "2462": {
+   "title": "Probation officers",
+   "eligibility": "eligible",
+   "goingRate": 35700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Probation officers"
+   ]
+  },
+  "2463": {
+   "title": "Clergy",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Chaplain",
+    "Clergyman",
+    "Minister of religion",
+    "Nun",
+    "Pastor",
+    "Priest",
+    "Vicar"
+   ]
+  },
+  "2464": {
+   "title": "Youth work professionals",
+   "eligibility": "eligible",
+   "goingRate": 38000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Youth work professionals"
+   ]
+  },
+  "2469": {
+   "title": "Welfare professionals not elsewhere classified",
+   "eligibility": "eligible",
+   "goingRate": 39700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Adoption officers",
+    "Children and family services professionals",
+    "Mediators and restorative practice professionals",
+    "Welfare professionals not elsewhere classified"
+   ]
+  },
+  "2471": {
+   "title": "Librarians",
+   "eligibility": "eligible",
+   "goingRate": 34800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Librarians"
+   ]
+  },
+  "2472": {
+   "title": "Archivists, conservators and curators",
+   "eligibility": "eligible",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Archivists",
+    "Collection managers and curators",
+    "Conservators",
+    "Museum education officers",
+    "Archivists and curators not elsewhere classified"
+   ]
+  },
+  "2481": {
+   "title": "Quality control and planning engineers",
+   "eligibility": "eligible",
+   "goingRate": 41300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Garment technologists",
+    "Planning engineers",
+    "Quality control engineers",
+    "Quality control and planning engineers not elsewhere classified"
+   ]
+  },
+  "2482": {
+   "title": "Quality assurance and regulatory professionals",
+   "eligibility": "eligible",
+   "goingRate": 48200,
+   "newEntrantRate": 33800,
+   "exampleTitles": [
+    "Compliance and regulatory professionals",
+    "Quality assurance professionals"
+   ]
+  },
+  "2483": {
+   "title": "Environmental health professionals",
+   "eligibility": "eligible",
+   "goingRate": 40900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Environmental health professionals"
+   ]
+  },
+  "2491": {
+   "title": "Newspaper, periodical and broadcast editors",
+   "eligibility": "eligible",
+   "goingRate": 39600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Newspaper, periodical and broadcast editors"
+   ]
+  },
+  "2492": {
+   "title": "Newspaper and periodical broadcast journalists and reporters",
+   "eligibility": "eligible",
+   "goingRate": 34000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Broadcast journalists",
+    "Newspaper journalists and reporters",
+    "Newspaper and periodical journalists and reporters not elsewhere classified"
+   ]
+  },
+  "2493": {
+   "title": "Public relations professionals",
+   "eligibility": "eligible",
+   "goingRate": 37000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Press officers",
+    "Public relations officers",
+    "Social media managers",
+    "Public relations professionals not elsewhere classified"
+   ]
+  },
+  "2494": {
+   "title": "Advertising accounts managers and creative directors",
+   "eligibility": "eligible",
+   "goingRate": 46000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Advertising account managers",
+    "Creative directors",
+    "Fundraising managers"
+   ]
+  },
+  "3111": {
+   "title": "Laboratory technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Biological laboratory technicians",
+    "Chemical laboratory technicians",
+    "Health physics monitors",
+    "Laboratory food technicians",
+    "Medical laboratory technicians",
+    "Laboratory technicians not elsewhere classified"
+   ]
+  },
+  "3112": {
+   "title": "Electrical and electronics technicians",
+   "eligibility": "limited",
+   "goingRate": 39300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Avionics technicians",
+    "Electrical and electronics technicians not elsewhere classified"
+   ]
+  },
+  "3113": {
+   "title": "Engineering technicians",
+   "eligibility": "limited",
+   "goingRate": 42500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Aerospace technicians",
+    "Wind turbine technicians",
+    "Engineering technicians not elsewhere classified"
+   ]
+  },
+  "3114": {
+   "title": "Building and civil engineering technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Building technicians",
+    "Civil engineering technicians",
+    "Surveying technicians",
+    "Building and civil engineering technicians not elsewhere classified"
+   ]
+  },
+  "3115": {
+   "title": "Quality assurance technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Quality assurance technicians"
+   ]
+  },
+  "3116": {
+   "title": "Planning, process and production technicians",
+   "eligibility": "limited",
+   "goingRate": 34800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Planning, process and production technicians"
+   ]
+  },
+  "3119": {
+   "title": "Science, engineering and production technicians not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 34600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "School technicians",
+    "Textile consultants",
+    "Science, engineering and production technicians not elsewhere classified"
+   ]
+  },
+  "3120": {
+   "title": "CAD, drawing and architectural technicians",
+   "eligibility": "limited",
+   "goingRate": 33800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Architectural technicians",
+    "BIM and CAD technicians",
+    "Cartographers",
+    "CAD, drawing and architectural technicians not elsewhere classified"
+   ]
+  },
+  "3131": {
+   "title": "IT operations technicians",
+   "eligibility": "limited",
+   "goingRate": 35200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Games testers",
+    "Network and systems administrators",
+    "Quality assurance testers",
+    "Software technicians",
+    "IT operations technicians not elsewhere classified"
+   ]
+  },
+  "3132": {
+   "title": "IT user support technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "IT user support technicians"
+   ]
+  },
+  "3133": {
+   "title": "Database administrators and web content technicians",
+   "eligibility": "limited",
+   "goingRate": 34600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Database administrators",
+    "Web content technicians",
+    "Database administrators and web content technicians not elsewhere classified"
+   ]
+  },
+  "3211": {
+   "title": "Dispensing opticians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Dispensing opticians"
+   ]
+  },
+  "3212": {
+   "title": "Pharmaceutical technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Pharmaceutical technicians"
+   ]
+  },
+  "3213": {
+   "title": "Medical and dental technicians",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cardiographer",
+    "Dental hygienist",
+    "Dental technician",
+    "Medical technical officer",
+    "Ocularist",
+    "Orthopaedic technician",
+    "Radiography assistant practitioner"
+   ]
+  },
+  "3214": {
+   "title": "Complementary health associate professionals",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Colour therapist",
+    "Holistic therapist",
+    "Homeopath",
+    "Hypnotherapist",
+    "Massage therapist",
+    "Reflexologist"
+   ]
+  },
+  "3219": {
+   "title": "Health associate professionals not elsewhere classified",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Antenatal teacher",
+    "Diet adviser",
+    "Health trainer",
+    "Therapist"
+   ]
+  },
+  "3221": {
+   "title": "Youth and community workers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Community workers",
+    "Family support workers",
+    "Youth workers (excludes youth work professionals)",
+    "Youth and community workers not elsewhere classified"
+   ]
+  },
+  "3222": {
+   "title": "Child and early years officers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Child protection officers",
+    "Learning and behaviour mentors",
+    "Welfare and attendance officers",
+    "Child and early years officers not elsewhere classified"
+   ]
+  },
+  "3223": {
+   "title": "Housing officers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Housing officers"
+   ]
+  },
+  "3224": {
+   "title": "Counsellors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Bereavement counsellors",
+    "Debt advisers",
+    "Life coaches",
+    "Relationship counsellors",
+    "Substance misuse workers",
+    "Counsellors not elsewhere classified"
+   ]
+  },
+  "3229": {
+   "title": "Welfare and housing associate professionals not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Advocates (excludes solicitor advocates)",
+    "Celebrants",
+    "Charity workers",
+    "Day care officers",
+    "Health advisers",
+    "Homelessness and housing advice support workers",
+    "Mental health project workers",
+    "Probation service workers",
+    "Student support workers",
+    "Victim support workers",
+    "Welfare and housing associate professionals not elsewhere classified"
+   ]
+  },
+  "3231": {
+   "title": "Higher level teaching assistants",
+   "eligibility": "national_pay_scale",
+   "goingRate": 23656,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Advanced teaching assistant",
+    "HLTA",
+    "Learning support practitioner",
+    "Teaching assistant (qualified)"
+   ]
+  },
+  "3232": {
+   "title": "Early education and childcare practitioners",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Early education and childcare practitioners"
+   ]
+  },
+  "3240": {
+   "title": "Veterinary nurses",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Veterinary nurses"
+   ]
+  },
+  "3311": {
+   "title": "Non-commissioned officers and other ranks",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Aircraftman",
+    "Aircraft technician (armed forces)",
+    "Lance-corporal",
+    "Sergeant (armed forces)",
+    "Soldier",
+    "Weapons engineer (armed forces)"
+   ]
+  },
+  "3312": {
+   "title": "Police officers (sergeant and below)",
+   "eligibility": "limited",
+   "goingRate": 46900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Police constable",
+    "Police sergeant",
+    "Police officers (sergeant and below) not elsewhere classified"
+   ]
+  },
+  "3313": {
+   "title": "Fire service officers (watch manager and below)",
+   "eligibility": "limited",
+   "goingRate": 42100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Firefighters",
+    "Fire service crew managers",
+    "Watch managers",
+    "Fire service officers (watch manager and below) not elsewhere classified"
+   ]
+  },
+  "3314": {
+   "title": "Prison service officers (below principal officer)",
+   "eligibility": "limited",
+   "goingRate": 38800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Operational support grades",
+    "Prison officers",
+    "Prison service officers (below principal officer) not elsewhere classified"
+   ]
+  },
+  "3319": {
+   "title": "Protective service associate professionals not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 41100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Coastguard",
+    "Customs and border control officers",
+    "Fraud investigators (excludes benefit fraud)",
+    "Immigration officers",
+    "Private investigators",
+    "Security consultants and managers (excludes cyber security)",
+    "Protective service associate professionals not elsewhere classified"
+   ]
+  },
+  "3411": {
+   "title": "Artists",
+   "eligibility": "limited",
+   "goingRate": 38200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Art technicians (excludes education)",
+    "Drawing and painting artists",
+    "Hand drawn animators",
+    "Illustrators (excludes medical and scientific)",
+    "Medical and scientific illustrators",
+    "Picture restorers",
+    "Sculptors",
+    "Tattoo and henna artists",
+    "Artists not elsewhere classified"
+   ]
+  },
+  "3412": {
+   "title": "Authors, writers and translators",
+   "eligibility": "limited",
+   "goingRate": 36100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Authors",
+    "Bloggers",
+    "Copywriters",
+    "Literary editors",
+    "Poets",
+    "Script writers",
+    "Technical writers (excludes computing)",
+    "Translators and interpreters",
+    "Authors, writers and translators not elsewhere classified"
+   ]
+  },
+  "3413": {
+   "title": "Actors, entertainers and presenters",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Actors",
+    "Broadcasters, podcasters and presenters",
+    "Children’s entertainers",
+    "Comedians",
+    "Disc jockeys",
+    "Magicians",
+    "Models",
+    "Singers",
+    "Social media influencers",
+    "Actors, entertainers and presenters not elsewhere classified"
+   ]
+  },
+  "3414": {
+   "title": "Dancers and choreographers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Choreographers",
+    "Dance teachers (excludes educational establishments)",
+    "Dancers"
+   ]
+  },
+  "3415": {
+   "title": "Musicians",
+   "eligibility": "eligible",
+   "goingRate": 37500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Composers and musical arrangers",
+    "Music conductors",
+    "Instrumentalists",
+    "Musicians not elsewhere classified"
+   ]
+  },
+  "3416": {
+   "title": "Arts officers, producers and directors",
+   "eligibility": "eligible",
+   "goingRate": 38100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Art consultants",
+    "Broadcasting and entertainment directors",
+    "Broadcasting and entertainment editors",
+    "Broadcasting and entertainment producers",
+    "Studio and stage managers",
+    "Arts officers, producers and directors not elsewhere classified"
+   ]
+  },
+  "3417": {
+   "title": "Photographers, audio-visual and broadcasting equipment operators",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Camera operators and videographers",
+    "Lighting designers",
+    "Photographers",
+    "Sound designers",
+    "Sound engineers",
+    "Theatre technicians (excludes hospitals)"
+   ]
+  },
+  "3421": {
+   "title": "Interior designers",
+   "eligibility": "limited",
+   "goingRate": 35200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Interior designers"
+   ]
+  },
+  "3422": {
+   "title": "Clothing, fashion and accessories designers",
+   "eligibility": "limited",
+   "goingRate": 36500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Clothing and fashion consultants",
+    "Clothing and fashion designers",
+    "Footwear designers",
+    "Jewellery designers",
+    "Textile designers",
+    "Clothing, fashion and accessories designers not elsewhere classified"
+   ]
+  },
+  "3429": {
+   "title": "Design occupations not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 39300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Industrial and product designers",
+    "Packaging designers",
+    "Performance make-up artists",
+    "Set designers",
+    "Visual merchandising managers and designers",
+    "Design occupations not elsewhere classified"
+   ]
+  },
+  "3431": {
+   "title": "Sports players",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cricketer",
+    "Footballer",
+    "Jockey",
+    "Golfer"
+   ]
+  },
+  "3432": {
+   "title": "Sports coaches, instructors and officials",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Referee",
+    "Riding instructor",
+    "Sports coach",
+    "Sports development officer",
+    "Swimming teacher"
+   ]
+  },
+  "3433": {
+   "title": "Fitness and wellbeing instructors",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Group fitness instructors and personal trainers",
+    "Pilates teachers",
+    "Yoga teachers",
+    "Fitness and wellbeing instructors not elsewhere classified"
+   ]
+  },
+  "3511": {
+   "title": "Aircraft pilots and air traffic controllers",
+   "eligibility": "eligible",
+   "goingRate": 80400,
+   "newEntrantRate": 56300,
+   "exampleTitles": [
+    "Airline pilots",
+    "Air traffic controllers",
+    "Flying instructors",
+    "Helicopter pilots",
+    "Aircraft pilots and air traffic controllers not elsewhere classified"
+   ]
+  },
+  "3512": {
+   "title": "Ship and hovercraft officers",
+   "eligibility": "limited",
+   "goingRate": 58300,
+   "newEntrantRate": 40800,
+   "exampleTitles": [
+    "Marine engineers",
+    "Ship and hovercraft officers not elsewhere classified"
+   ]
+  },
+  "3520": {
+   "title": "Legal associate professionals",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Conveyancing professionals",
+    "Cost lawyers",
+    "Barrister’s and judge’s clerks",
+    "Litigation officers",
+    "Probate managers",
+    "Will writers",
+    "Legal associate professionals not elsewhere classified"
+   ]
+  },
+  "3531": {
+   "title": "Brokers",
+   "eligibility": "eligible",
+   "goingRate": 52400,
+   "newEntrantRate": 36700,
+   "exampleTitles": [
+    "Commodity brokers and traders",
+    "Insurance and mortgage brokers",
+    "Shipbrokers",
+    "Stockbrokers",
+    "Brokers not elsewhere classified"
+   ]
+  },
+  "3532": {
+   "title": "Insurance underwriters",
+   "eligibility": "limited",
+   "goingRate": 36500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Insurance underwriters"
+   ]
+  },
+  "3533": {
+   "title": "Financial and accounting technicians",
+   "eligibility": "limited",
+   "goingRate": 48700,
+   "newEntrantRate": 34100,
+   "exampleTitles": [
+    "Accounting technicians",
+    "Financial control technicians",
+    "Financial and accounting technicians not elsewhere classified"
+   ]
+  },
+  "3534": {
+   "title": "Financial accounts managers",
+   "eligibility": "eligible",
+   "goingRate": 44700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Claims managers",
+    "Credit managers",
+    "Investment managers",
+    "Relationship managers",
+    "Financial accounts managers not elsewhere classified"
+   ]
+  },
+  "3541": {
+   "title": "Estimators, valuers and assessors",
+   "eligibility": "limited",
+   "goingRate": 35300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Energy advisers and assessors",
+    "Estimators",
+    "Loss adjusters",
+    "Valuers",
+    "Vehicle damage assessors",
+    "Estimators, valuers and assessors not elsewhere classified"
+   ]
+  },
+  "3542": {
+   "title": "Importers and exporters",
+   "eligibility": "limited",
+   "goingRate": 35700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Importers and exporters"
+   ]
+  },
+  "3543": {
+   "title": "Project support officers",
+   "eligibility": "limited",
+   "goingRate": 33900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Project support officers"
+   ]
+  },
+  "3544": {
+   "title": "Data analysts",
+   "eligibility": "limited",
+   "goingRate": 34900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Data analysts"
+   ]
+  },
+  "3549": {
+   "title": "Business associate professionals not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Business support officers",
+    "Business systems analysts",
+    "Contract administrators",
+    "Clinical coders",
+    "Clinical trials administrators",
+    "Research coordinators",
+    "Business associate professionals not elsewhere classified"
+   ]
+  },
+  "3551": {
+   "title": "Buyers and procurement officers",
+   "eligibility": "limited",
+   "goingRate": 35500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Buyers and procurement officers"
+   ]
+  },
+  "3552": {
+   "title": "Business sales executives",
+   "eligibility": "limited",
+   "goingRate": 36700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Business sales executives"
+   ]
+  },
+  "3553": {
+   "title": "Merchandisers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Merchandisers"
+   ]
+  },
+  "3554": {
+   "title": "Advertising and marketing associate professionals",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Advertising and marketing executives",
+    "Fundraisers",
+    "Market researchers (excludes interviewers)",
+    "Marketing associate professionals not elsewhere classified"
+   ]
+  },
+  "3555": {
+   "title": "Estate agents and auctioneers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Estate agents",
+    "Land and property auctioneers and valuers",
+    "Letting agents",
+    "Estate agents and auctioneers not elsewhere classified"
+   ]
+  },
+  "3556": {
+   "title": "Sales accounts and business development managers",
+   "eligibility": "eligible",
+   "goingRate": 55200,
+   "newEntrantRate": 38600,
+   "exampleTitles": [
+    "Brand managers",
+    "Business development managers",
+    "Sales account managers",
+    "Sales accounts and business development managers not elsewhere classified"
+   ]
+  },
+  "3557": {
+   "title": "Events managers and organisers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Conference managers and organisers",
+    "Exhibition managers and organisers",
+    "Festival managers and organisers",
+    "Hospitality managers",
+    "Wedding planners and organisers",
+    "Event managers and organisers not elsewhere classified"
+   ]
+  },
+  "3560": {
+   "title": "Public services associate professionals",
+   "eligibility": "limited",
+   "goingRate": 39500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Electoral services officers",
+    "Health service administrators",
+    "Job Centre officers",
+    "Waste management officers",
+    "Public services associate professionals not elsewhere classified"
+   ]
+  },
+  "3571": {
+   "title": "Human resources and industrial relations officers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Equality and diversity officers",
+    "Human resources advisers",
+    "Recruitment consultants",
+    "Human resources and industrial relations officers not elsewhere classified"
+   ]
+  },
+  "3572": {
+   "title": "Careers advisers and vocational guidance specialists",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Careers advisers and coaches",
+    "Work placement officers",
+    "Careers advisers and vocational guidance specialists not elsewhere classified"
+   ]
+  },
+  "3573": {
+   "title": "Information technology trainers",
+   "eligibility": "limited",
+   "goingRate": 40000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Information technology trainers"
+   ]
+  },
+  "3574": {
+   "title": "Other vocational and industrial trainers",
+   "eligibility": "limited",
+   "goingRate": 34500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Business coaches",
+    "Retail and store trainers",
+    "Training assessors",
+    "Other vocational and industrial trainers not elsewhere classified"
+   ]
+  },
+  "3581": {
+   "title": "Inspectors of standards and regulations",
+   "eligibility": "limited",
+   "goingRate": 34400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Animal health inspectors and officers",
+    "Building control officers",
+    "Driving examiners",
+    "Health and safety inspectors",
+    "Housing and planning inspectors",
+    "Licensing officers",
+    "Meat hygiene inspectors",
+    "Nuclear safety inspectors",
+    "Trading standards officers",
+    "Traffic and vehicle examiners and inspectors",
+    "Inspectors of standards and regulations not elsewhere classified"
+   ]
+  },
+  "3582": {
+   "title": "Health and safety managers and officers",
+   "eligibility": "limited",
+   "goingRate": 42500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Asbestos safety officers",
+    "Fire safety managers and officers",
+    "Occupational health and safety managers and officers",
+    "Road traffic and transport safety officers",
+    "Occupational hygienists",
+    "Health and safety managers and officers not elsewhere classified"
+   ]
+  },
+  "4111": {
+   "title": "National government administrative occupations",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "National government benefits officers",
+    "National government revenue officers",
+    "Passport officers",
+    "National government administrative occupations not elsewhere classified"
+   ]
+  },
+  "4112": {
+   "title": "Local government administrative occupations",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Local government benefits officers",
+    "Local government housing assistants",
+    "Local government revenue officers",
+    "Parish clerks",
+    "Local government administrative occupations not elsewhere classified"
+   ]
+  },
+  "4113": {
+   "title": "Officers of non-governmental organisations",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Charity administrators",
+    "Clerks to governors",
+    "Union officials",
+    "Officers of non-governmental organisations not elsewhere classified"
+   ]
+  },
+  "4121": {
+   "title": "Credit controllers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Credit controllers"
+   ]
+  },
+  "4122": {
+   "title": "Book-keepers, payroll managers and wages clerks",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Accounting clerks and bookkeepers",
+    "Payroll officers and wages clerks",
+    "Bookkeepers, payroll managers and wage clerks not elsewhere classified"
+   ]
+  },
+  "4123": {
+   "title": "Bank and post office clerks",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bank clerk",
+    "Cashier (banking)",
+    "Customer service adviser (building society)",
+    "Customer service officer (banking)",
+    "Post office clerk"
+   ]
+  },
+  "4124": {
+   "title": "Finance officers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Finance officers"
+   ]
+  },
+  "4129": {
+   "title": "Financial administrative occupations not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Box office assistants",
+    "Grants officers",
+    "Mortgage administrators",
+    "Revenue assistants (excludes National and Local government revenue occupations)",
+    "Treasury assistants",
+    "Finance administrative occupations not elsewhere classified"
+   ]
+  },
+  "4131": {
+   "title": "Records clerks and assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Admissions officer",
+    "Clerical officer (hospital service)",
+    "Examinations officer (education)",
+    "Filing clerk",
+    "Records clerk",
+    "Ward clerk"
+   ]
+  },
+  "4132": {
+   "title": "Pensions and insurance clerks and assistants",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Claims handlers",
+    "Insurance administrators",
+    "Pensions administrators",
+    "Pensions and insurance clerks and assistants not elsewhere classified"
+   ]
+  },
+  "4133": {
+   "title": "Stock control clerks and assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Auditor (stock control)",
+    "Despatch clerk",
+    "Material controller",
+    "Stock controller",
+    "Stores administrator",
+    "Supply chain coordinator"
+   ]
+  },
+  "4134": {
+   "title": "Transport and distribution clerks and assistants",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Transport and distribution clerks and assistants"
+   ]
+  },
+  "4135": {
+   "title": "Library clerks and assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Archives assistant (library)",
+    "Information assistant (library)",
+    "Learning resource assistant",
+    "Library assistant",
+    "Library clerk",
+    "Library supervisor"
+   ]
+  },
+  "4136": {
+   "title": "Human resources administrative occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Course administrator",
+    "Human resources administrator",
+    "Personnel administrator",
+    "Personnel clerk",
+    "Training administrator"
+   ]
+  },
+  "4141": {
+   "title": "Office managers",
+   "eligibility": "limited",
+   "goingRate": 37400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Office managers"
+   ]
+  },
+  "4142": {
+   "title": "Office supervisors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Administration supervisor",
+    "Clerical supervisor",
+    "Facilities supervisor",
+    "Office supervisor"
+   ]
+  },
+  "4143": {
+   "title": "Customer service managers",
+   "eligibility": "limited",
+   "goingRate": 35200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Call centre managers",
+    "Customer service managers not elsewhere classified"
+   ]
+  },
+  "4151": {
+   "title": "Sales administrators",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Sales administrators"
+   ]
+  },
+  "4152": {
+   "title": "Data entry administrators",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Data administrator",
+    "Database assistant",
+    "Data entry clerk",
+    "Database inputter"
+   ]
+  },
+  "4159": {
+   "title": "Other administrative occupations not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Business administrators",
+    "Church administrators",
+    "Facilities coordinators",
+    "Proofreaders",
+    "Property administrators",
+    "Warranty administrators",
+    "Other administrative occupations not elsewhere classified"
+   ]
+  },
+  "4211": {
+   "title": "Medical secretaries",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Clinic coordinator",
+    "Clinic administrator",
+    "Medical administrator",
+    "Medical secretary",
+    "Secretary (medical practice)"
+   ]
+  },
+  "4212": {
+   "title": "Legal secretaries",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Legal administrator",
+    "Legal clerk",
+    "Legal secretary",
+    "Secretary (legal services)"
+   ]
+  },
+  "4213": {
+   "title": "School secretaries",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Administration assistant (schools)",
+    "Clerical assistant (schools)",
+    "School administrator",
+    "School secretary",
+    "Secretary (schools)"
+   ]
+  },
+  "4214": {
+   "title": "Company secretaries and administrators",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Company secretaries and administrators"
+   ]
+  },
+  "4215": {
+   "title": "Personal assistants and other secretaries",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Farm secretaries",
+    "Personal assistants (excludes care workers)",
+    "Personal assistants and other secretaries not elsewhere classified"
+   ]
+  },
+  "4216": {
+   "title": "Receptionists",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dental receptionist",
+    "Doctor’s receptionist",
+    "Medical receptionist",
+    "Reception manager",
+    "Receptionist",
+    "Receptionist-administrator"
+   ]
+  },
+  "4217": {
+   "title": "Typists and related keyboard occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Audio typist",
+    "Transcriber",
+    "Typist",
+    "Typist-clerk"
+   ]
+  },
+  "5111": {
+   "title": "Farmers",
+   "eligibility": "limited",
+   "goingRate": 34100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Agricultural contractors",
+    "Aquaculture farmers",
+    "Arable farmers",
+    "Dairy farmers",
+    "Livestock farmers",
+    "Poultry farmers",
+    "Farmers not elsewhere classified"
+   ]
+  },
+  "5112": {
+   "title": "Horticultural trades",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Horticultural trades"
+   ]
+  },
+  "5113": {
+   "title": "Gardeners and landscape gardeners",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Garden designers",
+    "Gardeners (excludes horticultural/market gardening)",
+    "Green roof installers",
+    "Landscape gardeners",
+    "Gardeners and landscape gardeners not elsewhere classified"
+   ]
+  },
+  "5114": {
+   "title": "Groundsmen and greenkeepers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Groundsmen and greenkeepers"
+   ]
+  },
+  "5119": {
+   "title": "Agricultural and fishing trades not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Arborists",
+    "Beekeepers",
+    "Countryside and park officers and rangers",
+    "Falconers",
+    "Fish and river keepers",
+    "Fishers",
+    "Gamekeepers",
+    "Agricultural and fishing trades not elsewhere classified"
+   ]
+  },
+  "5211": {
+   "title": "Sheet metal workers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Metal fabricators and finishers",
+    "Panel beaters (excludes vehicles)",
+    "Whitesmiths",
+    "Sheet metal workers not elsewhere classified"
+   ]
+  },
+  "5212": {
+   "title": "Metal plate workers, smiths, moulders and related occupations",
+   "eligibility": "limited",
+   "goingRate": 36700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Die casters",
+    "Farriers",
+    "Moulders, mould makers and core makers",
+    "Smiths"
+   ]
+  },
+  "5213": {
+   "title": "Welding trades",
+   "eligibility": "limited",
+   "goingRate": 34900,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Braziers and solderers",
+    "Pipe welders",
+    "Plate welders",
+    "Welding trades not elsewhere classified"
+   ]
+  },
+  "5214": {
+   "title": "Pipe fitters",
+   "eligibility": "limited",
+   "goingRate": 46000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Pipe fitters"
+   ]
+  },
+  "5221": {
+   "title": "Metal machining setters and setter-operators",
+   "eligibility": "limited",
+   "goingRate": 34600,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Computer numerical control (CNC) machine setters and setter-operators",
+    "Metal machining setters and setter-operators not elsewhere classified"
+   ]
+  },
+  "5222": {
+   "title": "Tool makers, tool fitters and markers-out",
+   "eligibility": "limited",
+   "goingRate": 38400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Tool fitters",
+    "Tool makers",
+    "Tool makers, tool fitters and markers-out not elsewhere classified"
+   ]
+  },
+  "5223": {
+   "title": "Metal working production and maintenance fitters",
+   "eligibility": "limited",
+   "goingRate": 39300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Automation maintenance technicians",
+    "Bicycle mechanics",
+    "Catering equipment technicians",
+    "Door fitters and makers",
+    "Gunsmiths",
+    "Heavy plant maintenance technicians",
+    "Hydraulic technicians",
+    "Lift technicians",
+    "Locksmiths",
+    "Pump technicians",
+    "Textile machine technicians",
+    "Turbine fitters",
+    "Metal working production and maintenance fitters not elsewhere classified"
+   ]
+  },
+  "5224": {
+   "title": "Precision instrument makers and repairers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Calibration and precision instrument technicians",
+    "Camera and photographic equipment technicians",
+    "Horologists, watch makers and repairers",
+    "Optical technicians",
+    "Precision instrument makers and repairers not elsewhere classified"
+   ]
+  },
+  "5225": {
+   "title": "Air-conditioning and refrigeration installers and repairers",
+   "eligibility": "limited",
+   "goingRate": 41100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Air-conditioning and refrigeration installers and repairers"
+   ]
+  },
+  "5231": {
+   "title": "Vehicle technicians, mechanics and electricians",
+   "eligibility": "limited",
+   "goingRate": 35500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Auto electricians",
+    "Car/light vehicle technicians",
+    "Heavy and large vehicle technicians",
+    "Motorcycle technicians",
+    "Motorsport technicians",
+    "MOT testers",
+    "Roadside assistance technicians",
+    "Vehicle technicians, mechanics and electricians not elsewhere classified"
+   ]
+  },
+  "5232": {
+   "title": "Vehicle body builders and repairers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Vehicle body builders and repairers"
+   ]
+  },
+  "5233": {
+   "title": "Vehicle paint technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Vehicle paint technicians"
+   ]
+  },
+  "5234": {
+   "title": "Aircraft maintenance and related trades",
+   "eligibility": "limited",
+   "goingRate": 45000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Aircraft maintenance and related trades"
+   ]
+  },
+  "5235": {
+   "title": "Boat and ship builders and repairers",
+   "eligibility": "limited",
+   "goingRate": 33700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Boat and ship builders and repairers"
+   ]
+  },
+  "5236": {
+   "title": "Rail and rolling stock builders and repairers",
+   "eligibility": "limited",
+   "goingRate": 57000,
+   "newEntrantRate": 39900,
+   "exampleTitles": [
+    "Rail and rolling stock builders and repairers"
+   ]
+  },
+  "5241": {
+   "title": "Electricians and electrical fitters",
+   "eligibility": "limited",
+   "goingRate": 38800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Electric vehicle charging point installers",
+    "Electro-mechanical technicians",
+    "Installation and maintenance electricians",
+    "Smart energy experts",
+    "Solar panel installers",
+    "Street lighting electrician",
+    "Electricians and electrical fitters not elsewhere classified"
+   ]
+  },
+  "5242": {
+   "title": "Telecoms and related network installers and repairers",
+   "eligibility": "limited",
+   "goingRate": 36700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Telecoms and related network installers and repairers"
+   ]
+  },
+  "5243": {
+   "title": "TV, video and audio servicers and repairers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "TV, video and audio servicers and repairers"
+   ]
+  },
+  "5244": {
+   "title": "Computer system and equipment installers and servicers",
+   "eligibility": "limited",
+   "goingRate": 35100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Computer system and equipment installers and servicers"
+   ]
+  },
+  "5245": {
+   "title": "Security system installers and repairers",
+   "eligibility": "limited",
+   "goingRate": 36300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Security system installers and repairers"
+   ]
+  },
+  "5246": {
+   "title": "Electrical service and maintenance mechanics and repairers",
+   "eligibility": "limited",
+   "goingRate": 39700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Electrical service and maintenance mechanics and repairers"
+   ]
+  },
+  "5249": {
+   "title": "Electrical and electronic trades not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 45800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Broadcast and communications technicians",
+    "Overhead line workers",
+    "Signal workers",
+    "Electrical and electronic trades not elsewhere classified"
+   ]
+  },
+  "5250": {
+   "title": "Skilled metal, electrical and electronic trades supervisors",
+   "eligibility": "limited",
+   "goingRate": 42400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Skilled metal, electrical and electronic trades supervisors"
+   ]
+  },
+  "5311": {
+   "title": "Steel erectors",
+   "eligibility": "limited",
+   "goingRate": 35000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Steel erectors"
+   ]
+  },
+  "5312": {
+   "title": "Stonemasons and related trades",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Dry stone wallers",
+    "Monumental masons",
+    "Stonemasons",
+    "Stonemasons and related trades not elsewhere classified"
+   ]
+  },
+  "5313": {
+   "title": "Bricklayers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Bricklayers"
+   ]
+  },
+  "5314": {
+   "title": "Roofers, roof tilers and slaters",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Felt and flat roofers",
+    "Sheeters and cladders",
+    "Thatchers",
+    "Tilers and slaters",
+    "Roofers, roof tilers and slaters not elsewhere classified"
+   ]
+  },
+  "5315": {
+   "title": "Plumbers and heating and ventilating installers and repairers",
+   "eligibility": "limited",
+   "goingRate": 38100,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Plumbers and heating and ventilation installers and repairers"
+   ]
+  },
+  "5316": {
+   "title": "Carpenters and joiners",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Bedroom and kitchen fitters",
+    "Carpenters",
+    "Joiners",
+    "Carpenters and joiners not elsewhere classified"
+   ]
+  },
+  "5317": {
+   "title": "Glaziers, window fabricators and fitters",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Glass cutters and glaziers",
+    "Window fabricators",
+    "Window fitters",
+    "Glaziers, window fabricators and fitters not elsewhere classified"
+   ]
+  },
+  "5319": {
+   "title": "Construction and building trades not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Builders",
+    "Divers",
+    "Fence erectors",
+    "Industrial climbers",
+    "Remotely Operated Vehicle (ROV) operators",
+    "Steel fixers and underpinners",
+    "Construction and building trades not elsewhere classified"
+   ]
+  },
+  "5321": {
+   "title": "Plasterers",
+   "eligibility": "limited",
+   "goingRate": 34200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Dry liners",
+    "Plasterers (wall and decorative)"
+   ]
+  },
+  "5322": {
+   "title": "Floorers and wall tilers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Carpet and linoleum fitters",
+    "Floor layers",
+    "Tilers",
+    "Floorers and wall tilers not elsewhere classified"
+   ]
+  },
+  "5323": {
+   "title": "Painters and decorators",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Painters and decorators"
+   ]
+  },
+  "5330": {
+   "title": "Construction and building trades supervisors",
+   "eligibility": "limited",
+   "goingRate": 41800,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Carpenter and joinery supervisors",
+    "Demolition supervisors",
+    "Painting supervisors",
+    "Plumbing supervisors",
+    "Road construction supervisors",
+    "Roofing supervisors",
+    "Scaffolding supervisors",
+    "Construction and building trade supervisors not elsewhere classified"
+   ]
+  },
+  "5411": {
+   "title": "Upholsterers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Curtain makers",
+    "Trimmers and upholsterers",
+    "Upholsterers not elsewhere classified"
+   ]
+  },
+  "5412": {
+   "title": "Footwear and leather working trades",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Footwear makers and repairers",
+    "Leather workers (excludes leather dressing)",
+    "Footwear and leather working trades not elsewhere classified"
+   ]
+  },
+  "5413": {
+   "title": "Tailors and dressmakers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Costume makers",
+    "Dressmakers",
+    "Fitters and alterations assistants",
+    "Kilt makers",
+    "Milliners (excludes wholesale, retail trade)",
+    "Tailors",
+    "Tailors and dressmakers not elsewhere classified"
+   ]
+  },
+  "5419": {
+   "title": "Textiles, garments and related trades not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Embroiderers and sewers",
+    "Knitters",
+    "Sail makers",
+    "Weavers (excludes basket, wig and wire goods mfr)",
+    "Textiles, garments and related trades not elsewhere classified"
+   ]
+  },
+  "5421": {
+   "title": "Pre-press technicians",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Pre-press technicians"
+   ]
+  },
+  "5422": {
+   "title": "Printers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Digital printers",
+    "Flexographic printers",
+    "Lithographic printers",
+    "Screen printers",
+    "Printers not elsewhere classified"
+   ]
+  },
+  "5423": {
+   "title": "Print finishing and binding workers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Print finishing and binding workers"
+   ]
+  },
+  "5431": {
+   "title": "Butchers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Butchers",
+    "Slaughterers"
+   ]
+  },
+  "5432": {
+   "title": "Bakers and flour confectioners",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Bakers (excludes food process bakery workers and textile manufacturing)",
+    "Cake decorators and designers",
+    "Bakers and flour confectioners not elsewhere classified"
+   ]
+  },
+  "5433": {
+   "title": "Fishmongers and poultry dressers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Fishmongers",
+    "Poultry dressers",
+    "Fishmongers and poultry dressers not elsewhere classified"
+   ]
+  },
+  "5434": {
+   "title": "Chefs",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Chefs"
+   ]
+  },
+  "5435": {
+   "title": "Cooks",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cook",
+    "Cook-supervisor",
+    "Fish fryer",
+    "Head cook"
+   ]
+  },
+  "5436": {
+   "title": "Catering and bar managers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Catering and bar managers"
+   ]
+  },
+  "5441": {
+   "title": "Glass and ceramics makers, decorators and finishers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Ceramic makers, decorators and finishers",
+    "Ceramic potters",
+    "Glass blowers",
+    "Glass makers, decorators and finishers",
+    "Optical glass makers",
+    "Glass and ceramics makers, decorators and finishers not elsewhere classified"
+   ]
+  },
+  "5442": {
+   "title": "Furniture makers and other craft woodworkers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Cabinet makers (excludes metal)",
+    "Furniture makers and fitters",
+    "Furniture restorers",
+    "Furniture sprayers and finishers",
+    "Picture framers",
+    "Shed makers",
+    "Furniture makers and other craft woodworkers not elsewhere classified"
+   ]
+  },
+  "5443": {
+   "title": "Florists",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Florists"
+   ]
+  },
+  "5449": {
+   "title": "Other skilled trades not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Basket makers (excludes wire goods mfr)",
+    "Candle makers",
+    "Goldsmiths, silversmiths, jewellers and precious stone workers",
+    "Hairpiece and wig makers",
+    "Metal engravers",
+    "Craft model makers",
+    "Musical instrument repairers, makers and tuners",
+    "Sign makers and writers",
+    "Toy makers and repairers",
+    "Other skilled trades not elsewhere classified"
+   ]
+  },
+  "6111": {
+   "title": "Early education and childcare assistants",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Early education and childcare assistants"
+   ]
+  },
+  "6112": {
+   "title": "Teaching assistants",
+   "eligibility": "national_pay_scale",
+   "goingRate": 23656,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Classroom assistant",
+    "School assistant",
+    "Teaching assistant"
+   ]
+  },
+  "6113": {
+   "title": "Educational support assistants",
+   "eligibility": "national_pay_scale",
+   "goingRate": 23656,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Education support assistant",
+    "Learning support assistant",
+    "Non-teaching assistant (schools)",
+    "Special needs assistant",
+    "Support assistant (educational establishments)"
+   ]
+  },
+  "6114": {
+   "title": "Childminders",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Childminders"
+   ]
+  },
+  "6116": {
+   "title": "Nannies and au pairs",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Au pair",
+    "Nanny"
+   ]
+  },
+  "6117": {
+   "title": "Playworkers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Playworkers"
+   ]
+  },
+  "6121": {
+   "title": "Pest control officers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Fumigator",
+    "Pest control officer",
+    "Pest control technician",
+    "Pest controller"
+   ]
+  },
+  "6129": {
+   "title": "Animal care services occupations not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Animal boarding assistants",
+    "Animal breeders",
+    "Animal groomers",
+    "Animal trainers (excludes performing animals)",
+    "Animal walkers",
+    "Animal welfare workers",
+    "Stable workers",
+    "Veterinary assistants",
+    "Zookeepers",
+    "Animal care services occupations not elsewhere classified"
+   ]
+  },
+  "6131": {
+   "title": "Nursing auxiliaries and assistants Note: For Skilled Worker purposes, SOC 2020 occupation code 6131 only applies to roles in environments where registered nurse or other registered healthcare professional roles also exist.",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Auxiliary nurse",
+    "Health care assistant (hospital service)",
+    "Health care support worker",
+    "Nursing assistant",
+    "Nursing auxiliary"
+   ]
+  },
+  "6132": {
+   "title": "Ambulance staff (excluding paramedics)",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Ambulance care assistant",
+    "Ambulance driver",
+    "Ambulance service preparation operative",
+    "Ambulance technician",
+    "Emergency medical technician"
+   ]
+  },
+  "6133": {
+   "title": "Dental nurses",
+   "eligibility": "national_pay_scale",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dental assistant",
+    "Dental nurse",
+    "Dental nurse-receptionist",
+    "Dental surgery assistant"
+   ]
+  },
+  "6134": {
+   "title": "Houseparents and residential wardens",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Foster carers",
+    "Residential childcare practitioners",
+    "School matrons and houseparents",
+    "Residential housing wardens",
+    "Houseparents and residential wardens not elsewhere classified"
+   ]
+  },
+  "6135": {
+   "title": "Care workers and home carers – Jobs with a working location in England are only eligible in this SOC 2020 occupation code where the sponsor holds registration with the Care Quality Commission and is currently carrying on a regulated activity. Eligibility for Skilled Worker applicants to be sponsored in this SOC 2020 occupation code is restricted, as set out in SW 6.1B of Appendix Skilled Worker. Note: private households or individuals (other than sole traders sponsoring someone to work for their business) cannot sponsor Skilled Worker applicants.",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Community support workers",
+    "Home care workers",
+    "Residential care workers",
+    "Care workers and home carers not elsewhere classified"
+   ]
+  },
+  "6136": {
+   "title": "Senior care workers – Jobs with a working location in England are only eligible in this SOC 2020 occupation code where the sponsor holds registration with the Care Quality Commission and is currently carrying on a regulated activity. Eligibility for Skilled Worker applicants to be sponsored in this SOC 2020 occupation code is restricted, as set out in SW 6.1B of Appendix Skilled Worker.",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Senior community support workers",
+    "Senior home care workers",
+    "Senior residential care workers",
+    "Senior care workers not elsewhere classified"
+   ]
+  },
+  "6137": {
+   "title": "Care escorts",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bus escort",
+    "Escort",
+    "Passenger assistant",
+    "School escort"
+   ]
+  },
+  "6138": {
+   "title": "Undertakers, mortuary and crematorium assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Crematorium technician",
+    "Embalmer",
+    "Funeral director",
+    "Pall bearer",
+    "Undertaker"
+   ]
+  },
+  "6211": {
+   "title": "Sports and leisure assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Croupier",
+    "Leisure attendant",
+    "Lifeguard",
+    "Runner (broadcasting)",
+    "Sports assistant"
+   ]
+  },
+  "6212": {
+   "title": "Travel agents",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Reservations agent",
+    "Sales consultant (travel agents)",
+    "Travel adviser",
+    "Travel agent",
+    "Travel consultant"
+   ]
+  },
+  "6213": {
+   "title": "Air travel assistants",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Flight attendants",
+    "Passenger services assistants",
+    "Air travel assistants not elsewhere classified"
+   ]
+  },
+  "6214": {
+   "title": "Rail travel assistants",
+   "eligibility": "limited",
+   "goingRate": 41300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Railway station assistants",
+    "Revenue protection officers",
+    "Train conductors and guards",
+    "Rail travel assistants not elsewhere classified"
+   ]
+  },
+  "6219": {
+   "title": "Leisure and travel service occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bus conductor",
+    "Holiday representative",
+    "Information assistant (tourism)",
+    "Steward (shipping)",
+    "Tour guide"
+   ]
+  },
+  "6221": {
+   "title": "Hairdressers and barbers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Artistic director (hairdressing)",
+    "Barber",
+    "Colourist (hairdressing)",
+    "Hair designer",
+    "Hair stylist",
+    "Hairdresser"
+   ]
+  },
+  "6222": {
+   "title": "Beauticians and related occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Beautician",
+    "Beauty therapist",
+    "Nail technician",
+    "Spa therapist"
+   ]
+  },
+  "6231": {
+   "title": "Housekeepers and related occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Chalet host",
+    "House keeper",
+    "Lifestyle manager",
+    "Valet"
+   ]
+  },
+  "6232": {
+   "title": "Caretakers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Caretaker",
+    "Concierge",
+    "Janitor",
+    "Porter (college)",
+    "School premises manager",
+    "Site manager (educational establishments)"
+   ]
+  },
+  "6240": {
+   "title": "Cleaning and housekeeping managers and supervisors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Butler",
+    "Cleaner-in-charge",
+    "Cleaning supervisor",
+    "Guest service manager",
+    "Hotel services supervisor",
+    "House keeper (hotel)"
+   ]
+  },
+  "6250": {
+   "title": "Bed and breakfast and guest house owners and proprietors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Guest house owner",
+    "Landlady (guest house)"
+   ]
+  },
+  "6311": {
+   "title": "Police community support officers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Police community support officers"
+   ]
+  },
+  "6312": {
+   "title": "Parking and civil enforcement occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Car park attendant",
+    "Civil enforcement officer",
+    "Community warden",
+    "Parking attendant",
+    "Traffic warden"
+   ]
+  },
+  "7111": {
+   "title": "Sales and retail assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Retail assistant",
+    "Sales adviser",
+    "Sales assistant",
+    "Sales consultant (retail trade)",
+    "Shop assistant"
+   ]
+  },
+  "7112": {
+   "title": "Retail cashiers and check-out operators",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cashier (wholesale trade)",
+    "Check-out operator",
+    "Customer team member (retail trade)",
+    "Forecourt attendant",
+    "General assistant (check-out: retail trade)",
+    "Till operator"
+   ]
+  },
+  "7113": {
+   "title": "Telephone salespersons",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Inbound sales adviser",
+    "Sales adviser (telephone sales)",
+    "Telesales executive",
+    "Telesales operative"
+   ]
+  },
+  "7114": {
+   "title": "Pharmacy and optical dispensing assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dispenser",
+    "Health care assistant (retail pharmacy)",
+    "Optical assistant",
+    "Pharmacy assistant"
+   ]
+  },
+  "7115": {
+   "title": "Vehicle and parts salespersons and advisers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Car sales executive",
+    "Car salesman",
+    "Parts adviser (retail trade)",
+    "Parts technician"
+   ]
+  },
+  "7121": {
+   "title": "Collector salespersons and credit agents",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Agent (insurance)",
+    "Canvasser",
+    "Distributor (door-to-door sales)",
+    "Insurance agent"
+   ]
+  },
+  "7122": {
+   "title": "Debt, rent and other cash collectors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bailiff",
+    "Collecting agent",
+    "Debt collector",
+    "Meter reader",
+    "Pawn broker",
+    "Vending operator"
+   ]
+  },
+  "7123": {
+   "title": "Roundspersons and van salespersons",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dairyman (retail trade: delivery round)",
+    "Ice-cream salesman",
+    "Milkman (milk retailing)",
+    "Roundsman",
+    "Van salesman"
+   ]
+  },
+  "7124": {
+   "title": "Market and street traders and assistants",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Market and street traders and assistants"
+   ]
+  },
+  "7125": {
+   "title": "Visual merchandisers and related occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Display representative",
+    "Fashion stylist",
+    "Visual merchandising assistant",
+    "Window dresser"
+   ]
+  },
+  "7129": {
+   "title": "Sales related occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Demonstrator",
+    "Hire controller",
+    "Insurance salesman",
+    "Promoter (wholesale, retail trade)",
+    "Sales representative (retail trade)"
+   ]
+  },
+  "7131": {
+   "title": "Shopkeepers and owners - retail and wholesale",
+   "eligibility": "limited",
+   "goingRate": 33700,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Antique dealers",
+    "Art dealers",
+    "Car traders",
+    "Newsagents",
+    "Retail jewellers",
+    "Wholesalers",
+    "Wine merchants",
+    "Shopkeepers and owners - retail and wholesale not elsewhere classified"
+   ]
+  },
+  "7132": {
+   "title": "Sales supervisors - retail and wholesale",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Sales supervisors - retail and wholesale"
+   ]
+  },
+  "7211": {
+   "title": "Call and contact centre occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Call centre agent",
+    "Call centre operator",
+    "Customer service adviser (call centre)",
+    "Customer service operator"
+   ]
+  },
+  "7212": {
+   "title": "Telephonists",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Call handler (motoring organisation)",
+    "Operator (telephone)",
+    "Switchboard operator (telephone)",
+    "Telephonist",
+    "Telephonist-receptionist"
+   ]
+  },
+  "7213": {
+   "title": "Communication operators",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Call handler (emergency services)",
+    "Communications officer",
+    "Control room operator (emergency services)",
+    "Controller (taxi service)",
+    "Emergency medical despatcher",
+    "Radio operator"
+   ]
+  },
+  "7214": {
+   "title": "Market research interviewers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Field and telephone interviewers",
+    "Mystery shoppers",
+    "Political canvassers",
+    "Traffic enumerators"
+   ]
+  },
+  "7219": {
+   "title": "Customer service occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Complaints officer",
+    "Customer adviser",
+    "Customer service administrator",
+    "Customer service adviser",
+    "Customer service assistant",
+    "Customer services representative"
+   ]
+  },
+  "7220": {
+   "title": "Customer service supervisors",
+   "eligibility": "limited",
+   "goingRate": 34200,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Customer service supervisors"
+   ]
+  },
+  "8111": {
+   "title": "Food, drink and tobacco process operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Baker (food products mfr)",
+    "Bakery assistant",
+    "Factory worker (food products mfr)",
+    "Meat processor (meat packing)",
+    "Process worker (brewery)",
+    "Process worker (dairy)"
+   ]
+  },
+  "8112": {
+   "title": "Textile process operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Factory worker (clothing mfr)",
+    "Hosiery worker",
+    "Machinist (rope, twine mfr)",
+    "Process worker (textile mfr)",
+    "Spinner (paper twine mfr)"
+   ]
+  },
+  "8113": {
+   "title": "Chemical and related process operatives",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Chemical and related process operatives"
+   ]
+  },
+  "8114": {
+   "title": "Plastics process operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Extrusion operator (plastics mfr)",
+    "Fabricator (plastics mfr)",
+    "Injection moulder",
+    "Laminator (fibreglass)",
+    "Process worker (plastic goods mfr)"
+   ]
+  },
+  "8115": {
+   "title": "Metal making and treating process operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Degreaser (metal trades)",
+    "Electroplater",
+    "Furnaceman (metal trades)",
+    "Process worker (nickel mfr)",
+    "Wire drawer"
+   ]
+  },
+  "8119": {
+   "title": "Process operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Glass worker",
+    "Moulder (rubber goods mfr)",
+    "Melting pot assistant (electric cable)",
+    "Process worker (fibreglass mfr)",
+    "Stone finisher (cast concrete products mfr)"
+   ]
+  },
+  "8120": {
+   "title": "Metal working machine operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Engineer (nos)",
+    "Machinist (metal trades)",
+    "Metal polisher",
+    "Process worker (metal trades)",
+    "Shot blaster"
+   ]
+  },
+  "8131": {
+   "title": "Paper and wood machine operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Box maker (cardboard)",
+    "Guillotine operator (printing)",
+    "Machinist (paper goods mfr)",
+    "Sawyer",
+    "Wood machinist"
+   ]
+  },
+  "8132": {
+   "title": "Mining and quarry workers and related operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Coal miner",
+    "Derrickman (oil wells)",
+    "Diamond driller (well sinking)",
+    "Plant operator (quarry)",
+    "Quarry operative"
+   ]
+  },
+  "8133": {
+   "title": "Energy plant operatives",
+   "eligibility": "limited",
+   "goingRate": 41500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Boiler operatives",
+    "Compressor operatives",
+    "Nuclear decommissioning operatives",
+    "Energy plant operatives not elsewhere classified"
+   ]
+  },
+  "8134": {
+   "title": "Water and sewerage plant operatives",
+   "eligibility": "limited",
+   "goingRate": 38000,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Water and sewerage distribution operatives",
+    "Water treatment operatives",
+    "Water and sewerage plant operatives not elsewhere classified"
+   ]
+  },
+  "8135": {
+   "title": "Printing machine assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Finishing operative (printing)",
+    "Lithographer (printing)",
+    "Machinist (printing)",
+    "Print operator",
+    "Printer’s assistant"
+   ]
+  },
+  "8139": {
+   "title": "Plant and machine operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bench hand (metal trades)",
+    "Cable maker (spring mfr)",
+    "Laser operator",
+    "Manufacturer (metal goods mfr)",
+    "Saw doctor"
+   ]
+  },
+  "8141": {
+   "title": "Assemblers (electrical and electronic products)",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Assembler (electrical, electronic equipment mfr)",
+    "Line operator (electrical)",
+    "Panel wirer",
+    "Solderer",
+    "Technical operator (circuit board mfr)"
+   ]
+  },
+  "8142": {
+   "title": "Assemblers (vehicles and metal goods)",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Assembler (metal trades)",
+    "Car worker",
+    "Lineworker (vehicle mfr)",
+    "Manufacturing operator (metal trades)",
+    "Process worker (metal trades: assembly)"
+   ]
+  },
+  "8143": {
+   "title": "Routine inspectors and testers",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Routine inspectors and testers"
+   ]
+  },
+  "8144": {
+   "title": "Weighers, graders and sorters",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Grader (food products mfr)",
+    "Metal sorter",
+    "Selector (ceramics mfr)",
+    "Weighbridge clerk",
+    "Weighbridge operator"
+   ]
+  },
+  "8145": {
+   "title": "Tyre, exhaust and windscreen fitters",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Tyre and exhaust fitter",
+    "Tyre fitter",
+    "Tyre technician",
+    "Windscreen fitter"
+   ]
+  },
+  "8146": {
+   "title": "Sewing machinists",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Overlocker",
+    "Seamstress",
+    "Sewing machinist",
+    "Stitcher",
+    "Upholstery machinist"
+   ]
+  },
+  "8149": {
+   "title": "Assemblers and routine operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Assembler",
+    "Gluer (furniture mfr)",
+    "Paint line operator",
+    "Production assistant",
+    "Riveter (soft toy mfr)"
+   ]
+  },
+  "8151": {
+   "title": "Scaffolders, stagers and riggers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bell hanger (church bells)",
+    "Rigger (film, television production)",
+    "Stage rigger (shipbuilding)",
+    "Tackleman (steelworks)"
+   ]
+  },
+  "8152": {
+   "title": "Road construction operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Asphalter",
+    "Concrete finisher (building construction)",
+    "Highways operative",
+    "Paver",
+    "Road worker",
+    "Tarmacer"
+   ]
+  },
+  "8153": {
+   "title": "Rail construction and maintenance operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Line Inspector (railways)",
+    "Maintenance man (railway maintenance and repair)",
+    "Relayer (railways)",
+    "Track maintenance engineer",
+    "Trackman (railways)",
+    "Ultrasonic engineer (railway maintenance and repair)"
+   ]
+  },
+  "8159": {
+   "title": "Construction operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Asbestos remover",
+    "Cable layer",
+    "Demolition worker",
+    "General handyman",
+    "Maintenance man",
+    "Public lighting operative",
+    "Thermal insulation engineer"
+   ]
+  },
+  "8160": {
+   "title": "Production, factory and assembly supervisors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Foreman (plasterboard mfr)",
+    "Leading hand (textile mfr)",
+    "Mill foreman (food products mfr)",
+    "Print room supervisor",
+    "Process supervisor (chemical mfr)",
+    "Production team leader (vehicle mfr)"
+   ]
+  },
+  "8211": {
+   "title": "Heavy and large goods vehicle drivers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Haulage contractor",
+    "LGV/HGV driver",
+    "Lorry driver",
+    "Owner (HGV/LGV)",
+    "Tanker driver"
+   ]
+  },
+  "8212": {
+   "title": "Bus and coach drivers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bus driver",
+    "Coach driver",
+    "Coach operator",
+    "Minibus driver",
+    "PSV driver"
+   ]
+  },
+  "8213": {
+   "title": "Taxi and cab drivers and chauffeurs",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Carriage driver",
+    "Chauffeur",
+    "Mini cab driver",
+    "Taxi driver",
+    "Taxi owner"
+   ]
+  },
+  "8214": {
+   "title": "Delivery drivers and couriers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Courier-driver",
+    "Cash in transit driver",
+    "Customer service team member (delivery service)",
+    "Delivery driver",
+    "Meals on wheels driver",
+    "Parcel delivery driver",
+    "Van driver"
+   ]
+  },
+  "8215": {
+   "title": "Driving instructors",
+   "eligibility": "limited",
+   "goingRate": 39500,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Cycling instructors",
+    "Forklift instructors",
+    "Heavy and large vehicle driving instructors",
+    "Motorcycle instructors",
+    "Passenger carrying vehicle (PCV) and car driving instructors",
+    "Driving instructors not elsewhere classified"
+   ]
+  },
+  "8219": {
+   "title": "Road transport drivers not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Driver",
+    "Driver-cleaner",
+    "Driver-valeter",
+    "Recovery driver",
+    "Test driver (vehicle mfr)"
+   ]
+  },
+  "8221": {
+   "title": "Crane drivers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Crane driver",
+    "Crane operator",
+    "Haulage engine driver",
+    "Grab driver",
+    "Winchman"
+   ]
+  },
+  "8222": {
+   "title": "Fork-lift truck drivers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Fork lift driver",
+    "Fork lift truck driver",
+    "Fork truck operator",
+    "Stacker-driver"
+   ]
+  },
+  "8229": {
+   "title": "Mobile machine drivers and operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Agricultural machinist",
+    "Digger driver",
+    "Dredger",
+    "Excavator driver",
+    "JCB driver",
+    "Plant operator",
+    "Rig operator",
+    "Tractor driver (agriculture)"
+   ]
+  },
+  "8231": {
+   "title": "Train and tram drivers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Diesel driver (railways)",
+    "Train driver",
+    "Train operator",
+    "Tram driver",
+    "Shunter driver"
+   ]
+  },
+  "8232": {
+   "title": "Marine and waterways transport operatives",
+   "eligibility": "limited",
+   "goingRate": 38300,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Marine and waterways transport operatives"
+   ]
+  },
+  "8233": {
+   "title": "Air transport operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Aircraft dispatcher",
+    "Baggage handler",
+    "Cargo handler (airport)",
+    "Controller, airfield",
+    "Ground staff (airport)",
+    "Ramp agent",
+    "Refueller (airport)"
+   ]
+  },
+  "8234": {
+   "title": "Rail transport operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Protection master",
+    "Railway worker",
+    "Shunter",
+    "Signalman (railways)",
+    "Transport supervisor (railways)"
+   ]
+  },
+  "8239": {
+   "title": "Other drivers and transport operatives not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bus inspector",
+    "Marshal (transport)",
+    "Operations assistant (freight handling)",
+    "Test driver (motor vehicle mfr)",
+    "Transport supervisor",
+    "Yard foreman (road transport)"
+   ]
+  },
+  "9111": {
+   "title": "Farm workers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Agricultural worker",
+    "Farm labourer",
+    "Farm worker",
+    "Herdsman",
+    "Poultry catcher",
+    "Shepherd"
+   ]
+  },
+  "9112": {
+   "title": "Forestry and related workers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Arboricultural worker",
+    "Forestry contractor",
+    "Forestry worker",
+    "Lumberjack",
+    "Park keeper"
+   ]
+  },
+  "9119": {
+   "title": "Fishing and other elementary agriculture occupations not elsewhere classified - ONLY the listed job titles are eligible in this SOC 2020 occupation code and ONLY where the job requires the worker to have at least 3 years’ full-time experience in using their skills. This experience must not have been gained through working illegally.",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Vent chick sexer",
+    "Deckhand on large fishing vessel (9 metres and above)"
+   ]
+  },
+  "9121": {
+   "title": "Groundworkers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Drainage worker",
+    "Ground worker (building construction)",
+    "Trench digger"
+   ]
+  },
+  "9129": {
+   "title": "Elementary construction occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Building worker",
+    "Electrician’s mate (building construction)",
+    "Hod carrier",
+    "Labourer (building construction)",
+    "Odd job man",
+    "Sea diver’s assistant"
+   ]
+  },
+  "9131": {
+   "title": "Industrial cleaning process occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cleaner and greaser",
+    "Factory cleaner",
+    "Hygiene operative",
+    "Industrial cleaner",
+    "Pot washer"
+   ]
+  },
+  "9132": {
+   "title": "Packers, bottlers, canners and fillers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Factory worker (packing)",
+    "Packaging operator",
+    "Packer",
+    "Paint filler"
+   ]
+  },
+  "9139": {
+   "title": "Elementary process plant occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Factory worker",
+    "Fitter’s mate",
+    "Labourer (engineering)",
+    "Material handler"
+   ]
+  },
+  "9211": {
+   "title": "Postal workers, mail sorters and messengers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Leaflet distributor",
+    "Mail sorter",
+    "Messenger",
+    "Paper boy",
+    "Paper girl",
+    "Postman",
+    "Postwoman"
+   ]
+  },
+  "9219": {
+   "title": "Elementary administration occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "General assistant",
+    "Office junior",
+    "Office worker",
+    "Reprographic technician"
+   ]
+  },
+  "9221": {
+   "title": "Window cleaners",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Window cleaner",
+    "Window cleaning contractor"
+   ]
+  },
+  "9222": {
+   "title": "Street cleaners",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Cleansing operative (street cleaning)",
+    "Litter picker",
+    "Road sweeper",
+    "Street cleaner"
+   ]
+  },
+  "9223": {
+   "title": "Cleaners and domestics",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Chambermaid",
+    "Cleaner",
+    "Domestic",
+    "Home help",
+    "School cleaner"
+   ]
+  },
+  "9224": {
+   "title": "Launderers, dry cleaners and pressers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Carpet cleaner",
+    "Dry cleaner",
+    "Garment presser",
+    "Laundry assistant",
+    "Laundry worker",
+    "Presser (laundry, launderette, dry cleaning)"
+   ]
+  },
+  "9225": {
+   "title": "Refuse and salvage occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Binman (local government: cleansing department)",
+    "Dustman",
+    "Hopper attendant (refuse destruction)",
+    "Recycling operative",
+    "Refuse collector",
+    "Salvage worker"
+   ]
+  },
+  "9226": {
+   "title": "Vehicle valeters and cleaners",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Car washer",
+    "Carriage cleaner",
+    "Motor car polisher (garage)",
+    "Vehicle valeter"
+   ]
+  },
+  "9229": {
+   "title": "Elementary cleaning occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Amenity block attendant",
+    "Bin cleaner",
+    "Chimney sweep",
+    "Toilet cleaner"
+   ]
+  },
+  "9231": {
+   "title": "Security guards and related occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "CCTV operator",
+    "Court usher",
+    "Door supervisor",
+    "Enforcement officer",
+    "Security guard",
+    "Security officer"
+   ]
+  },
+  "9232": {
+   "title": "School midday and crossing patrol occupations",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Dinner lady (schools)",
+    "Lunchtime supervisor",
+    "Midday assistant",
+    "School crossing patrol officer"
+   ]
+  },
+  "9233": {
+   "title": "Exam invigilators",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Invigilator"
+   ]
+  },
+  "9241": {
+   "title": "Shelf fillers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Customer team member (shelf filling)",
+    "Evening merchandiser",
+    "General assistant (retail trade)",
+    "Grocery assistant",
+    "Shelf filler",
+    "Shelf stacker"
+   ]
+  },
+  "9249": {
+   "title": "Elementary sales occupations not elsewhere classified",
+   "eligibility": "limited",
+   "goingRate": 33400,
+   "newEntrantRate": 33400,
+   "exampleTitles": [
+    "Retail order pickers",
+    "Trolley collectors",
+    "Elementary sales occupations not elsewhere classified"
+   ]
+  },
+  "9251": {
+   "title": "Elementary storage supervisors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Despatch supervisor",
+    "Foreman (docks)",
+    "Warehouse supervisor",
+    "Yard foreman (auctioneers)"
+   ]
+  },
+  "9252": {
+   "title": "Warehouse operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Order picker",
+    "Storeman",
+    "Team member (warehousing)",
+    "Warehouse operative",
+    "Warehouseman"
+   ]
+  },
+  "9253": {
+   "title": "Delivery operatives",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Driver’s mate",
+    "Delivery assistant",
+    "Furniture remover",
+    "Porter"
+   ]
+  },
+  "9259": {
+   "title": "Elementary storage occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Art handler",
+    "Dock worker",
+    "General assistant (wholesale trade)",
+    "Labourer (haulage contractor)"
+   ]
+  },
+  "9261": {
+   "title": "Bar and catering supervisors",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bar supervisor",
+    "Catering supervisor",
+    "Foreman (catering)Head waiter",
+    "Restaurant supervisor"
+   ]
+  },
+  "9262": {
+   "title": "Hospital porters",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Hospital porter",
+    "Porter (hospital service)",
+    "Portering supervisor (hospital services)"
+   ]
+  },
+  "9263": {
+   "title": "Kitchen and catering assistants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Catering assistant",
+    "Crew member (fast food outlet)",
+    "Kitchen assistant",
+    "Kitchen porter",
+    "Sandwich artist"
+   ]
+  },
+  "9264": {
+   "title": "Waiters and waitresses",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Food and beverage assistant",
+    "Silver service waiter",
+    "Steward (catering)",
+    "Waiter",
+    "Waitress"
+   ]
+  },
+  "9265": {
+   "title": "Bar staff",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Barmaid",
+    "Bar staff",
+    "Bartender",
+    "Glass collector (public house)",
+    "Mixologist (beverages)"
+   ]
+  },
+  "9266": {
+   "title": "Coffee shop workers",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Barista",
+    "Coffee shop assistant"
+   ]
+  },
+  "9267": {
+   "title": "Leisure and theme park attendants",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Arcade assistant",
+    "Art gallery assistant",
+    "Cinema attendant",
+    "Museum attendant",
+    "Ride operator",
+    "Steward (sports ground)",
+    "Usher"
+   ]
+  },
+  "9269": {
+   "title": "Other elementary services occupations not elsewhere classified",
+   "eligibility": "ineligible",
+   "goingRate": null,
+   "newEntrantRate": null,
+   "exampleTitles": [
+    "Bingo caller",
+    "Cloak room attendant",
+    "Hotel assistant",
+    "Night porter",
+    "Porter (residential buildings)",
+    "Stage hand (entertainment)"
+   ]
+  }
+ }
+}

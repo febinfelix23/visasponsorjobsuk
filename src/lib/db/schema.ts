@@ -199,12 +199,18 @@ export const jobs = snakeCase.table.withRLS(
     salaryMin: numeric({ precision: 10, scale: 2, mode: "number" }),
     salaryMax: numeric({ precision: 10, scale: 2, mode: "number" }),
     salaryPeriod: salaryPeriod(),
+    /** Salary converted to a full-time annual figure, for the salary filter and the visa rule. */
+    salaryAnnualMin: numeric({ precision: 10, scale: 2, mode: "number" }),
+    salaryAnnualMax: numeric({ precision: 10, scale: 2, mode: "number" }),
     sector: sector(),
     seniority: seniority().notNull().default("unknown"),
     isGradScheme: boolean().notNull().default(false),
     socCode: text(),
     sponsorability: sponsorability().notNull().default("unknown"),
     reasons: jsonb().$type<SponsorabilityReason[]>().notNull().default([]),
+    /** Scoring rules version (src/lib/scoring/score.ts); jobs scored by an older version are re-scored. */
+    scoreVersion: smallint(),
+    scoredAt: timestamp({ withTimezone: true }),
     snippet: text(),
     /**
      * Plain-text description, capped in length. Used only to score the job (sponsorship
@@ -232,6 +238,9 @@ export const jobs = snakeCase.table.withRLS(
     index("jobs_sponsor_id_idx").on(t.sponsorId),
     index("jobs_live_listing_idx")
       .on(t.sector, t.firstSeenAt.desc())
+      .where(sql`${t.status} = 'live'`),
+    index("jobs_live_sponsorability_idx")
+      .on(t.sponsorability, t.seniority)
       .where(sql`${t.status} = 'live'`),
   ],
 );

@@ -48,3 +48,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           # Optional: AI check for ambiguous boards. Without it, they wait in the review queue.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Scores new and changed jobs: occupation code, seniority, salary and the sponsorship badge.
+      - run: npm run score:jobs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
