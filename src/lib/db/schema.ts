@@ -206,6 +206,15 @@ export const jobs = snakeCase.table.withRLS(
     sponsorability: sponsorability().notNull().default("unknown"),
     reasons: jsonb().$type<SponsorabilityReason[]>().notNull().default([]),
     snippet: text(),
+    /**
+     * Plain-text description, capped in length. Used only to score the job (sponsorship
+     * wording, seniority, occupation); never shown on the site, which links to the original ad.
+     */
+    description: text(),
+    /** Salary exactly as advertised, before parsing ("£45,000 - £55,000 per annum"). */
+    salaryText: text(),
+    employmentType: text(),
+    department: text(),
     applyUrl: text().notNull(),
     postedAt: timestamp({ withTimezone: true }),
     closingDate: date({ mode: "string" }),

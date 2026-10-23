@@ -12,6 +12,7 @@ describe("normaliseOrgName", () => {
     assert.equal(normaliseOrgName("The Bank of London plc"), "bank of london");
     assert.equal(normaliseOrgName("Smith & Sons (UK) Ltd"), "smith and sons uk");
     assert.equal(normaliseOrgName("Café Nero"), "cafe nero");
+    assert.equal(normaliseOrgName("King's College Hospital"), "kings college hospital");
   });
 
   it("keeps a name that is only a suffix word", () => {

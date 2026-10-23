@@ -1,0 +1,22 @@
+{
+  "$comment": "Job boards that slug probing can't find (mostly Workday). Each entry links a board to the sponsor named exactly as on the register. Load with: npm run seed:sources",
+  "sources": [
+    { "sponsor": "Barclays Bank PLC", "ats": "workday", "identifier": "barclays.wd3/barclays/External_Career_Site_Barclays" },
+    { "sponsor": "AstraZeneca UK Limited", "ats": "workday", "identifier": "astrazeneca.wd3/astrazeneca/Careers" },
+    { "sponsor": "Rolls-Royce plc", "ats": "workday", "identifier": "rollsroyce.wd3/rollsroyce/Intern_Graduate" },
+    { "sponsor": "Rolls-Royce plc", "ats": "workday", "identifier": "rollsroyce.wd3/rollsroyce/professional" },
+    { "sponsor": "Rolls-Royce SMR Limited", "ats": "workday", "identifier": "rollsroycesmr.wd103/rollsroycesmr/RRSMR" },
+    { "sponsor": "Lloyds Bank plc", "ats": "workday", "identifier": "lbg.wd3/lbg/Graduate_careers" },
+    { "sponsor": "Lloyds Bank plc", "ats": "workday", "identifier": "lbg.wd3/lbg/lbg_Careers" },
+    { "sponsor": "GSK Plc", "ats": "workday", "identifier": "gsk.wd5/gsk/GSKCareers" },
+    { "sponsor": "Pfizer Limited", "ats": "workday", "identifier": "pfizer.wd1/pfizer/PfizerCareers" },
+    { "sponsor": "Accenture (UK) Limited", "ats": "workday", "identifier": "accenture.wd103/accenture/AccentureCareers" },
+    { "sponsor": "AtkinsRealis UK Limited", "ats": "workday", "identifier": "slihrms.wd3/slihrms/Careers" },
+    { "sponsor": "Shell International Ltd", "ats": "workday", "identifier": "shell.wd3/shell/ShellCareers" },
+    { "sponsor": "London Stock Exchange Group plc", "ats": "workday", "identifier": "lseg.wd3/lseg/Careers" },
+    { "sponsor": "Airbus Operations Limited", "ats": "workday", "identifier": "ag.wd3/ag/Airbus" },
+    { "sponsor": "Leonardo UK Ltd", "ats": "workday", "identifier": "leonardocompany.wd3/leonardocompany/LeonardoCareerSite" },
+    { "sponsor": "MBDA UK Limited", "ats": "workday", "identifier": "mbda.wd3/mbda/MBDA-UK", "ukOnly": true },
+    { "sponsor": "Mylan Pharma UK Limited", "ats": "workday", "identifier": "viatris.wd5/viatris/External" }
+  ]
+}

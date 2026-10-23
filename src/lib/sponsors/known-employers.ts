@@ -36,6 +36,7 @@ export const KNOWN_EMPLOYERS: [RegExp, Sector][] = [
   [/^jane street\b/i, "finance"],
   [/^citadel\b/i, "finance"],
   [/^edf trading\b/i, "finance"],
+  [/^(london stock exchange|lseg)\b/i, "finance"],
   // Tech
   [/^accenture\b/i, "tech"],
   [/^google\b/i, "tech"],

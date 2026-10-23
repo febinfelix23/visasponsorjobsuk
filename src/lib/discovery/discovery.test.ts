@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { discoverSponsor, judgeHit, type ProbeFn } from "./discover";
-import { HostBlockedError } from "./http";
+import { HostBlockedError } from "@/lib/http";
 import type { BoardHit, ProbeAts } from "./probes";
 import { coreName, isDistinctiveSlug, namesMatch, slugCandidates } from "./slugs";
 

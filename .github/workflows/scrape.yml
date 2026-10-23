@@ -1,0 +1,48 @@
+name: Scrape jobs
+
+on:
+  schedule:
+    # Twice a day. Each run only crawls sources that are due (12h for ATS boards, 24h for NHS Jobs).
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Extra flags, e.g. --ats workday --limit 20"
+        required: false
+        default: ""
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Check secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Repository secret DATABASE_URL is missing. Add it under Settings → Secrets and variables → Actions → Repository secrets (Supabase transaction pooler URL, port 6543)."
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm ci
+      # Flags go through an env var, never interpolated into the script, to avoid injection.
+      # Idempotent: applies any change to data/seeds/job-sources.json.
+      - run: npm run seed:sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm run scrape -- $SCRAPE_ARGS
+        env:
+          SCRAPE_ARGS: ${{ inputs.args }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

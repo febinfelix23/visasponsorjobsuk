@@ -1,5 +1,5 @@
 import { isUkCountryCode, isUkLocation } from "@/lib/geo/uk";
-import { createLimiter, requestJson } from "./http";
+import { createLimiter, requestJson } from "@/lib/http";
 
 export type ProbeAts = "greenhouse" | "lever" | "ashby" | "smartrecruiters";
 

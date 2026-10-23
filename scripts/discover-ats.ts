@@ -15,7 +15,7 @@ import { createDb } from "@/lib/db";
 import { startRun } from "@/lib/db/runs";
 import { crawlRuns, jobSources, sponsors } from "@/lib/db/schema";
 import { discoverSponsor, memoisedProbe, type Verdict } from "@/lib/discovery/discover";
-import { getBlockedHosts } from "@/lib/discovery/http";
+import { getBlockedHosts } from "@/lib/http";
 
 const REPROBE_AFTER_DAYS = 30;
 const SPONSOR_CONCURRENCY = 12;

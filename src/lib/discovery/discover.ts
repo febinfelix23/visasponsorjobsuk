@@ -1,4 +1,4 @@
-import { HostBlockedError } from "./http";
+import { HostBlockedError } from "@/lib/http";
 import { countUkJobs, NAMED_ATS, PROBES, type BoardHit, type ProbeAts } from "./probes";
 import { droppedWords, fullName, isDistinctiveSlug, nameEvidence, slugCandidates, type SlugCandidate } from "./slugs";
 

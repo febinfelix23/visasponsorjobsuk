@@ -22,6 +22,7 @@ export function normaliseOrgName(name: string): string {
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
+    .replace(/['’]/g, "") // "King's" → "kings", not "king s"
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, " ")
     .trim()

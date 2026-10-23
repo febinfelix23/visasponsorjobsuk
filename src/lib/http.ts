@@ -69,7 +69,17 @@ function retryAfterMs(header: string | null): number | null {
   return Number.isNaN(date) ? null : Math.max(0, date - Date.now());
 }
 
-export async function requestJson(url: string, init: { method?: "GET" | "HEAD" } = {}): Promise<HttpResult> {
+export type RequestInit = {
+  method?: "GET" | "HEAD" | "POST";
+  /** Sent as JSON. */
+  json?: unknown;
+  /** "json" parses the body (null if it isn't JSON); "text" returns it as a string. */
+  as?: "json" | "text";
+};
+
+export type TextResult = { status: number; body: string | null };
+
+async function request(url: string, init: RequestInit): Promise<{ status: number; text: string | null }> {
   const host = new URL(url).host;
   let lastError = "";
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
@@ -78,8 +88,13 @@ export async function requestJson(url: string, init: { method?: "GET" | "HEAD" }
     if (attempt > 0) await sleep(RETRY_DELAYS_MS[attempt - 1]);
     try {
       const res = await fetch(url, {
-        method: init.method ?? "GET",
-        headers: { "user-agent": USER_AGENT, accept: "application/json" },
+        method: init.method ?? (init.json === undefined ? "GET" : "POST"),
+        headers: {
+          "user-agent": USER_AGENT,
+          accept: init.as === "text" ? "*/*" : "application/json",
+          ...(init.json === undefined ? {} : { "content-type": "application/json" }),
+        },
+        body: init.json === undefined ? undefined : JSON.stringify(init.json),
         signal: AbortSignal.timeout(TIMEOUT_MS),
         redirect: "follow",
       });
@@ -92,7 +107,8 @@ export async function requestJson(url: string, init: { method?: "GET" | "HEAD" }
           throw error;
         }
         lastError = "HTTP 429";
-        if (wait) await sleep(wait);
+        // No Retry-After: back off a little more than the standard delay.
+        await sleep(wait ?? 5_000);
         continue;
       }
       if (res.status >= 500) {
@@ -102,20 +118,31 @@ export async function requestJson(url: string, init: { method?: "GET" | "HEAD" }
       }
       if (init.method === "HEAD" || !res.ok) {
         await res.body?.cancel();
-        return { status: res.status, body: null };
+        return { status: res.status, text: null };
       }
-      const text = await res.text();
-      let body: unknown = null;
-      try {
-        body = JSON.parse(text);
-      } catch {
-        body = null;
-      }
-      return { status: res.status, body };
+      return { status: res.status, text: await res.text() };
     } catch (error) {
       if (error instanceof HostBlockedError) throw error;
       lastError = error instanceof Error ? error.message : String(error);
     }
   }
   throw new TransientHttpError(`${url}: ${lastError}`);
+}
+
+export async function requestJson(url: string, init: Omit<RequestInit, "as"> = {}): Promise<HttpResult> {
+  const { status, text } = await request(url, { ...init, as: "json" });
+  let body: unknown = null;
+  if (text !== null) {
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = null;
+    }
+  }
+  return { status, body };
+}
+
+export async function requestText(url: string, init: Omit<RequestInit, "as"> = {}): Promise<TextResult> {
+  const { status, text } = await request(url, { ...init, as: "text" });
+  return { status, body: text };
 }
