@@ -46,3 +46,5 @@ jobs:
         env:
           SCRAPE_ARGS: ${{ inputs.args }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Optional: AI check for ambiguous boards. Without it, they wait in the review queue.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

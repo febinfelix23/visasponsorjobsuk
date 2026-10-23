@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { and, eq, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db";
 import { jobs, jobSources } from "@/lib/db/schema";
+import { ReviewUnavailableError, type BoardReview, type BoardReviewer } from "@/lib/discovery/ai-review";
 import { ADAPTERS } from "./adapters";
 import { snippetOf, slugify } from "./text";
 import type { RawJob, SourceRef } from "./types";
@@ -24,11 +25,14 @@ export type CrawlTarget = SourceRef & {
   sponsorName: string | null;
   sponsorTradingName: string | null;
   sponsorSector: Sector | null;
+  sponsorTown: string | null;
+  sponsorCounty: string | null;
+  sponsorSicCodes: string[] | null;
 };
 
 export type CrawlResult =
-  | { outcome: "stored"; ukJobs: number; inserted: number; expired: number; promoted: boolean }
-  | { outcome: "verification_failed" | "insufficient_evidence"; ukJobs: number }
+  | { outcome: "stored"; ukJobs: number; inserted: number; expired: number; promoted: boolean; aiPromoted: boolean }
+  | { outcome: "verification_failed" | "insufficient_evidence" | "needs_review" | "ai_rejected"; ukJobs: number }
   | { outcome: "error"; error: string };
 
 /** Display name for jobs from a sponsor's own board: "Roofoods Ltd t/a Deliveroo" shows as "Deliveroo". */
@@ -50,7 +54,14 @@ const hoursFromNow = (hours: number) => sql`now() + make_interval(hours => ${hou
 export async function crawlSource(
   db: Db,
   target: CrawlTarget,
-  options: { dryRun: boolean; matchSponsor: (employer: string) => number | null },
+  options: {
+    dryRun: boolean;
+    matchSponsor: (employer: string) => number | null;
+    /** AI check for boards the text rules can't settle; null when no API key is configured. */
+    reviewer?: BoardReviewer | null;
+    /** Called once if the AI check stops working mid-run (key rejected, credit exhausted). */
+    onReviewUnavailable?: (reason: string) => void;
+  },
 ): Promise<CrawlResult> {
   const adapter = ADAPTERS[target.ats];
   if (!adapter) return { outcome: "error", error: `No adapter for ${target.ats}` };
@@ -66,8 +77,9 @@ export async function crawlSource(
   }
 
   let promoted = false;
+  let promotion: Record<string, unknown> = { verifiedBy: "job_text" };
   if (target.status === "unverified") {
-    const check = raw.length === 0 ? "insufficient" : checkSponsorInJobs(raw, [target.sponsorName, target.sponsorTradingName]);
+    const check = raw.length === 0 ? "insufficient" : checkSponsorInJobs(raw, [target.sponsorName, target.sponsorTradingName], target.sponsorSector);
     if (check === "insufficient") {
       if (!options.dryRun) {
         await db
@@ -76,6 +88,72 @@ export async function crawlSource(
           .where(eq(jobSources.id, target.id));
       }
       return { outcome: "insufficient_evidence", ukJobs: raw.length };
+    }
+    if (check === "needs_review") {
+      // How the board describes its company, for the AI check and any human reviewer.
+      const sample = raw.find((r) => r.description)?.description ?? "";
+      const about = (/\babout\b[\s\S]{0,400}/i.exec(sample)?.[0] ?? sample.slice(0, 400)).replace(/\s+/g, " ").trim();
+      const evidence = {
+        about,
+        sampleTitles: raw.slice(0, 5).map((r) => r.title),
+        sampleLocations: [...new Set(raw.map((r) => r.locationText).filter((l): l is string => !!l))].slice(0, 5),
+      };
+
+      // Ask the AI once per board; a stored verdict (including "unsure") is never re-billed.
+      let aiReview: BoardReview | null = null;
+      if (options.reviewer && !target.discovery?.aiReview && !options.dryRun) {
+        try {
+          aiReview = await options.reviewer.review({
+            sponsor: {
+              name: target.sponsorName ?? target.identifier,
+              tradingName: target.sponsorTradingName,
+              town: target.sponsorTown ?? "",
+              county: target.sponsorCounty,
+              sector: target.sponsorSector ?? null,
+              sicCodes: target.sponsorSicCodes,
+            },
+            board: {
+              ats: target.ats,
+              identifier: target.identifier,
+              boardName: (target.discovery?.boardName as string | null | undefined) ?? null,
+              ...evidence,
+            },
+          });
+        } catch (error) {
+          if (!(error instanceof ReviewUnavailableError)) throw error;
+          options.onReviewUnavailable?.(error.message);
+        }
+      }
+      const reviewRecord = aiReview ? { aiReview: { ...aiReview, at: new Date().toISOString() } } : {};
+
+      if (aiReview?.verdict === "different") {
+        await db
+          .update(jobSources)
+          .set({
+            status: "disabled",
+            lastCrawledAt: sql`now()`,
+            lastJobCount: raw.length,
+            discovery: sql`coalesce(${jobSources.discovery}, '{}'::jsonb) || ${JSON.stringify({ ...evidence, ...reviewRecord, needsReview: false, disabledReason: "ai_wrong_company" })}::jsonb`,
+          })
+          .where(eq(jobSources.id, target.id));
+        return { outcome: "ai_rejected", ukJobs: raw.length };
+      }
+      if (aiReview?.verdict === "same") {
+        promotion = { verifiedBy: "ai_review", needsReview: false, ...evidence, ...reviewRecord };
+      } else {
+        if (!options.dryRun) {
+          await db
+            .update(jobSources)
+            .set({
+              lastCrawledAt: sql`now()`,
+              lastJobCount: raw.length,
+              nextCrawlAt: sql`now() + make_interval(days => ${UNVERIFIED_RECHECK_DAYS})`,
+              discovery: sql`coalesce(${jobSources.discovery}, '{}'::jsonb) || ${JSON.stringify({ needsReview: true, ...evidence, ...reviewRecord })}::jsonb`,
+            })
+            .where(eq(jobSources.id, target.id));
+        }
+        return { outcome: "needs_review", ukJobs: raw.length };
+      }
     }
     if (check === "rejected") {
       if (!options.dryRun) {
@@ -94,7 +172,7 @@ export async function crawlSource(
     promoted = true;
   }
 
-  if (options.dryRun) return { outcome: "stored", ukJobs: raw.length, inserted: 0, expired: 0, promoted };
+  if (options.dryRun) return { outcome: "stored", ukJobs: raw.length, inserted: 0, expired: 0, promoted, aiPromoted: false };
 
   const sector: Sector | null = target.ats === "nhs_jobs" ? "healthcare" : target.sponsorSector;
   let inserted = 0;
@@ -179,12 +257,19 @@ export async function crawlSource(
       lastJobCount: raw.length,
       nextCrawlAt: hoursFromNow(RECRAWL_HOURS[target.ats] ?? DEFAULT_RECRAWL_HOURS),
       ...(promoted
-        ? { discovery: sql`coalesce(${jobSources.discovery}, '{}'::jsonb) || '{"verifiedBy":"job_text"}'::jsonb` }
+        ? { discovery: sql`coalesce(${jobSources.discovery}, '{}'::jsonb) || ${JSON.stringify(promotion)}::jsonb` }
         : {}),
     })
     .where(eq(jobSources.id, target.id));
 
-  return { outcome: "stored", ukJobs: raw.length, inserted, expired: expired.filter((e) => e.status === "expired").length, promoted };
+  return {
+    outcome: "stored",
+    ukJobs: raw.length,
+    inserted,
+    expired: expired.filter((e) => e.status === "expired").length,
+    promoted,
+    aiPromoted: promotion.verifiedBy === "ai_review",
+  };
 }
 
 async function recordFailure(db: Db, target: CrawlTarget, message: string) {

@@ -41,8 +41,18 @@ describe("mentionsSponsor", () => {
   });
 
   it("ignores ordinary words that happen to be a company's core name", () => {
-    assert.deepEqual(sponsorPhrases(["Access Capital Partners (UK) Ltd."]), ["access capital partners"]);
+    // "access" is a one-word phrase, so it needs most of 2+ jobs, which one benefits line isn't.
     assert.equal(mentionsSponsor([job("You'll have access to great benefits.")], ["Access Capital Partners (UK) Ltd.", null]), false);
+  });
+
+  it("recognises how companies name themselves in ads (Wise, ElevenLabs), but not 3-letter names", () => {
+    assert.ok(sponsorPhrases(["Wise Payments Limited"]).includes("wise"));
+    assert.ok(sponsorPhrases(["Eleven Labs Ltd"]).includes("elevenlabs"));
+    assert.ok(!sponsorPhrases(["MAP GROUP (UK) LIMITED"]).includes("map"));
+    const wise = [job("Wise is a global technology company…"), job("At Wise, we move money and payments…"), job("Join Wise")];
+    assert.equal(checkSponsorInJobs(wise, ["Wise Payments Limited", null]), "confirmed");
+    const map = [job("MAP is a creative agency"), job("At MAP we design…")];
+    assert.equal(checkSponsorInJobs(map, ["MAP GROUP (UK) LIMITED", null]), "rejected");
   });
 });
 
@@ -57,6 +67,23 @@ describe("checkSponsorInJobs", () => {
 
   it("judges a one-word match as one-word even when the full name is longer", () => {
     assert.equal(checkSponsorInJobs([job("Academia is the platform for academics.")], ["Academia Holdings Ltd", null]), "insufficient");
+  });
+
+  it("tells Spire Global from Spire Healthcare by clinical job titles", () => {
+    const titled = (title: string, d: string) => emptyJob({ externalId: title, title, applyUrl: "x", description: d });
+    const global = [titled("Satellite Operations Engineer", "Spire builds satellites. Private health insurance."), titled("Software Engineer", "At Spire we… healthcare benefits")];
+    assert.equal(checkSponsorInJobs(global, ["Spire Healthcare Ltd", null], "healthcare"), "rejected");
+    const hospital = [titled("Theatre Practitioner", "Spire Bristol Hospital"), titled("Staff Nurse", "Join Spire")];
+    assert.equal(checkSponsorInJobs(hospital, ["Spire Healthcare Ltd", null], "healthcare"), "confirmed");
+  });
+
+  it("sends namesakes it can't tell apart to review instead of going live", () => {
+    // Axiom the legal-services firm vs Axiom Manufacturing Services: "services" proves nothing,
+    // and "manufacturing" never appears, so it's rejected outright.
+    const axiom = [job("About Axiom: the leading alternative legal services provider"), job("Axiom gives in-house legal teams…")];
+    assert.equal(checkSponsorInJobs(axiom, ["Axiom Manufacturing Services Limited", null], "engineering"), "rejected");
+    const calibre = [job("About Calibre: AI systems security"), job("At Calibre we…")];
+    assert.equal(checkSponsorInJobs(calibre, ["Calibre Global Limited", null], "tech"), "needs_review");
   });
 
   it("rejects a board whose jobs never name the sponsor", () => {

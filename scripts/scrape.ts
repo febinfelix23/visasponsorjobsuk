@@ -15,6 +15,7 @@ import { and, asc, eq, inArray, lte, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { startRun } from "@/lib/db/runs";
 import { crawlRuns, jobSources, sponsors } from "@/lib/db/schema";
+import { createBoardReviewer } from "@/lib/discovery/ai-review";
 import { getBlockedHosts } from "@/lib/http";
 import { crawlSource, type CrawlResult, type CrawlTarget } from "@/lib/scrape/pipeline";
 import { createNhsMatcher } from "@/lib/sponsors/nhs-match";
@@ -57,6 +58,9 @@ async function main() {
         sponsorName: sponsors.name,
         sponsorTradingName: sponsors.tradingName,
         sponsorSector: sponsors.sector,
+        sponsorTown: sponsors.town,
+        sponsorCounty: sponsors.county,
+        sponsorSicCodes: sponsors.sicCodes,
       })
       .from(jobSources)
       .leftJoin(sponsors, eq(sponsors.id, jobSources.sponsorId))
@@ -95,6 +99,10 @@ async function main() {
       promoted: 0,
       verificationFailed: 0,
       insufficientEvidence: 0,
+      needsReview: 0,
+      aiPromoted: 0,
+      aiRejected: 0,
+      aiReview: "off" as string,
       errors: 0,
       ukJobs: 0,
       inserted: 0,
@@ -119,16 +127,30 @@ async function main() {
         stats.inserted += r.inserted;
         stats.expired += r.expired;
         if (r.promoted) stats.promoted++;
+        if (r.aiPromoted) stats.aiPromoted++;
       } else if (r.outcome === "verification_failed") stats.verificationFailed++;
+      else if (r.outcome === "needs_review") stats.needsReview++;
+      else if (r.outcome === "ai_rejected") stats.aiRejected++;
       else stats.insufficientEvidence++;
     };
+
+    // AI check for boards the text rules can't settle. Without a key, they wait in the review queue.
+    let reviewer = createBoardReviewer();
+    stats.aiReview = reviewer ? "on" : "off (no ANTHROPIC_API_KEY)";
+    const onReviewUnavailable = (reason: string) => {
+      if (!reviewer) return;
+      reviewer = null;
+      stats.aiReview = `stopped: ${reason}`;
+      console.warn(`AI board check stopped: ${reason}. Boards stay in the review queue.`);
+    };
+    const aiUsage = reviewer?.usage ?? null;
 
     let cursor = 0;
     const worker = async () => {
       while (cursor < targets.length) {
         const target = targets[cursor++];
         const started = Date.now();
-        const result = await crawlSource(db, target, { dryRun: args["dry-run"], matchSponsor });
+        const result = await crawlSource(db, target, { dryRun: args["dry-run"], matchSponsor, reviewer, onReviewUnavailable });
         record(target, result);
         const label = `${target.ats}/${target.identifier}${target.status === "unverified" ? " (unverified)" : ""}`;
         const detail = result.outcome === "error" ? result.error.slice(0, 120) : `${result.ukJobs} UK jobs${result.outcome === "stored" ? `, +${result.inserted} new, ${result.expired} expired${result.promoted ? ", PROMOTED" : ""}` : ` → ${result.outcome}`}`;
@@ -138,7 +160,9 @@ async function main() {
     await Promise.all(Array.from({ length: SOURCE_CONCURRENCY }, worker));
 
     stats.blockedHosts = getBlockedHosts().map((e) => e.message);
-    const summary = { ...stats, byAts: stats.byAts };
+    // Claude Opus 5.5 list price: $4 per million input tokens, $20 per million output tokens.
+    const aiCostUsd = aiUsage ? (aiUsage.inputTokens * 4 + aiUsage.outputTokens * 20) / 1_000_000 : 0;
+    const summary = { ...stats, aiUsage: aiUsage ? { ...aiUsage, estimatedCostUsd: Number(aiCostUsd.toFixed(4)) } : null };
     console.log(JSON.stringify(summary, null, 2));
     await finish("succeeded", summary);
     if (process.env.GITHUB_STEP_SUMMARY) {

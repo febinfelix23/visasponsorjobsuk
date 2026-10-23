@@ -15,9 +15,11 @@
     "discover:ats": "tsx scripts/discover-ats.ts",
     "build:uk-towns": "tsx scripts/build-uk-towns.ts",
     "scrape": "tsx scripts/scrape.ts",
-    "seed:sources": "tsx scripts/seed-sources.ts"
+    "seed:sources": "tsx scripts/seed-sources.ts",
+    "review:boards": "tsx scripts/review-boards.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.2.0",
     "@base-ui/react": "^1.9.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",

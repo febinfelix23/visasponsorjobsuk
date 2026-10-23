@@ -1,6 +1,6 @@
 # VisaSponsorJobsUK — Product & Development Blueprint
 
-_Last updated: 2026-10-19 · Status: v3, scope decisions locked, Phase 0 ready to build_
+_Last updated: 2026-10-23 · Status: v4, adds the premium tailored feed (§13) and the AI blog writer (§14)_
 
 > **One-line thesis:** Every job board lets you search for "visa sponsorship" as a keyword. Nobody reliably tells you whether **this job, at this salary, for this occupation, can actually lead to a Skilled Worker visa for a UK graduate.** Our moat isn't the scraping. It's being **verified and checked for eligibility**.
 
@@ -18,6 +18,8 @@ _Last updated: 2026-10-19 · Status: v3, scope decisions locked, Phase 0 ready t
 | Repo | **Public** (changed 2026-10-19) | Unlimited free GitHub Actions minutes on standard runners. The scraper code being public is accepted for now. Rules: keys only in GitHub Actions secrets and `.env*` (already gitignored); no scraped data, bulk files or user data in the repo; admin password via env |
 | Healthcare scope | **Includes junior doctors** | NHS Jobs doctor posts + national training recruitment (§2.3.1) |
 | Curation | **No hand curation**: the founder has no time for it | Phase 0 *is* an automated scraper plus a demo listing site. The founder only posts the output to channels |
+| Premium feature (2026-10-23) | **Tailored feed + email alerts** for paid users, matched to their degree, with an extra view based on recent work experience | Education and experience collected at sign-up; jobs matched by occupation code (§13) |
+| Content (2026-10-23) | **AI blog writer in the admin area**: suggests data-driven topics, drafts posts; the founder reviews, edits and publishes | No auto-publishing; no immigration advice or promises (§14) |
 
 ---
 
@@ -333,6 +335,7 @@ Build order (each step is usable on its own):
 ### Phase 4: Public site + alerts (weeks 8–11)
 - Job search, job pages, sponsor pages, programmatic SEO pages
 - Auth, saved searches, email + Telegram bot alerts
+- **Sign-up profile** (education + work experience, §13.2) collected from the start, so the premium feed has data the day it launches
 - Click tracking, analytics, disclaimer and anti-scam pages
 
 ### Phase 5: Distribution automation (weeks 10–13)
@@ -344,17 +347,20 @@ Build order (each step is usable on its own):
 - Long-tail coverage within the 4 sectors: more adapters, LLM extraction for priority sites
 - Grad-scheme calendar (opening/closing dates). Grad schemes open in autumn, so time the launch for **September–November**
 - "Sponsor intelligence": newly licensed sponsors in the 4 sectors
+- **AI blog writer** in the admin area (§14): SEO compounds over time, so it starts while the site is still free
 
 ### Phase 7: Freemium (when the leading indicators justify it)
 - Trigger: about 2k+ active alert subscribers and steady weekly returning users
 - Pro waitlist → paid tier (§9), upgrade to Vercel Pro / Supabase Pro
+- **Tailored feed + relevant-job email alerts** (§13), the core of Pro
+- Payments (Stripe), plan gating on `users.plan`
 
 ---
 
 ## 9. Business model options (later: launch is 100% free)
 **Free forever:** search, sponsorability badges, Telegram/WhatsApp/Instagram channels, a weekly email digest. Never paywall the trust layer.
 
-1. **Freemium alerts:** Pro gets instant personal alerts, advanced filters (SOC, salary vs threshold margin), grad-scheme deadline reminders, and early access (£3–£7/month)
+1. **Freemium (decided, §13):** Pro gets the **tailored feed** (jobs matched to the user's degree, plus a work-experience view) and **email alerts for strongly relevant new jobs**; also grad-scheme deadline reminders (£3–£7/month, price to be tested)
 2. **Employer featured listings:** sponsors pay to reach a pre-qualified international talent pool
 3. **Affiliate:** CV review, English tests, relocation services. **Vet these carefully**, because a bad affiliate destroys trust
 4. **Data product:** sponsor register analytics for recruiters and immigration law firms
@@ -388,3 +394,123 @@ My bet is (1) + (2). Users in this segment pay for speed when a visa clock is ru
 - Browser extension that overlays a sponsor badge on LinkedIn/Indeed
 - Salary-threshold calculator and Graduate-visa countdown planner (facts only)
 - Global Talent / Scale-up route coverage
+- CV upload to fill in the sign-up profile automatically (§13)
+- AI-suggested social posts (Telegram/Instagram captions) from the same data the blog writer uses (§14)
+
+---
+
+## 13. Premium: tailored feed and relevant-job alerts
+
+### 13.1 Intent
+A paid graduate opens their feed and sees **only jobs in their field**. A Computer Science graduate sees frontend, full stack, DevOps and similar roles, and never a nursing post. A Mechanical Engineering graduate never sees a doctor's job. Any job outside their field makes the product feel random, and that is the failure this feature exists to prevent.
+
+| Goals | Non-goals | Anti-goals (failure even if it "works") |
+|---|---|---|
+| Field-accurate feed from degree subject | CV parsing or AI career coaching (v1) | A job from an unrelated field appears in someone's feed |
+| Closely related roles included, ranked below core ones | Matching on skills or keywords in free text | Showing a job that fails the visa checks without saying so |
+| Optional view based on recent work experience | Employer-side candidate search | Alert emails that feel like spam |
+| Email alerts for strongly relevant new jobs | Paywalling the trust layer (badges stay free) | Collecting more personal data than the matching needs |
+
+### 13.2 Sign-up profile
+Collected from **every** user at sign-up, from Phase 4 onwards, so the feed has data on launch day. The feed itself is premium. _(My call: collect early, gate later.)_
+
+| Field | Detail |
+|---|---|
+| Degree(s) | Level (Bachelor's, Master's, MBA, PhD, MBBS/MBChB and similar), **subject chosen from a fixed list** (not free text, so it maps cleanly), university (optional), graduation year |
+| Work experience (optional) | Entries of job title, employer, start and end dates. Most recent first |
+| Visa situation (optional) | Student visa or Graduate visa, and the Graduate visa expiry date (used for "closing soon" urgency, never for advice) |
+| Preferences | Locations, remote/hybrid, and an alert frequency |
+
+The subject list is based on the HESA **Common Aggregation Hierarchy (CAH)** subject codes used by UK universities, so every UK degree has a home. _(My call.)_
+
+### 13.3 How matching works
+Every job already gets a **SOC 2020 occupation code** in Phase 0.6, so the feed matches occupation codes, not keywords. That's what keeps nursing out of a CS feed even when an ad mentions "software".
+
+1. **Subject → occupations table** (`subject_occupations`): each CAH subject maps to SOC unit groups with a strength, **core** or **related**. For example:
+   - Computer Science: core = programmers and software development, web design, IT and cyber security, IT testing; related = data analysts, IT business analysts, IT project roles, technical consultancy.
+   - Mechanical Engineering: core = mechanical, design and development, and production engineers; related = engineering project management, quality, and technical sales.
+   - Nursing: core = nursing SOC groups only.
+
+   Built once by hand-checking AI-drafted mappings, versioned, and editable in the admin area. _(My call.)_
+2. **Degree view (default):** jobs whose SOC is core or related for any of the user's subjects. Each card is labelled **"Core match"** or **"Related"**.
+3. **"Based on your recent work experience" view (optional toggle):** the user's most recent job titles are classified into SOC codes with the same classifier used for jobs (0.6), plus their related groups. Example: a Physics graduate with two years as a DevOps engineer switches to this view and sees DevOps and cloud roles.
+4. **Visa checks apply in both views:** graduate/entry/junior seniority, salary at or above the new-entrant rate (or the NHS pay scale), and a licensed sponsor. Jobs that fail are hidden. Borderline ones ("Check with employer") are shown with their badge.
+5. **Ranking:** core before related, then sponsorability (sponsorship mentioned, then likely eligible, then check with employer), then closing soon, then newest. Preferences (location, remote) filter the list.
+
+### 13.4 Email alerts (premium)
+- Sent when a **new** job is a core match, or a related match with "Sponsorship mentioned", **and** passes the visa checks.
+- The user picks which view the alerts follow (degree, experience or both) and how often: **daily digest** (default) or **instant**. Instant is capped at 5 a day, and anything over the cap rolls into the next digest, so a big employer posting 40 roles at once can't flood an inbox.
+- Every email has a one-click unsubscribe and a link to preferences (UK GDPR / PECR).
+- Sent with Resend. The free tier (100 a day) covers early paid users; upgrade when daily sends approach the limit.
+
+### 13.5 Free vs premium
+| Free | Premium |
+|---|---|
+| Search with filters (sector, location, salary, badge) | **Tailored feed** by degree + work-experience view |
+| Sponsorship badges with reasons | **Relevant-job email alerts** (digest or instant) |
+| Weekly general digest, Telegram/WhatsApp/Instagram channels | Grad-scheme deadline reminders for their matches |
+| **Preview:** the top 3 matches from their tailored feed, to show what Pro unlocks _(my call)_ | |
+
+### 13.6 Data and privacy
+- New tables: `user_profiles` (degree level, CAH subject codes, graduation year, visa type and expiry, preferences), `user_experience` (title, employer, dates, derived SOC), `subject_occupations` (subject, SOC, strength, version), `alert_deliveries` (already planned, §4.2).
+- The profile is personal data. Explain why each field is asked for, keep it to what matching needs, and let users edit or delete it (account deletion removes everything). No special-category data is asked for.
+- Row-level security: users can read and write only their own profile rows.
+
+### 13.7 Success measures
+- Premium users opening the feed weekly, and the click-through rate from feed and alert emails
+- **"Not relevant" reports per 100 feed views.** Every card gets a "Not relevant to me" button, and this number should trend towards zero. It is the direct measure of the anti-goal
+- Conversion from the free 3-match preview to Pro
+
+---
+
+## 14. AI blog writer (admin)
+
+### 14.1 Intent
+Bring graduates in from Google with posts built on **data only this site has**: live sponsorable jobs, register changes and closing dates. The founder stays in control. The AI **suggests topics and drafts**; the founder **chooses, checks, edits and publishes**. Nothing goes live automatically.
+
+| Goals | Non-goals | Anti-goals |
+|---|---|---|
+| Data-driven topic suggestions, refreshed daily | Auto-publishing | **Immigration advice or promises** ("you will get a visa", "guaranteed sponsorship") |
+| Drafts with real figures and internal links | Generic posts any site could write | Figures that don't come from the site's own data |
+| SEO title, meta description and URL per post | Mass-produced thin content (Google penalises scaled AI content) | Anything published without the founder's review |
+
+### 14.2 Flow (in `/admin/blog`)
+1. **Topic suggestions.** A daily job, plus a "Suggest topics" button, reads the site's data and proposes about 5–10 topics. Each comes with a working title, the angle, a target search phrase, why it's timely, and the **data snapshot** behind it. Sources:
+   - register changes (`sponsor_events`): sponsors added or removed this week, by sector
+   - live listings: counts by sector, city and employer; new graduate schemes; schemes closing soon
+   - NHS: roles carrying the Certificate of Sponsorship statement, by profession or band
+   - rule changes: a new version of the salary threshold or occupation tables (§3.5) triggers an explainer suggestion
+   - site activity: most-clicked employers and roles (clicks table)
+2. **The founder picks one** (or dismisses suggestions).
+3. **Draft.** The AI writes the post from the topic and its data snapshot. Output:
+   - body in Markdown
+   - an SEO title of 60 characters or fewer, a meta description of 155 or fewer, and a suggested slug
+   - an optional FAQ block
+   - **internal links** to the relevant job, sponsor and city pages
+   - links to gov.uk for any rule mentioned
+4. **Automatic checks before review**, shown as highlights in the editor:
+   - **Advice and promise phrases** ("you will", "guarantee", "definitely get", "eligible for a visa", "we can sponsor") are flagged.
+   - **Every number** in the draft is checked against the data snapshot. Numbers that aren't in it are flagged.
+   - Missing "data as of" date, or a rule mentioned without a gov.uk link, is flagged.
+5. **Edit:** a Markdown editor with live preview and "rewrite this section" for one part at a time.
+6. **Publish:** the founder clicks Publish. The post gets a visible "Figures as of {date}" line and a short disclaimer ("Facts, not immigration advice").
+
+### 14.3 Rules given to the AI (system prompt)
+- Use only figures from the supplied data snapshot. Never invent numbers, employers or deadlines.
+- State facts ("X is a licensed sponsor", "the salary is above the published new-entrant rate as of {date}"). **Never give immigration advice or make promises** about visas or sponsorship. Point readers to gov.uk for rules.
+- Write for UK graduates on Student or Graduate visas, in plain British English and a friendly, factual tone.
+- Link to the site's own job, sponsor and city pages wherever relevant.
+
+### 14.4 Public blog
+- `/blog` and `/blog/[slug]`, server-rendered, with Article structured data (JSON-LD), sitemap entries, and an OG image from `next/og`.
+- Each post links to the live listings it discusses, so readers land on current jobs and not only the article.
+
+### 14.5 Data model and cost
+- `blog_topics`: title, angle, target phrase, data snapshot (jsonb), status (suggested / selected / dismissed), created_at.
+- `blog_posts`: topic, slug, SEO title, meta description, body (Markdown), status (draft / published), data_as_of, published_at, model used, created and updated timestamps.
+- Model: Claude through the Anthropic API (`ANTHROPIC_API_KEY` as an env secret), with a stronger model for drafts and a cheaper one for topic suggestions. Expect roughly pennies per draft. A monthly spend cap in code keeps it inside the "≈ £0–5/month" budget (§4.3) at a few posts a week. _(My call; check current pricing when building.)_
+
+### 14.6 Success measures
+- Organic search sessions landing on blog posts, and clicks from posts through to job pages
+- Search ranking for target phrases (Google Search Console)
+- How much the founder edits each draft, which shows prompt quality. Fewer edits over time is the goal; zero edits is not, because review stays mandatory
