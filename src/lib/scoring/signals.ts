@@ -31,8 +31,16 @@ const POSITIVE: RegExp[] = [
 
 export type SponsorshipSignal = { positive: string | null; negative: string | null; rightToWorkOnly: boolean };
 
-const excerpt = (text: string, index: number, length: number) =>
-  text.slice(Math.max(0, index - 40), index + length + 40).replace(/\s+/g, " ").trim();
+/** The sentence around a match, so the quote reads as the ad wrote it. */
+function excerpt(text: string, index: number, length: number): string {
+  const before = text.slice(Math.max(0, index - 200), index);
+  const after = text.slice(index + length, index + length + 200);
+  const start = Math.max(before.lastIndexOf(". "), before.lastIndexOf("\n"), before.lastIndexOf("! "), before.lastIndexOf("? "));
+  const endMatch = /[.!?](\s|$)|\n/.exec(after);
+  const sentence = before.slice(start + 1) + text.slice(index, index + length) + (endMatch ? after.slice(0, endMatch.index + 1) : after);
+  const clean = sentence.replace(/\s+/g, " ").trim();
+  return clean.length > 220 ? `${clean.slice(0, 217).trimEnd()}…` : clean;
+}
 
 export function sponsorshipSignal(text: string | null | undefined): SponsorshipSignal {
   if (!text) return { positive: null, negative: null, rightToWorkOnly: false };

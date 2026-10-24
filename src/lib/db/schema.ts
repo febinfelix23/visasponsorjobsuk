@@ -202,7 +202,13 @@ export const jobs = snakeCase.table.withRLS(
     /** Salary converted to a full-time annual figure, for the salary filter and the visa rule. */
     salaryAnnualMin: numeric({ precision: 10, scale: 2, mode: "number" }),
     salaryAnnualMax: numeric({ precision: 10, scale: 2, mode: "number" }),
+    /** The employer's industry (from the sponsor), copied at scrape time. */
     sector: sector(),
+    /**
+     * Field of work (src/lib/scoring/fields.ts), independent of the employer: "Software Engineer"
+     * at a bank is "software". Plain text so new fields don't need a migration. Drives the filters.
+     */
+    field: text(),
     seniority: seniority().notNull().default("unknown"),
     isGradScheme: boolean().notNull().default(false),
     socCode: text(),
@@ -238,6 +244,9 @@ export const jobs = snakeCase.table.withRLS(
     index("jobs_sponsor_id_idx").on(t.sponsorId),
     index("jobs_live_listing_idx")
       .on(t.sector, t.firstSeenAt.desc())
+      .where(sql`${t.status} = 'live'`),
+    index("jobs_live_field_idx")
+      .on(t.field, t.firstSeenAt.desc())
       .where(sql`${t.status} = 'live'`),
     index("jobs_live_sponsorability_idx")
       .on(t.sponsorability, t.seniority)
@@ -277,3 +286,19 @@ export const clicks = snakeCase.table.withRLS(
     index("clicks_created_at_idx").on(t.createdAt),
   ],
 );
+
+/**
+ * AI classification of a job title, cached so each distinct title (in the context of
+ * the employer's industry) is only classified once.
+ */
+export const jobClassifications = snakeCase.table.withRLS("job_classifications", {
+  /** Normalised title + "|" + employer industry. */
+  key: text().primaryKey(),
+  title: text().notNull(),
+  employerIndustry: text(),
+  /** SOC 2020 code, only ever one from the official Skilled Occupations table, or null. */
+  socCode: text(),
+  field: text(),
+  model: text().notNull(),
+  createdAt: createdAt(),
+});

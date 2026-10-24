@@ -6,6 +6,8 @@ import { scoreJob, type ScoreInput } from "./score";
 import { classifySeniority, yearsRequired } from "./seniority";
 import { sponsorshipSignal } from "./signals";
 import { classifyOccupation, CLASSIFIER_CODES } from "./soc";
+import { FIELD_KEYS, FIELD_RULE_CODES, FIELDS, fieldFromOccupation, isFieldKey } from "./fields";
+import { classificationKey, parseClassifications } from "./ai-classify";
 
 describe("occupation table", () => {
   it("has the official new-entrant rates", () => {
@@ -17,6 +19,76 @@ describe("occupation table", () => {
 
   it("contains every code the title classifier can return", () => {
     for (const soc of CLASSIFIER_CODES) assert.ok(getOccupation(soc), `SOC ${soc} missing from the rules table`);
+  });
+});
+
+describe("fields", () => {
+  it("files work by what it is, not who the employer is", () => {
+    assert.equal(fieldFromOccupation("2134", "Backend Engineer III"), "software");
+    assert.equal(fieldFromOccupation("2422", "Financial Analyst"), "finance");
+    assert.equal(fieldFromOccupation("2237", "Staff Nurse"), "healthcare");
+    assert.equal(fieldFromOccupation("3544", "Data Analyst"), "data");
+    assert.equal(fieldFromOccupation("3556", "Account Manager"), "sales_marketing");
+    assert.equal(fieldFromOccupation("2431", "Sales Consultant"), "business");
+  });
+
+  it("never guesses a field from the employer when the occupation is unknown", () => {
+    assert.equal(fieldFromOccupation(null, "Data Science Manager"), null);
+  });
+
+  it("splits SOC 2433 between finance and data by title", () => {
+    assert.equal(fieldFromOccupation("2433", "Actuarial Analyst"), "finance");
+    assert.equal(fieldFromOccupation("2433", "Data Scientist"), "data");
+  });
+
+  it("has unique keys, and every rule code is in the official table", () => {
+    assert.equal(new Set(FIELD_KEYS).size, FIELDS.length);
+    assert.ok(isFieldKey("software") && !isFieldKey("tech"));
+    for (const soc of FIELD_RULE_CODES) assert.ok(getOccupation(soc), `SOC ${soc} missing from the rules table`);
+  });
+});
+
+describe("AI classification", () => {
+  it("shares one cached result across title variants", () => {
+    assert.equal(classificationKey("Software Engineer Graduate Scheme (Manchester)", "finance"), classificationKey("software engineer graduate scheme  (Leeds)", "finance"));
+    assert.notEqual(classificationKey("Consultant", "healthcare"), classificationKey("Consultant", "tech"));
+  });
+
+  it("keeps only known fields and codes that exist in the official table", () => {
+    const parsed = parseClassifications(
+      JSON.stringify({
+        results: [
+          { id: 0, field: "data", soc: "2433" },
+          { id: 1, field: "sales_marketing", soc: "9999" }, // invented code: dropped, field kept
+          { id: 2, field: "astrology", soc: "2134" }, // unknown field: dropped, code kept
+          { id: 7, field: "software", soc: "2134" }, // id out of range: ignored
+        ],
+      }),
+      3,
+    );
+    assert.deepEqual(parsed.get(0), { socCode: "2433", field: "data" });
+    assert.deepEqual(parsed.get(1), { socCode: null, field: "sales_marketing" });
+    assert.deepEqual(parsed.get(2), { socCode: "2134", field: null });
+    assert.equal(parsed.has(7), false);
+    assert.equal(parseClassifications("not json", 3).size, 0);
+  });
+
+  it("never rules a job out on an AI-chosen ineligible code alone", () => {
+    const csm = scoreJob({ ...base, title: "Customer Success Manager", aiSocCode: "7219", aiField: "sales_marketing", salaryText: "£50,000" });
+    assert.equal(csm.sponsorability, "check_with_employer");
+    assert.ok(csm.reasons.some((r) => r.code === "occupation_maybe_ineligible"));
+    // The keyword rules' own ineligible codes still rule a job out.
+    assert.equal(scoreJob({ ...base, title: "Mobile Patrol Officer", sector: "engineering" }).sponsorability, "ineligible");
+  });
+
+  it("prefers the AI's occupation and field over the keyword rules", () => {
+    const r = scoreJob({ ...base, title: "Data Science Manager", sector: "finance", aiSocCode: "2433", aiField: "data", salaryText: "£80,000" });
+    assert.deepEqual([r.socCode, r.field, r.sponsorability], ["2433", "data", "likely_eligible"]);
+    // Where the rules and the AI disagree, the AI wins: the rules read "Security Officer" as guarding.
+    const infosec = scoreJob({ ...base, title: "Security Officer", aiSocCode: "2135", aiField: "software" });
+    assert.deepEqual([infosec.socCode, infosec.field], ["2135", "software"]);
+    const bogus = scoreJob({ ...base, title: "Data Science Manager", aiSocCode: "9999", aiField: null });
+    assert.equal(bogus.socCode, null);
   });
 });
 
@@ -50,6 +122,8 @@ describe("classifyOccupation", () => {
     ["Quantity Surveyor", "engineering", "2453"],
     ["Senior Legal Counsel", "tech", "2412"],
     ["Data Analyst", "finance", "3544"],
+    ["Senior Financial Reporting Analyst", "finance", "2421"],
+    ["Regulatory Reporting Analyst", "finance", "2421"],
     ["Junior Information Security Officer", "tech", "2135"],
     ["Security Operations Coordinator", "tech", null],
     ["Mobile Patrol Officer", "engineering", "9231"],
@@ -126,6 +200,9 @@ describe("classifySeniority", () => {
     assert.equal(classifySeniority("Senior Data Engineer").seniority, "senior");
     assert.equal(classifySeniority("Junior Developer").seniority, "junior");
     assert.equal(classifySeniority("Product Manager").seniority, "mid");
+    assert.equal(classifySeniority("Consultant Dermatologist").seniority, "senior");
+    assert.equal(classifySeniority("Consultant Psychiatrist - EDU").seniority, "senior");
+    assert.notEqual(classifySeniority("IT Consultant").seniority, "senior");
     assert.equal(classifySeniority("Staff Nurse", null, "Band 5 · £32,073 to £39,043 a year").seniority, "entry");
     assert.equal(classifySeniority("Backend Engineer", "You have 5+ years of professional experience").seniority, "senior");
   });
@@ -146,6 +223,11 @@ describe("sponsorshipSignal", () => {
     assert.ok(sponsorshipSignal("You must be able to work in the UK without sponsorship").negative);
     const both = sponsorshipSignal("We offer great benefits. We cannot offer sponsorship for this role.");
     assert.ok(both.negative);
+  });
+
+  it("quotes the sentence that mentions sponsorship, not the text around it", () => {
+    const s = sponsorshipSignal("4 weeks Work From Anywhere per year. We are able to offer visa sponsorship for this position. OUR PROCESS - three interviews");
+    assert.equal(s.positive, "We are able to offer visa sponsorship for this position.");
   });
 
   it("treats the right-to-work line as soft", () => {
@@ -239,6 +321,12 @@ describe("scoreJob", () => {
     const pharma = { ...base, title: "Senior Clinical Research Physician", sector: "healthcare", sponsorName: "GSK Plc", description: "Experience of NHS clinical practice preferred." };
     assert.equal(scoreJob(pharma).sponsorability, "check_with_employer");
     assert.equal(scoreJob({ ...pharma, salaryText: "£120,000" }).sponsorability, "likely_eligible");
+  });
+
+  it("gives the rules date in words, not as an ISO date", () => {
+    const msg = scoreJob(base).reasons.find((r) => r.code === "salary_unknown")?.message ?? "";
+    assert.match(msg, /rules as of \d{1,2} [A-Z][a-z]+ \d{4}\)/);
+    assert.doesNotMatch(msg, /\d{4}-\d{2}-\d{2}/);
   });
 
   it("never states a visa outcome", () => {

@@ -2,10 +2,11 @@ import { getOccupation, RULES_UPDATED_AT, type Occupation } from "./occupations"
 import { annualise, parseSalary, plausibleAnnual, salaryFromDescription, type SalaryPeriod } from "./salary";
 import { classifySeniority, type Seniority } from "./seniority";
 import { sponsorshipSignal } from "./signals";
+import { fieldFromOccupation } from "./fields";
 import { classifyOccupation } from "./soc";
 
 /** Bump when the rules change, so every job is re-scored on the next run. */
-export const SCORE_VERSION = 5;
+export const SCORE_VERSION = 12;
 
 export type Sponsorability = "sponsorship_mentioned" | "likely_eligible" | "check_with_employer" | "ineligible" | "unknown";
 export type Reason = { code: string; message: string };
@@ -19,6 +20,9 @@ export type ScoreInput = {
   salaryPeriod: SalaryPeriod | null;
   employmentType: string | null;
   sector: string | null;
+  /** AI classification for this title, when one exists (scripts/classify-jobs.ts). */
+  aiSocCode?: string | null;
+  aiField?: string | null;
   isNhsJobs: boolean;
   /** Linked to an active sponsor on the Skilled Worker route. */
   licensedSponsor: boolean;
@@ -27,6 +31,7 @@ export type ScoreInput = {
 
 export type ScoreResult = {
   socCode: string | null;
+  field: string | null;
   seniority: Seniority;
   isGradScheme: boolean;
   sponsorability: Sponsorability;
@@ -39,6 +44,7 @@ export type ScoreResult = {
 };
 
 const gbp = (n: number) => `£${n.toLocaleString("en-GB")}`;
+const rulesDate = new Date(RULES_UPDATED_AT).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/London" });
 
 /** Only employees can be sponsored, and not by a client hiring contractors through an agency. */
 const SELF_EMPLOYED = /\b(self[- ]employed|freelance|freelancer|commission[- ]only|outside ir35)\b/i;
@@ -66,12 +72,15 @@ export function scoreJob(input: ScoreInput): ScoreResult {
   const annualMax = parsed ? annualise(parsed.max, parsed.period) : null;
 
   const { seniority, isGradScheme, isInternship, isApprenticeship } = classifySeniority(input.title, input.description, input.salaryText);
-  const socCode = classifyOccupation(input.title, input.sector);
+  // The AI reads the whole job; the keyword rules are the fallback.
+  const aiSoc = input.aiSocCode && getOccupation(input.aiSocCode) ? input.aiSocCode : null;
+  const socCode = aiSoc ?? classifyOccupation(input.title, input.sector);
   const occupation: Occupation | null = getOccupation(socCode);
   const signal = sponsorshipSignal(text);
 
   const result = (sponsorability: Sponsorability): ScoreResult => ({
     socCode,
+    field: input.aiField ?? fieldFromOccupation(socCode, input.title),
     seniority,
     isGradScheme,
     sponsorability,
@@ -114,6 +123,12 @@ export function scoreJob(input: ScoreInput): ScoreResult {
     reasons.push({ code: "apprenticeship", message: "Apprenticeships are training schemes and are rarely sponsored under the Skilled Worker route." });
     return result("ineligible");
   }
+  // An AI-chosen code can misfile a role (a customer success manager as customer service),
+  // so on its own it never rules a job out: it only asks the person to check.
+  if (occupation?.eligibility === "ineligible" && aiSoc === socCode) {
+    reasons.push({ code: "occupation_maybe_ineligible", message: `This looks like ${occupation.title} (SOC ${occupation.soc}), which isn't an eligible Skilled Worker occupation. Check the role with the employer.` });
+    return result(input.licensedSponsor ? "check_with_employer" : "unknown");
+  }
   if (occupation?.eligibility === "ineligible") {
     reasons.push({ code: "occupation_ineligible", message: `${occupation.title} (SOC ${occupation.soc}) isn't an eligible Skilled Worker occupation.` });
     return result("ineligible");
@@ -128,7 +143,7 @@ export function scoreJob(input: ScoreInput): ScoreResult {
     else if (occupation.goingRate && annualMin !== null) salaryMeets = annualMin >= occupation.goingRate ? true : null;
   } else if (occupation?.eligibility === "eligible" && occupation.newEntrantRate) {
     if (annualMin === null) {
-      reasons.push({ code: "salary_unknown", message: `No salary in the ad. New entrants in ${occupation.title} (SOC ${occupation.soc}) need at least ${gbp(occupation.newEntrantRate)} a year (rules as of ${RULES_UPDATED_AT.slice(0, 10)}).` });
+      reasons.push({ code: "salary_unknown", message: `No salary in the ad. New entrants in ${occupation.title} (SOC ${occupation.soc}) need at least ${gbp(occupation.newEntrantRate)} a year (rules as of ${rulesDate}).` });
     } else if (annualMin >= occupation.newEntrantRate) {
       salaryMeets = true;
       reasons.push({ code: "salary_meets_new_entrant", message: `Salary from ${gbp(annualMin)} a year is at or above the ${gbp(occupation.newEntrantRate)} new-entrant rate for ${occupation.title} (SOC ${occupation.soc}).` });

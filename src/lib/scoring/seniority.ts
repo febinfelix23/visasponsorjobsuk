@@ -8,7 +8,8 @@ const INTERNSHIP = /\b(intern|internship|summer analyst|summer associate|placeme
 const APPRENTICESHIP = /\b(apprentice|apprenticeship)\b/;
 const GRAD_SCHEME = /\b(graduate (scheme|programme|program|trainee|development programme)|grad scheme|graduate|new grad|early careers?|campus hire|foundation (year|doctor|programme)|fy ?[12])\b/;
 // "staff" only means senior in tech titles ("Staff Engineer"), never in "Staff Nurse".
-const SENIOR = /\b(senior|sr|lead|principal|staff (engineer|software|developer|data|scientist|product|designer|ml|machine)|head of|director|vp|vice president|chief|cto|cfo|ceo|partner|consultant (in|physician|surgeon)|associate director|matron)\b/;
+// Hospital consultants are senior ("Consultant Dermatologist"); "IT Consultant" isn't.
+const SENIOR = /\b(senior|sr|lead|principal|staff (engineer|software|developer|data|scientist|product|designer|ml|machine)|head of|director|vp|vice president|chief|cto|cfo|ceo|partner|consultant (in|physician|surgeon|anaesthetist|paediatrician|psychiatrist|radiologist|histopathologist|[a-z]+ologist|[a-z]+iatrist)|associate director|matron)\b/;
 const MID = /\b(manager|architect|registrar|specialty doctor|speciality doctor|specialist)\b/;
 const JUNIOR = /\b(junior|jr|entry level|trainee|apprentice|associate|assistant|engineer i|analyst i|developer i|level 1)\b/;
 

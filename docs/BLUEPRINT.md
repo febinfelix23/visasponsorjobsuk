@@ -242,6 +242,8 @@ Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`,
 | Vercel Hobby, Supabase Free, GitHub Actions, Sentry Free, Resend Free | £0 |
 | Telegram Bot API, Instagram Graph API, WhatsApp Channel (manual) | £0 |
 | LLM fallback (Haiku-class, cached, capped) | ~£0–5 |
+| Job classification: field of work + occupation code (Claude Haiku 5.5, cached per title; first pass of 5,490 titles cost $0.27) | ~£0.30/month |
+| AI board check for ambiguous job boards (Claude Opus 5.5, about $0.005 per board, once per board) | ~£1/month |
 | Domain | ~£10–15/year |
 | **Upgrade triggers** (at freemium launch): Vercel Pro (~$20) when monetising, Supabase Pro (~$25) when the DB nears 500 MB or needs backups | Later |
 
@@ -424,7 +426,7 @@ Collected from **every** user at sign-up, from Phase 4 onwards, so the feed has 
 The subject list is based on the HESA **Common Aggregation Hierarchy (CAH)** subject codes used by UK universities, so every UK degree has a home. _(My call.)_
 
 ### 13.3 How matching works
-Every job already gets a **SOC 2020 occupation code** in Phase 0.6, so the feed matches occupation codes, not keywords. That's what keeps nursing out of a CS feed even when an ad mentions "software".
+Every job already gets a **SOC 2020 occupation code** and a **field of work** (Phase 0.6–0.7: Claude Haiku 5.5 reads each job, with keyword rules as the fallback; fields are defined once in `src/lib/scoring/fields.ts`). The feed matches occupation codes, not keywords. That's what keeps nursing out of a CS feed even when an ad mentions "software".
 
 1. **Subject → occupations table** (`subject_occupations`): each CAH subject maps to SOC unit groups with a strength, **core** or **related**. For example:
    - Computer Science: core = programmers and software development, web design, IT and cyber security, IT testing; related = data analysts, IT business analysts, IT project roles, technical consultancy.

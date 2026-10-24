@@ -48,6 +48,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           # Optional: AI check for ambiguous boards. Without it, they wait in the review queue.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Classifies new job titles (field of work, occupation code) with Claude Haiku 5.5.
+      # Skipped without the key; scoring then falls back to the keyword rules.
+      - run: npm run classify:jobs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Scores new and changed jobs: occupation code, seniority, salary and the sponsorship badge.
       - run: npm run score:jobs
         env:

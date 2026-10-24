@@ -18,7 +18,8 @@
     "seed:sources": "tsx scripts/seed-sources.ts",
     "review:boards": "tsx scripts/review-boards.ts",
     "build:occupations": "tsx scripts/build-skilled-occupations.ts",
-    "score:jobs": "tsx scripts/score-jobs.ts"
+    "score:jobs": "tsx scripts/score-jobs.ts",
+    "classify:jobs": "tsx scripts/classify-jobs.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.2.0",

@@ -1,0 +1,282 @@
+import { cacheLife } from "next/cache";
+import { and, desc, eq, ilike, inArray, ne, or, sql, type SQL } from "drizzle-orm";
+import { getDb } from "@/lib/db";
+import { jobs, jobSources, sponsors } from "@/lib/db/schema";
+import type { Reason, Sponsorability } from "@/lib/scoring/score";
+import { slugify } from "@/lib/scrape/text";
+
+import type { FieldKey } from "@/lib/scoring/fields";
+
+/** What a graduate wants first: confirmed or likely sponsorship, then roles worth a question. */
+export const BADGE_ORDER: Sponsorability[] = ["sponsorship_mentioned", "likely_eligible", "check_with_employer", "unknown", "ineligible"];
+
+export type Filters = {
+  q?: string;
+  field?: FieldKey;
+  /** "passes": sponsorship mentioned or likely eligible (default). "all": everything except ineligible. */
+  show: "passes" | "all";
+  includeSenior: boolean;
+  gradSchemes: boolean;
+  page: number;
+};
+
+export const PAGE_SIZE = 25;
+
+export type JobListItem = {
+  slug: string;
+  title: string;
+  employerName: string;
+  locationText: string | null;
+  /** The kind of work, from the occupation code. */
+  field: string | null;
+  /** The employer's industry. */
+  sector: string | null;
+  salaryAnnualMin: number | null;
+  salaryAnnualMax: number | null;
+  sponsorability: Sponsorability;
+  seniority: string;
+  isGradScheme: boolean;
+  closingDate: string | null;
+  firstSeenAt: string;
+};
+
+const listColumns = {
+  slug: jobs.slug,
+  title: jobs.title,
+  employerName: jobs.employerName,
+  locationText: jobs.locationText,
+  field: jobs.field,
+  sector: jobs.sector,
+  salaryAnnualMin: jobs.salaryAnnualMin,
+  salaryAnnualMax: jobs.salaryAnnualMax,
+  sponsorability: jobs.sponsorability,
+  seniority: jobs.seniority,
+  isGradScheme: jobs.isGradScheme,
+  closingDate: jobs.closingDate,
+  firstSeenAt: jobs.firstSeenAt,
+};
+
+const toItem = (r: { firstSeenAt: Date } & Omit<JobListItem, "firstSeenAt">): JobListItem => ({
+  ...r,
+  firstSeenAt: r.firstSeenAt.toISOString(),
+});
+
+const badgeRank = sql`array_position(array['sponsorship_mentioned','likely_eligible','check_with_employer','unknown','ineligible']::sponsorability[], ${jobs.sponsorability})`;
+
+function whereFor(f: Filters): SQL | undefined {
+  const parts: (SQL | undefined)[] = [eq(jobs.status, "live")];
+  parts.push(f.show === "passes" ? inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]) : ne(jobs.sponsorability, "ineligible"));
+  if (!f.includeSenior) parts.push(ne(jobs.seniority, "senior"));
+  if (f.gradSchemes) parts.push(eq(jobs.isGradScheme, true));
+  // Filter by the kind of work, not the employer's industry: Monzo's software roles are Software & IT.
+  if (f.field) parts.push(eq(jobs.field, f.field));
+  if (f.q) {
+    const like = `%${f.q.replace(/[%_\\]/g, "\\$&")}%`;
+    parts.push(or(ilike(jobs.title, like), ilike(jobs.employerName, like), ilike(jobs.locationText, like)));
+  }
+  return and(...parts);
+}
+
+export async function searchJobs(f: Filters): Promise<{ items: JobListItem[]; total: number }> {
+  "use cache";
+  // Jobs change twice a day; a few minutes' staleness is invisible.
+  cacheLife("minutes");
+  const db = getDb();
+  const where = whereFor(f);
+  const [rows, [{ total }]] = await Promise.all([
+    db
+      .select(listColumns)
+      .from(jobs)
+      .where(where)
+      .orderBy(badgeRank, desc(jobs.isGradScheme), desc(jobs.firstSeenAt))
+      .limit(PAGE_SIZE)
+      .offset((f.page - 1) * PAGE_SIZE),
+    db.select({ total: sql<number>`count(*)::int` }).from(jobs).where(where),
+  ]);
+  return { items: rows.map(toItem), total };
+}
+
+export async function fieldCounts(): Promise<Record<string, number>> {
+  "use cache";
+  cacheLife("minutes");
+  const rows = await getDb()
+    .select({ field: jobs.field, n: sql<number>`count(*)::int` })
+    .from(jobs)
+    .where(and(eq(jobs.status, "live"), inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]), ne(jobs.seniority, "senior")))
+    .groupBy(jobs.field);
+  return Object.fromEntries(rows.map((r) => [r.field ?? "other", r.n]));
+}
+
+export type JobDetail = JobListItem & {
+  id: number;
+  snippet: string | null;
+  salaryText: string | null;
+  employmentType: string | null;
+  department: string | null;
+  socCode: string | null;
+  reasons: Reason[];
+  postedAt: string | null;
+  isRemote: boolean;
+  ats: string;
+  sponsor: { slug: string; name: string; town: string; rating: string | null; status: string } | null;
+};
+
+export const sponsorSlug = (s: { id: number; name: string }) => `${slugify(s.name, 60)}-${s.id}`;
+export const sponsorIdFromSlug = (slug: string) => {
+  const id = Number(/-(\d+)$/.exec(slug)?.[1]);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+};
+
+export async function getJob(slug: string): Promise<JobDetail | null> {
+  "use cache";
+  cacheLife("hours");
+  const [r] = await getDb()
+    .select({
+      ...listColumns,
+      id: jobs.id,
+      snippet: jobs.snippet,
+      salaryText: jobs.salaryText,
+      employmentType: jobs.employmentType,
+      department: jobs.department,
+      socCode: jobs.socCode,
+      reasons: jobs.reasons,
+      postedAt: jobs.postedAt,
+      isRemote: jobs.isRemote,
+      status: jobs.status,
+      ats: jobSources.ats,
+      sponsorId: sponsors.id,
+      sponsorName: sponsors.name,
+      sponsorTown: sponsors.town,
+      sponsorRating: sponsors.workerRating,
+      sponsorStatus: sponsors.status,
+    })
+    .from(jobs)
+    .innerJoin(jobSources, eq(jobSources.id, jobs.sourceId))
+    .leftJoin(sponsors, eq(sponsors.id, jobs.sponsorId))
+    .where(eq(jobs.slug, slug))
+    .limit(1);
+  if (!r || r.status !== "live") return null;
+  return {
+    ...toItem(r),
+    id: r.id,
+    snippet: r.snippet,
+    salaryText: r.salaryText,
+    employmentType: r.employmentType,
+    department: r.department,
+    socCode: r.socCode,
+    reasons: r.reasons as Reason[],
+    postedAt: r.postedAt?.toISOString() ?? null,
+    isRemote: r.isRemote,
+    ats: r.ats,
+    sponsor: r.sponsorId
+      ? { slug: sponsorSlug({ id: r.sponsorId, name: r.sponsorName! }), name: r.sponsorName!, town: r.sponsorTown!, rating: r.sponsorRating, status: r.sponsorStatus! }
+      : null,
+  };
+}
+
+/** Newest jobs, prerendered at build time; every other job renders on its first visit and is then cached. */
+export async function recentJobSlugs(limit = 50): Promise<string[]> {
+  "use cache";
+  cacheLife("hours");
+  const rows = await getDb()
+    .select({ slug: jobs.slug })
+    .from(jobs)
+    .where(and(eq(jobs.status, "live"), inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"])))
+    .orderBy(desc(jobs.firstSeenAt))
+    .limit(limit);
+  return rows.map((r) => r.slug);
+}
+
+export type SponsorDetail = {
+  id: number;
+  name: string;
+  town: string;
+  county: string | null;
+  rating: string | null;
+  routes: string[];
+  status: string;
+  sector: string | null;
+  firstSeenOn: string;
+  jobs: JobListItem[];
+};
+
+export async function getSponsor(id: number): Promise<SponsorDetail | null> {
+  "use cache";
+  cacheLife("hours");
+  const db = getDb();
+  const [s] = await db.select().from(sponsors).where(eq(sponsors.id, id)).limit(1);
+  if (!s) return null;
+  const rows = await db
+    .select(listColumns)
+    .from(jobs)
+    .where(and(eq(jobs.sponsorId, id), eq(jobs.status, "live"), ne(jobs.sponsorability, "ineligible")))
+    .orderBy(badgeRank, desc(jobs.firstSeenAt))
+    .limit(100);
+  return {
+    id: s.id,
+    name: s.name,
+    town: s.town,
+    county: s.county,
+    rating: s.workerRating,
+    routes: s.routes,
+    status: s.status,
+    sector: s.sector,
+    firstSeenOn: s.firstSeenOn,
+    jobs: rows.map(toItem),
+  };
+}
+
+export async function topSponsorIds(limit = 30): Promise<{ id: number; name: string }[]> {
+  "use cache";
+  cacheLife("hours");
+  return getDb()
+    .select({ id: sponsors.id, name: sponsors.name })
+    .from(sponsors)
+    .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), eq(jobs.status, "live")))
+    .groupBy(sponsors.id, sponsors.name)
+    .orderBy(desc(sql`count(*)`))
+    .limit(limit);
+}
+
+/**
+ * Junior and non-training doctors' grades. GP posts (qualified GPs) and consultants
+ * aren't junior roles, so they're left out even though they're doctors.
+ */
+const JUNIOR_DOCTOR_TITLE = String.raw`\m(foundation|fy ?[12]|f[12]|clinical fellow|junior|trust (grade|doctor)|sho|senior house officer|core trainee|ct[1-3]|specialty doctor|speciality doctor|staff grade|resident doctor|clinical research fellow|teaching fellow)\M`;
+
+/** Junior doctors' posts on NHS Jobs that aren't ruled out. */
+export async function doctorJobs(): Promise<JobListItem[]> {
+  "use cache";
+  cacheLife("hours");
+  const rows = await getDb()
+    .select(listColumns)
+    .from(jobs)
+    .innerJoin(jobSources, eq(jobSources.id, jobs.sourceId))
+    .where(
+      and(
+        eq(jobs.status, "live"),
+        eq(jobSources.ats, "nhs_jobs"),
+        eq(jobs.socCode, "2211"),
+        sql`${jobs.title} ~* ${JUNIOR_DOCTOR_TITLE}`,
+        ne(jobs.sponsorability, "ineligible"),
+        ne(jobs.seniority, "senior"),
+      ),
+    )
+    .orderBy(badgeRank, desc(jobs.firstSeenAt))
+    .limit(60);
+  return rows.map(toItem);
+}
+
+export async function siteStats(): Promise<{ jobs: number; sponsors: number; updatedAt: string | null }> {
+  "use cache";
+  cacheLife("minutes");
+  const [row] = await getDb()
+    .select({
+      jobs: sql<number>`count(*)::int`,
+      sponsors: sql<number>`count(distinct ${jobs.sponsorId})::int`,
+      updatedAt: sql<string | null>`max(${jobs.lastSeenAt})::text`,
+    })
+    .from(jobs)
+    .where(eq(jobs.status, "live"));
+  return row;
+}

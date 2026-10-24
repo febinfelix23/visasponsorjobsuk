@@ -67,7 +67,6 @@ const RULES: Rule[] = [
   { soc: "3556", pattern: /\b(account manager|key account|business development manager|customer success manager|partnerships? manager|sales manager|account director|brand manager|customer success)\b/ },
   { soc: "2432", pattern: /\b(marketing manager|product marketing|growth manager|commercial manager|head of commercial)\b/ },
   { soc: "3554", pattern: /\b(marketing executive|marketing assistant|content marketing|social media (executive|manager)|seo (executive|specialist))\b/ },
-  { soc: "3544", pattern: /\b(data analyst|business intelligence analyst|bi analyst|product analyst|insights? analyst|reporting analyst|analytics analyst)\b/ },
   // Legal and people
   { soc: "2412", pattern: /\b(solicitor|lawyer|legal counsel|general counsel|in-house counsel|counsel)\b/ },
   { soc: "2419", pattern: /\b(paralegal|legal executive|litigation executive)\b/ },
@@ -78,7 +77,7 @@ const RULES: Rule[] = [
   { soc: "1131", pattern: /\b(financial controller|finance director|head of finance|cfo)\b/ },
   { soc: "3534", pattern: /\b(finance manager|finance business partner|credit manager|investment manager)\b/ },
   { soc: "2423", pattern: /\b(tax (associate|adviser|advisor|consultant|manager|senior|analyst|trainee)|taxation)\b/ },
-  { soc: "2421", pattern: /\b(accountant|audit(or)?|assurance (associate|trainee|senior)|aca|acca|cima|financial reporting)\b/ },
+  { soc: "2421", pattern: /\b(accountant|audit(or)?|assurance (associate|trainee|senior)|aca|acca|cima|financial reporting|regulatory reporting)\b/ },
   { soc: "2422", pattern: /\b(financial analyst|investment analyst|investment banking|credit analyst|equity research|portfolio analyst|treasury analyst|fp&a|financial planning|wealth (manager|adviser|planner)|financial (adviser|advisor|planner)|mortgage adviser|underwriter|valuation)\b/ },
   { soc: "2431", pattern: /\b(business analyst|management consultant|strategy (consultant|analyst)|risk analyst|consultant)\b/ },
   { soc: "4122", pattern: /\b(bookkeeper|book-keeper|payroll|accounts (assistant|payable|receivable))\b/ },
@@ -89,6 +88,9 @@ const RULES: Rule[] = [
   { soc: "2455", pattern: /\b(construction (project )?manager|contracts? manager|site manager|transport planner)\b/ },
   { soc: "2452", pattern: /\b(town planner|planning officer|urban designer|architectural technologist)\b/ },
   { soc: "2440", pattern: /\b(project manager|programme manager|program manager|change manager|risk manager|pmo)\b/ },
+
+  // Data analysts after finance, so "Financial Reporting Analyst" stays an accountancy role.
+  { soc: "3544", pattern: /\b(data analyst|business intelligence analyst|bi analyst|product analyst|insights? analyst|reporting analyst|analytics analyst)\b/ },
 
   // Engineering (after tech so "software engineer" is already taken).
   // Technicians first: "Mechanical Technician" is a technician, not a mechanical engineer.

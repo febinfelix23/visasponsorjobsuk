@@ -13,7 +13,8 @@ import { appendFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { and, asc, eq, gt, or, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
-import { jobs, jobSources, sponsors } from "@/lib/db/schema";
+import { jobClassifications, jobs, jobSources, sponsors } from "@/lib/db/schema";
+import { classificationKey } from "@/lib/scoring/ai-classify";
 import { SCORE_VERSION, scoreJob, type ScoreResult } from "@/lib/scoring/score";
 
 const BATCH = 1000;
@@ -31,6 +32,7 @@ async function main() {
     sponsorability: {} as Record<string, number>,
     seniority: {} as Record<string, number>,
     withOccupation: 0,
+    field: {} as Record<string, number>,
     withSalary: 0,
     graduateSchemes: 0,
     scoreVersion: SCORE_VERSION,
@@ -38,6 +40,11 @@ async function main() {
   };
 
   try {
+    // AI classifications, one per distinct title; the scorer falls back to rules without one.
+    const classified = new Map(
+      (await db.select().from(jobClassifications)).map((c) => [c.key, { socCode: c.socCode, field: c.field }]),
+    );
+    let fromAi = 0;
     let lastId = 0;
     for (;;) {
       const due = args.all
@@ -68,9 +75,14 @@ async function main() {
       if (rows.length === 0) break;
       lastId = rows.at(-1)!.id;
 
-      const results: (ScoreResult & { id: number })[] = rows.map((r) => ({
+      const results: (ScoreResult & { id: number })[] = rows.map((r) => {
+        const ai = classified.get(classificationKey(r.title, r.sector));
+        if (ai) fromAi++;
+        return {
         id: r.id,
         ...scoreJob({
+          aiSocCode: ai?.socCode ?? null,
+          aiField: ai?.field ?? null,
           title: r.title,
           description: r.description,
           salaryText: r.salaryText,
@@ -83,12 +95,14 @@ async function main() {
           licensedSponsor: r.sponsorStatus === "active" && r.sponsorSkilledWorker === true,
           sponsorName: r.sponsorName,
         }),
-      }));
+        };
+      });
 
       for (const r of results) {
         stats.scored++;
         countBy(stats.sponsorability, r.sponsorability);
         countBy(stats.seniority, r.seniority);
+        countBy(stats.field, r.field ?? "unknown");
         if (r.socCode) stats.withOccupation++;
         if (r.salaryAnnualMin !== null) stats.withSalary++;
         if (r.isGradScheme) stats.graduateSchemes++;
@@ -102,6 +116,7 @@ async function main() {
       await tx`
         update jobs j set
           soc_code = v.soc_code,
+          field = v.field,
           seniority = v.seniority::seniority,
           is_grad_scheme = v.is_grad_scheme,
           sponsorability = v.sponsorability::sponsorability,
@@ -113,17 +128,19 @@ async function main() {
         from unnest(
           ${tx.array(results.map((r) => r.id))}::bigint[],
           ${tx.array(results.map((r) => r.socCode))}::text[],
+          ${tx.array(results.map((r) => r.field))}::text[],
           ${tx.array(results.map((r) => r.seniority))}::text[],
           ${tx.array(results.map((r) => String(r.isGradScheme)))}::boolean[],
           ${tx.array(results.map((r) => r.sponsorability))}::text[],
           ${tx.array(results.map((r) => JSON.stringify(r.reasons)))}::text[],
           ${tx.array(results.map((r) => r.salaryAnnualMin))}::numeric[],
           ${tx.array(results.map((r) => r.salaryAnnualMax))}::numeric[]
-        ) as v(id, soc_code, seniority, is_grad_scheme, sponsorability, reasons, salary_annual_min, salary_annual_max)
+        ) as v(id, soc_code, field, seniority, is_grad_scheme, sponsorability, reasons, salary_annual_min, salary_annual_max)
         where j.id = v.id
       `;
     }
 
+    Object.assign(stats, { classifiedByAi: fromAi });
     console.log(JSON.stringify(stats, null, 2));
     if (process.env.GITHUB_STEP_SUMMARY) {
       await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Job scoring\n\n\`\`\`json\n${JSON.stringify(stats, null, 2)}\n\`\`\`\n`);
