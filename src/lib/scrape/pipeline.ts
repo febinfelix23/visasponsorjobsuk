@@ -51,25 +51,50 @@ const hoursFromNow = (hours: number) => sql`now() + make_interval(hours => ${hou
  * Crawls one source and writes its UK jobs. `matchSponsor` resolves an advertised
  * employer to a sponsor ID on shared boards (NHS Jobs).
  */
-export async function crawlSource(
-  db: Db,
-  target: CrawlTarget,
-  options: {
-    dryRun: boolean;
-    matchSponsor: (employer: string) => number | null;
-    /** AI check for boards the text rules can't settle; null when no API key is configured. */
-    reviewer?: BoardReviewer | null;
-    /** Called once if the AI check stops working mid-run (key rejected, credit exhausted). */
-    onReviewUnavailable?: (reason: string) => void;
-  },
-): Promise<CrawlResult> {
+/**
+ * One listing can name the same job twice (Workday pages shift while being paged through),
+ * and an upsert can't touch a row twice in one statement. Keeps one copy per job: the
+ * first with a description, else the first seen.
+ */
+export function uniqueJobs(raw: RawJob[]): RawJob[] {
+  const byId = new Map<string, RawJob>();
+  for (const job of raw) {
+    const kept = byId.get(job.externalId);
+    if (!kept || (!kept.description && job.description)) byId.set(job.externalId, job);
+  }
+  return [...byId.values()];
+}
+
+type CrawlOptions = {
+  dryRun: boolean;
+  matchSponsor: (employer: string) => number | null;
+  /** AI check for boards the text rules can't settle; null when no API key is configured. */
+  reviewer?: BoardReviewer | null;
+  /** Called once if the AI check stops working mid-run (key rejected, credit exhausted). */
+  onReviewUnavailable?: (reason: string) => void;
+};
+
+/** Crawls one source. Any failure is recorded against that source and never stops the run. */
+export async function crawlSource(db: Db, target: CrawlTarget, options: CrawlOptions): Promise<CrawlResult> {
+  try {
+    return await crawlOne(db, target, options);
+  } catch (error) {
+    // A failed query's own message is the whole SQL statement; the database's reason is in `cause`.
+    const reason = error instanceof Error && error.cause instanceof Error ? error.cause : error;
+    const message = reason instanceof Error ? reason.message : String(reason);
+    if (!options.dryRun) await recordFailure(db, target, message).catch(() => {});
+    return { outcome: "error", error: message };
+  }
+}
+
+async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Promise<CrawlResult> {
   const adapter = ADAPTERS[target.ats];
   if (!adapter) return { outcome: "error", error: `No adapter for ${target.ats}` };
 
   let raw: RawJob[];
   try {
     const known = await db.select({ id: jobs.externalId }).from(jobs).where(eq(jobs.sourceId, target.id));
-    raw = await adapter(target, { knownIds: new Set(known.map((k) => k.id)) });
+    raw = uniqueJobs(await adapter(target, { knownIds: new Set(known.map((k) => k.id)) }));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (!options.dryRun) await recordFailure(db, target, message);

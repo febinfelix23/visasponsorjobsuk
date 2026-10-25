@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { BADGE, formatClosing, formatContract, formatSalary, SECTOR_LABEL } from "@/components/site/format";
 import { SponsorshipCheck } from "@/components/site/sponsorship-check";
 import { Stamp } from "@/components/site/stamp";
+import { OutboundLink } from "@/components/site/outbound-link";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
 import { RULES_UPDATED_AT } from "@/lib/scoring/occupations";
 import { getJob, recentJobSlugs } from "@/lib/site/queries";
@@ -90,14 +91,15 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
       </section>
 
       <div className="mt-8">
-        <a
-          href={`/out/${job.id}?utm_source=site&utm_medium=job_page`}
-          rel="nofollow noopener"
+        <OutboundLink
+          jobId={job.id}
+          medium="job_page"
+          aria-describedby="apply-note"
           className="flex min-h-12 w-full items-center justify-center rounded-md bg-ink px-6 py-3 text-center font-semibold text-white hover:bg-ink/90 sm:inline-flex sm:w-auto"
         >
           Apply for this job
-        </a>
-        <p className="mt-2 text-sm text-ink-soft">Opens {source}.</p>
+        </OutboundLink>
+        <p id="apply-note" className="mt-2 text-sm text-ink-soft">Opens {source} in a new tab.</p>
       </div>
 
       {job.snippet ? (
@@ -105,9 +107,10 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
           <h2 id="about" className="font-semi-expanded text-xl font-bold">About the role</h2>
           <p className="mt-3 max-w-[38rem] leading-relaxed text-ink-soft">{job.snippet}</p>
           <p className="mt-3 text-[0.94rem]">
-            <a className="underline underline-offset-2" href={`/out/${job.id}?utm_source=site&utm_medium=read_more`} rel="nofollow noopener">
+            <OutboundLink jobId={job.id} medium="read_more" className="underline underline-offset-2">
               Read the full ad on {source}
-            </a>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </OutboundLink>
           </p>
         </section>
       ) : null}

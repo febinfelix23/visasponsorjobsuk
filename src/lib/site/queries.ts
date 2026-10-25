@@ -1,7 +1,7 @@
 import { cacheLife } from "next/cache";
-import { and, desc, eq, ilike, inArray, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, gte, ilike, inArray, isNotNull, isNull, lte, ne, notInArray, or, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/lib/db";
-import { jobs, jobSources, sponsors } from "@/lib/db/schema";
+import { clicks, jobs, jobSources, sponsors } from "@/lib/db/schema";
 import type { Reason, Sponsorability } from "@/lib/scoring/score";
 import { slugify } from "@/lib/scrape/text";
 
@@ -279,4 +279,56 @@ export async function siteStats(): Promise<{ jobs: number; sponsors: number; upd
     .from(jobs)
     .where(eq(jobs.status, "live"));
   return row;
+}
+
+/**
+ * How graduate-friendly a role looks: graduate, entry and junior roles first; then roles
+ * with no stated level that pay under £70k (or don't say), then the rest.
+ */
+const graduateTier = sql`case when ${jobs.seniority} in ('graduate','entry','junior') then 0 when ${jobs.salaryAnnualMin} is null or ${jobs.salaryAnnualMin} < 70000 then 1 else 2 end`;
+
+/**
+ * The posting helper's candidates: jobs added in the last `days` that pass the check,
+ * aren't manager-level or senior and aren't about to close, best first within each field
+ * (up to 40 each).
+ */
+export async function postCandidates(days: number): Promise<JobListItem[]> {
+  "use cache";
+  cacheLife("minutes");
+  const db = getDb();
+  const ranked = db
+    .select({
+      ...listColumns,
+      rank: sql<number>`row_number() over (partition by ${jobs.field} order by ${graduateTier}, ${badgeRank}, ${jobs.isGradScheme} desc, (${jobs.salaryAnnualMin} is not null) desc, ${jobs.firstSeenAt} desc)`.as("rank"),
+    })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.status, "live"),
+        inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]),
+        notInArray(jobs.seniority, ["mid", "senior"]),
+        isNotNull(jobs.field),
+        ne(jobs.field, "other"),
+        gte(jobs.firstSeenAt, sql`now() - make_interval(days => ${days})`),
+        or(isNull(jobs.closingDate), gte(jobs.closingDate, sql`current_date + 2`)),
+      ),
+    )
+    .as("ranked");
+  // Select the job columns back out of the subquery, leaving the rank behind.
+  const columns = Object.fromEntries(Object.keys(listColumns).map((k) => [k, ranked[k as keyof typeof listColumns]])) as {
+    [K in keyof typeof listColumns]: (typeof ranked)[K];
+  };
+  const rows = await db.select(columns).from(ranked).where(lte(ranked.rank, 40)).orderBy(ranked.rank);
+  return rows.map(toItem);
+}
+
+/** Apply clicks per channel (utm_source) over the last `days`. */
+export async function clicksByChannel(days: number): Promise<{ source: string; clicks: number }[]> {
+  const rows = await getDb()
+    .select({ source: clicks.utmSource, clicks: sql<number>`count(*)::int` })
+    .from(clicks)
+    .where(gte(clicks.createdAt, sql`now() - make_interval(days => ${days})`))
+    .groupBy(clicks.utmSource)
+    .orderBy(desc(sql`count(*)`));
+  return rows.map((r) => ({ source: r.source ?? "direct", clicks: r.clicks }));
 }

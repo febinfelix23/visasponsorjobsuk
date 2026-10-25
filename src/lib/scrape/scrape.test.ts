@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { elementById, parseAdvert, parseSearchXml, sponsorshipSection } from "./adapters/nhs-jobs";
 import { approximatePostedOn, ukFacetFilter } from "./adapters/workday";
-import { jobSlug } from "./pipeline";
+import { jobSlug, uniqueJobs } from "./pipeline";
 import { htmlToText, snippetOf } from "./text";
 import { emptyJob } from "./types";
 import { checkSponsorInJobs, mentionsSponsor, sponsorPhrases } from "./verify";
@@ -140,5 +140,25 @@ describe("NHS Jobs", () => {
     const advert = parseAdvert(html);
     assert.equal(advert.town, "Leeds");
     assert.match(advert.description, /Certificate of Sponsorship\nApplications from job seekers/);
+  });
+});
+
+describe("uniqueJobs", () => {
+  const job = (externalId: string, title: string, description?: string) => emptyJob({ externalId, title, applyUrl: "x", description });
+
+  it("keeps one copy of a job a listing names twice", () => {
+    // Accenture's Workday listing, 25 Oct 2026: the same posting on two pages broke the upsert.
+    const out = uniqueJobs([job("R1", "Analyst"), job("R2", "Engineer"), job("R1", "Analyst")]);
+    assert.deepEqual(out.map((j) => j.externalId), ["R1", "R2"]);
+  });
+
+  it("prefers the copy with a description", () => {
+    const out = uniqueJobs([job("R1", "Analyst"), job("R1", "Analyst", "Full advert text")]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].description, "Full advert text");
+  });
+
+  it("leaves distinct jobs alone", () => {
+    assert.equal(uniqueJobs([job("A", "x"), job("B", "x"), job("C", "x")]).length, 3);
   });
 });
