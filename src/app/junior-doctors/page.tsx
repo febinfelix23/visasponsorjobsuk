@@ -5,6 +5,7 @@ import { doctorJobs } from "@/lib/site/queries";
 export const metadata: Metadata = {
   title: "Junior doctor jobs with visa sponsorship",
   description: "Doctors' posts at NHS employers that can sponsor visas, and where national training recruitment happens for UK medical graduates.",
+  alternates: { canonical: "/junior-doctors" },
 };
 
 const OFFICIAL = [

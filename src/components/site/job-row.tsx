@@ -3,7 +3,7 @@ import type { JobListItem } from "@/lib/site/queries";
 import { formatAdded, formatClosing, formatSalary } from "./format";
 import { Stamp } from "./stamp";
 
-export function JobRow({ job }: { job: JobListItem }) {
+export function JobRow({ job, query }: { job: JobListItem; query?: string }) {
   const salary = formatSalary(job.salaryAnnualMin, job.salaryAnnualMax);
   const closing = formatClosing(job.closingDate);
   return (
@@ -11,7 +11,7 @@ export function JobRow({ job }: { job: JobListItem }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-[1.05rem] leading-snug font-semibold text-ink">
-            <Link href={`/jobs/${job.slug}`} className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-teal group-hover:underline-offset-4">
+            <Link href={`/jobs/${job.slug}${query ? `?${query}` : ""}`} className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-teal group-hover:underline-offset-4">
               {job.title}
             </Link>
           </h3>
@@ -31,6 +31,7 @@ export function JobRow({ job }: { job: JobListItem }) {
   );
 }
 
-export function JobList({ jobs }: { jobs: JobListItem[] }) {
-  return <ul className="divide-y divide-line border-y border-line">{jobs.map((j) => <JobRow key={j.slug} job={j} />)}</ul>;
+/** `query`: UTM tags to carry on to the job page (see lib/site/utm). */
+export function JobList({ jobs, query }: { jobs: JobListItem[]; query?: string }) {
+  return <ul className="divide-y divide-line border-y border-line">{jobs.map((j) => <JobRow key={j.slug} job={j} query={query} />)}</ul>;
 }

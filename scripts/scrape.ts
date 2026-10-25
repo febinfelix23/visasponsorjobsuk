@@ -14,6 +14,7 @@ import { parseArgs } from "node:util";
 import { and, asc, eq, inArray, lte, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { startRun } from "@/lib/db/runs";
+import { saveReport } from "@/lib/notify/run-report";
 import { crawlRuns, jobSources, sponsors } from "@/lib/db/schema";
 import { createBoardReviewer } from "@/lib/discovery/ai-review";
 import { getBlockedHosts } from "@/lib/http";
@@ -165,6 +166,7 @@ async function main() {
     const summary = { ...stats, aiUsage: aiUsage ? { ...aiUsage, estimatedCostUsd: Number(aiCostUsd.toFixed(4)) } : null };
     console.log(JSON.stringify(summary, null, 2));
     await finish("succeeded", summary);
+    await saveReport("scrape", summary);
     if (process.env.GITHUB_STEP_SUMMARY) {
       await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Scrape\n\n\`\`\`json\n${JSON.stringify(summary, null, 2)}\n\`\`\`\n`);
     }

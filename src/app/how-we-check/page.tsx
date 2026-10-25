@@ -5,6 +5,7 @@ import { RULES_SOURCE, RULES_UPDATED_AT } from "@/lib/scoring/occupations";
 export const metadata: Metadata = {
   title: "How we check jobs",
   description: "Where our data comes from, how each job is checked against the Skilled Worker rules, and what we can't tell you.",
+  alternates: { canonical: "/how-we-check" },
 };
 
 const rulesDate = new Date(RULES_UPDATED_AT).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/London" });

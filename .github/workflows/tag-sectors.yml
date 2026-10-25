@@ -43,3 +43,11 @@ jobs:
         env:
           TAG_ARGS: ${{ inputs.args }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # Telegram alert when this run fails. Never fails the job itself.
+      - name: Report failure
+        if: failure()
+        continue-on-error: true
+        run: npm run notify:run -- --workflow "Sector tagging" --status failure
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

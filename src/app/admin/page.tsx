@@ -19,6 +19,7 @@ import {
   telegramPost,
   whatsappDigest,
 } from "@/lib/admin/posts";
+import { SITE_URL } from "@/lib/site/config";
 import { clicksByChannel, postCandidates } from "@/lib/site/queries";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +69,7 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
   if (!(await isAdmin())) notFound();
   const days = parse(await searchParams);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = SITE_URL;
   const now = new Date();
   const daily = { siteUrl, date: now, campaign: `daily-${isoDay(now)}` };
   const weekly = { siteUrl, date: now, campaign: `weekly-${isoDay(now)}` };

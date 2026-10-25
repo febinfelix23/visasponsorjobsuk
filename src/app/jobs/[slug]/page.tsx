@@ -9,6 +9,7 @@ import { OutboundLink } from "@/components/site/outbound-link";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
 import { RULES_UPDATED_AT } from "@/lib/scoring/occupations";
 import { getJob, recentJobSlugs } from "@/lib/site/queries";
+import { jobPostingJsonLd, jsonLdScript } from "@/lib/site/structured-data";
 
 export async function generateStaticParams() {
   const slugs = await recentJobSlugs(50);
@@ -21,9 +22,16 @@ export async function generateMetadata(props: PageProps<"/jobs/[slug]">): Promis
   const job = await getJob(slug);
   // The page streams before the lookup finishes, so a 404 status can't be sent; keep it out of search instead.
   if (!job) return { title: "Job not found", robots: { index: false } };
+  const title = `${job.title} at ${job.employerName}`;
+  const description = `${BADGE[job.sponsorability].label}: ${job.title} at ${job.employerName}${job.locationText ? `, ${job.locationText}` : ""}. See how this job measures up to the Skilled Worker visa rules.`;
   return {
-    title: `${job.title} at ${job.employerName}`,
-    description: `${BADGE[job.sponsorability].label}: ${job.title} at ${job.employerName}${job.locationText ? `, ${job.locationText}` : ""}. See how this job measures up to the Skilled Worker visa rules.`,
+    title,
+    description,
+    // Post links carry UTM tags; search engines should index the plain address.
+    alternates: { canonical: `/jobs/${job.slug}` },
+    openGraph: { type: "article", title, description, url: `/jobs/${job.slug}` },
+    // Not-sponsorable jobs stay reachable from links but out of search results.
+    ...(job.sponsorability === "ineligible" ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -40,6 +48,9 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
 
   return (
     <article>
+      {job.sponsorability !== "ineligible" ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jobPostingJsonLd(job)) }} />
+      ) : null}
       <h1 className="font-semi-expanded text-[1.65rem] leading-tight font-extrabold tracking-tight text-balance sm:text-[2rem]">{job.title}</h1>
       <p className="mt-2 text-[1.05rem]">
         {job.sponsor ? (

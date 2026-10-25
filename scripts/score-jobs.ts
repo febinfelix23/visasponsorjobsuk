@@ -14,6 +14,7 @@ import { parseArgs } from "node:util";
 import { and, asc, eq, gt, or, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { jobClassifications, jobs, jobSources, sponsors } from "@/lib/db/schema";
+import { saveReport } from "@/lib/notify/run-report";
 import { classificationKey } from "@/lib/scoring/ai-classify";
 import { SCORE_VERSION, scoreJob, type ScoreResult } from "@/lib/scoring/score";
 
@@ -142,6 +143,7 @@ async function main() {
 
     Object.assign(stats, { classifiedByAi: fromAi });
     console.log(JSON.stringify(stats, null, 2));
+    if (!args["dry-run"]) await saveReport("score", stats);
     if (process.env.GITHUB_STEP_SUMMARY) {
       await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Job scoring\n\n\`\`\`json\n${JSON.stringify(stats, null, 2)}\n\`\`\`\n`);
     }

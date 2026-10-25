@@ -13,6 +13,7 @@ import { parseArgs } from "node:util";
 import { eq, inArray } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { jobClassifications, jobs } from "@/lib/db/schema";
+import { saveReport } from "@/lib/notify/run-report";
 import {
   BATCH_SIZE,
   CLASSIFY_MODEL,
@@ -101,6 +102,7 @@ async function main() {
 
     const summary = { ...stats, model: CLASSIFY_MODEL, usage: classifier.usage, estimatedCostUsd: Number(classifier.costUsd().toFixed(4)) };
     console.log(JSON.stringify(summary, null, 2));
+    await saveReport("classify", summary);
     if (process.env.GITHUB_STEP_SUMMARY) {
       await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Job classification\n\n\`\`\`json\n${JSON.stringify(summary, null, 2)}\n\`\`\`\n`);
     }

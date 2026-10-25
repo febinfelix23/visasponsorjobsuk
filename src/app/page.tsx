@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AutoSubmitForm } from "@/components/site/auto-submit";
@@ -6,6 +7,11 @@ import { JobList } from "@/components/site/job-row";
 import { Stamp } from "@/components/site/stamp";
 import { fieldCounts, PAGE_SIZE, searchJobs, siteStats, type Filters } from "@/lib/site/queries";
 import { RULES_UPDATED_AT } from "@/lib/scoring/occupations";
+import { jsonLdScript, siteJsonLd } from "@/lib/site/structured-data";
+import { utmQuery } from "@/lib/site/utm";
+
+// Filtered, paged and tagged addresses all point search engines at the home page.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -25,8 +31,8 @@ function parseFilters(sp: SearchParams): Filters {
   };
 }
 
-function hrefFor(f: Filters, page: number) {
-  const p = new URLSearchParams();
+function hrefFor(f: Filters, page: number, utm = "") {
+  const p = new URLSearchParams(utm);
   if (f.q) p.set("q", f.q);
   if (f.field) p.set("field", f.field);
   if (f.show === "all") p.set("show", "all");
@@ -41,6 +47,7 @@ async function Intro() {
   const stats = await siteStats();
   return (
     <section aria-labelledby="intro" className="mb-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd()) }} />
       <h1 id="intro" className="font-expanded text-[1.9rem] leading-[1.08] font-extrabold tracking-tight text-balance sm:text-[2.4rem]">
         Graduate jobs at UK employers licensed to sponsor visas
       </h1>
@@ -54,7 +61,11 @@ async function Intro() {
 }
 
 async function SearchAndResults({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const filters = parseFilters(await searchParams);
+  const sp = await searchParams;
+  const filters = parseFilters(sp);
+  // A visitor from a tagged post keeps the tag on every link here, so their apply click is credited to it.
+  const utm = utmQuery({ get: (k) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]) ?? null });
+  const utmParams = [...new URLSearchParams(utm)];
   const [{ items, total }, counts] = await Promise.all([searchJobs(filters), fieldCounts()]);
   // Fields with nothing to show stay out of the row, unless it's the one selected.
   const chips = FIELD_KEYS.filter((k) => k !== "other" && ((counts[k] ?? 0) > 0 || filters.field === k));
@@ -64,6 +75,9 @@ async function SearchAndResults({ searchParams }: { searchParams: Promise<Search
   return (
     <>
       <AutoSubmitForm action="/" method="get" role="search" aria-label="Search jobs" className="space-y-4">
+        {utmParams.map(([k, v]) => (
+          <input key={k} type="hidden" name={k} value={v} />
+        ))}
         <div className="flex gap-2">
           <label htmlFor="q" className="sr-only">Job title, employer or town</label>
           <input
@@ -128,14 +142,14 @@ async function SearchAndResults({ searchParams }: { searchParams: Promise<Search
 
         {items.length > 0 ? (
           <div className="mt-3">
-            <JobList jobs={items} />
+            <JobList jobs={items} query={utm} />
           </div>
         ) : (
           <div className="mt-4 rounded-lg border border-dashed border-line bg-white p-6">
             <p className="font-semibold">No jobs match these filters.</p>
             <p className="mt-1 text-ink-soft">
               Try another field, or{" "}
-              <Link className="underline underline-offset-2" href={hrefFor({ ...filters, show: "all", page: 1 }, 1)}>
+              <Link className="underline underline-offset-2" href={hrefFor({ ...filters, show: "all", page: 1 }, 1, utm)}>
                 include jobs to check with the employer
               </Link>
               .
@@ -146,12 +160,12 @@ async function SearchAndResults({ searchParams }: { searchParams: Promise<Search
         {pages > 1 ? (
           <nav aria-label="Pages" className="mt-6 flex items-center justify-between text-[0.94rem]">
             {filters.page > 1 ? (
-              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page - 1)}>
+              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page - 1, utm)}>
                 Previous page
               </Link>
             ) : <span />}
             {filters.page < pages ? (
-              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page + 1)}>
+              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page + 1, utm)}>
                 Next page
               </Link>
             ) : null}

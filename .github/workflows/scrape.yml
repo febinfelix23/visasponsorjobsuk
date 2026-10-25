@@ -22,6 +22,9 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 150
+    env:
+      # Each step saves its summary here for the run report at the end.
+      RUN_REPORT_DIR: ${{ github.workspace }}/.run-report
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -58,3 +61,13 @@ jobs:
       - run: npm run score:jobs
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # Telegram run report after every run, good or bad: what it did and what needs attention.
+      - name: Send run report
+        if: always()
+        continue-on-error: true
+        run: npm run notify:run -- --workflow Scrape --status "$JOB_STATUS" --health
+        env:
+          JOB_STATUS: ${{ job.status }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

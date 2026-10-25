@@ -4,6 +4,7 @@ import { ImageResponse } from "next/og";
 import { BADGE, formatClosing, formatSalary, shortLocation } from "@/components/site/format";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
 import type { Sponsorability } from "@/lib/scoring/score";
+import { SITE_URL } from "@/lib/site/config";
 import type { JobListItem } from "@/lib/site/queries";
 
 /**
@@ -40,7 +41,7 @@ const STAMP: Record<Sponsorability, { border: string; bg: string; fg: string }> 
 const font = (weight: number) => readFile(join(process.cwd(), `assets/fonts/archivo-latin-${weight}-normal.ttf`));
 const fonts = Promise.all([500, 700, 800].map(async (weight) => ({ name: "Archivo", data: await font(weight), weight: weight as 500 | 700 | 800, style: "normal" as const })));
 
-export const siteHost = () => new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").host.replace(/^www\./, "");
+export const siteHost = () => new URL(SITE_URL).host.replace(/^www\./, "");
 
 function guillochePaths(width: number, height: number): string[] {
   const paths: string[] = [];
@@ -57,10 +58,10 @@ function guillochePaths(width: number, height: number): string[] {
   return paths;
 }
 
-function Guilloche({ height, opacity }: { height: number; opacity: number }) {
+function Guilloche({ height, opacity, width = CARD_SIZE.width }: { height: number; opacity: number; width?: number }) {
   return (
-    <svg width={CARD_SIZE.width} height={height} viewBox={`0 0 ${CARD_SIZE.width} ${height}`} style={{ opacity }}>
-      {guillochePaths(CARD_SIZE.width, height).map((d, i) => (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ opacity }}>
+      {guillochePaths(width, height).map((d, i) => (
         <path key={i} d={d} fill="none" stroke={C.tealWash} strokeWidth={1.4} />
       ))}
     </svg>
@@ -166,5 +167,54 @@ export async function coverCard({ count, date }: { count: number; date: string }
       </div>
     ),
     { ...CARD_SIZE, fonts: await fonts, headers: PRIVATE },
+  );
+}
+
+export const SHARE_SIZE = { width: 1200, height: 630 };
+
+/**
+ * Link previews (Open Graph, 1200×630) for the public site: a job with its stamp, or the
+ * site itself. Public and cacheable, unlike the admin carousel.
+ */
+export async function shareCard({ title, subtitle, status }: { title: string; subtitle?: string; status?: Sponsorability }) {
+  const stamp = status ? STAMP[status] : null;
+  return new ImageResponse(
+    (
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", background: C.paper, color: C.ink, fontFamily: "Archivo" }}>
+        <div style={{ display: "flex", flexDirection: "column", background: C.ink, color: "#ffffff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "36px 64px 12px" }}>
+            <div style={{ fontSize: 34, fontWeight: 800 }}>Visa Sponsor Jobs UK</div>
+            <div style={{ fontSize: 26, fontWeight: 500, color: "rgba(255,255,255,0.8)" }}>{siteHost()}</div>
+          </div>
+          <Guilloche height={44} opacity={0.45} width={SHARE_SIZE.width} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center", padding: "0 64px" }}>
+          {stamp && status ? (
+            <div style={{ display: "flex" }}>
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 28,
+                  fontWeight: 700,
+                  padding: "10px 20px",
+                  border: `4px solid ${stamp.border}`,
+                  borderRadius: 9,
+                  background: stamp.bg,
+                  color: stamp.fg,
+                  transform: "rotate(-1.5deg)",
+                }}
+              >
+                {BADGE[status].label}
+              </div>
+            </div>
+          ) : null}
+          <div style={{ display: "flex", fontSize: title.length > 60 ? 52 : 64, fontWeight: 800, lineHeight: 1.06, letterSpacing: -1, marginTop: stamp ? 32 : 0, lineClamp: 3 }}>
+            {title}
+          </div>
+          {subtitle ? <div style={{ display: "flex", fontSize: 34, fontWeight: 500, color: C.inkSoft, marginTop: 20, lineClamp: 2 }}>{subtitle}</div> : null}
+        </div>
+      </div>
+    ),
+    { ...SHARE_SIZE, fonts: await fonts },
   );
 }

@@ -332,3 +332,30 @@ export async function clicksByChannel(days: number): Promise<{ source: string; c
     .orderBy(desc(sql`count(*)`));
   return rows.map((r) => ({ source: r.source ?? "direct", clicks: r.clicks }));
 }
+
+/** Everything the sitemap lists: live jobs that aren't ruled out, and sponsors with live jobs. */
+export async function sitemapEntries(): Promise<{
+  jobs: { slug: string; updatedAt: string }[];
+  sponsors: { id: number; name: string; updatedAt: string }[];
+}> {
+  "use cache";
+  cacheLife("hours");
+  const db = getDb();
+  const [jobRows, sponsorRows] = await Promise.all([
+    db
+      .select({ slug: jobs.slug, updatedAt: jobs.updatedAt })
+      .from(jobs)
+      .where(and(eq(jobs.status, "live"), ne(jobs.sponsorability, "ineligible")))
+      .orderBy(desc(jobs.firstSeenAt))
+      .limit(45_000),
+    db
+      .select({ id: sponsors.id, name: sponsors.name, updatedAt: sql<string>`max(${jobs.updatedAt})::text` })
+      .from(sponsors)
+      .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), eq(jobs.status, "live")))
+      .groupBy(sponsors.id, sponsors.name),
+  ]);
+  return {
+    jobs: jobRows.map((r) => ({ slug: r.slug, updatedAt: r.updatedAt.toISOString() })),
+    sponsors: sponsorRows.map((r) => ({ id: r.id, name: r.name, updatedAt: new Date(r.updatedAt).toISOString() })),
+  };
+}

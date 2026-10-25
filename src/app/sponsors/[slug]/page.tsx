@@ -18,6 +18,7 @@ export async function generateMetadata(props: PageProps<"/sponsors/[slug]">): Pr
   return {
     title: `${sponsor.name}: licensed visa sponsor`,
     description: `${sponsor.name} (${sponsor.town}) on the UK register of licensed sponsors, with ${sponsor.jobs.length} live jobs checked against the Skilled Worker rules.`,
+    alternates: { canonical: `/sponsors/${sponsorSlug(sponsor)}` },
   };
 }
 
