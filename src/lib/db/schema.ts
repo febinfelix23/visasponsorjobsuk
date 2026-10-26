@@ -8,6 +8,7 @@ import {
   jsonb,
   numeric,
   pgEnum,
+  primaryKey,
   real,
   smallint,
   snakeCase,
@@ -371,4 +372,23 @@ export const userExperience = snakeCase.table.withRLS(
     createdAt: createdAt(),
   },
   (t) => [index("user_experience_user_id_idx").on(t.userId)],
+);
+
+export const applicationStatus = pgEnum("application_status", ["saved", "applied", "interview", "offer", "rejected"]);
+
+/** Jobs a user has saved, with where their application stands. Kept after a job closes, so the history stays. */
+export const savedJobs = snakeCase.table.withRLS(
+  "saved_jobs",
+  {
+    userId: uuid()
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    jobId: bigint({ mode: "number" })
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+    status: applicationStatus().notNull().default("saved"),
+    savedAt: createdAt(),
+    statusChangedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.jobId] }), index("saved_jobs_user_id_idx").on(t.userId, t.status)],
 );

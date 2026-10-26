@@ -60,8 +60,12 @@ export default function PrivacyPage() {
           your visa expiry is used only to flag jobs that close after it, never to give advice.
         </li>
         <li>
+          <strong>Saved jobs.</strong> The jobs you save and the application status you give each one (applied, interview and so on), so you
+          can track your search. Only you can see them.
+        </li>
+        <li>
           <strong>Keeping and deleting it.</strong> We keep your account until you delete it. Deleting it, from your account page, removes
-          your profile and settings straight away.
+          your profile, saved jobs and settings straight away.
         </li>
       </ul>
 

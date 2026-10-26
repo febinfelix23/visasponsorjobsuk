@@ -10,11 +10,12 @@ import { SUBJECT_GROUPS, subjectName } from "@/lib/profile/subjects";
 import { DEGREE_LEVELS, EXPERIENCE_KINDS, MAX_EDUCATION, MAX_EXPERIENCE, VISA_TYPES } from "@/lib/profile/validate";
 import { cn } from "@/lib/utils";
 import { control, EntryCard, FieldMessage, FormDialog, Label } from "./form-dialog";
+import { FormSelect } from "./form-select";
 
 function SectionHeader({ id, title, why, action }: { id: string; title: string; why: string; action?: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
-      <div className="min-w-0 max-w-[36rem]">
+      <div className="min-w-0 max-w-xl">
         <h2 id={id} className="font-semi-expanded text-xl font-bold">{title}</h2>
         <p className="mt-1 text-[0.94rem] text-ink-soft">{why}</p>
       </div>
@@ -44,20 +45,19 @@ function EmptyState({ children, onAdd, label }: { children: React.ReactNode; onA
 
 const levelLabel = (v: string) => DEGREE_LEVELS.find((d) => d.value === v)?.label ?? "Degree";
 
+const SUBJECT_OPTIONS = SUBJECT_GROUPS.map((g) => ({ label: g.group, options: g.subjects.map((s) => ({ label: s.name, value: s.code })) }));
+
 function SubjectSelect({ id, name, defaultValue, required, invalid }: { id: string; name: string; defaultValue?: string; required?: boolean; invalid?: boolean }) {
   return (
-    <select id={id} name={name} defaultValue={defaultValue ?? ""} aria-invalid={invalid || undefined} aria-describedby={invalid ? `${id}-error` : undefined} className={control}>
-      <option value="">{required ? "Choose a subject" : "No second subject"}</option>
-      {SUBJECT_GROUPS.map((g) => (
-        <optgroup key={g.group} label={g.group}>
-          {g.subjects.map((s) => (
-            <option key={s.code} value={s.code}>
-              {s.name}
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </select>
+    <FormSelect
+      id={id}
+      name={name}
+      groups={SUBJECT_OPTIONS}
+      defaultValue={defaultValue}
+      placeholder={required ? "Choose a subject" : "No second subject"}
+      clearable={!required}
+      invalid={invalid}
+    />
   );
 }
 
@@ -111,26 +111,20 @@ export function EducationSection({ items, currentYear }: { items: Education[]; c
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <Label htmlFor="level">Level</Label>
-                <select id="level" name="level" defaultValue={entry?.level ?? ""} aria-invalid={!!errors?.level || undefined} className={control}>
-                  <option value="">Choose a level</option>
-                  {DEGREE_LEVELS.map((d) => (
-                    <option key={d.value} value={d.value}>
-                      {d.label}
-                    </option>
-                  ))}
-                </select>
+                <FormSelect id="level" name="level" options={[...DEGREE_LEVELS]} defaultValue={entry?.level} placeholder="Choose a level" invalid={!!errors?.level} />
                 <FieldMessage id="level-error" errors={errors} name="level" />
               </div>
               <div>
                 <Label htmlFor="graduationYear">Year completed, or will be</Label>
-                <select id="graduationYear" name="graduationYear" defaultValue={entry?.graduationYear ?? ""} aria-invalid={!!errors?.graduationYear || undefined} className={cn(control, "tabular")}>
-                  <option value="">Choose a year</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
+                <FormSelect
+                  id="graduationYear"
+                  name="graduationYear"
+                  options={years.map((y) => ({ label: String(y), value: String(y) }))}
+                  defaultValue={entry ? String(entry.graduationYear) : null}
+                  placeholder="Choose a year"
+                  invalid={!!errors?.graduationYear}
+                  className="tabular"
+                />
                 <FieldMessage id="graduationYear-error" errors={errors} name="graduationYear" />
               </div>
             </div>
@@ -224,13 +218,7 @@ export function ExperienceSection({ items }: { items: Experience[] }) {
               </div>
               <div>
                 <Label htmlFor="kind">Type</Label>
-                <select id="kind" name="kind" defaultValue={entry?.kind ?? "job"} className={control}>
-                  {EXPERIENCE_KINDS.map((k) => (
-                    <option key={k.value} value={k.value}>
-                      {k.label}
-                    </option>
-                  ))}
-                </select>
+                <FormSelect id="kind" name="kind" options={[...EXPERIENCE_KINDS]} defaultValue={entry?.kind ?? "job"} placeholder="Choose a type" />
               </div>
               <div>
                 <Label htmlFor="start" optional>
@@ -319,14 +307,7 @@ export function PreferencesSection({ preferences }: { preferences: Preferences |
                 <Label htmlFor="visaType" optional>
                   Current visa
                 </Label>
-                <select id="visaType" name="visaType" defaultValue={preferences?.visaType ?? ""} className={control}>
-                  <option value="">Prefer not to say</option>
-                  {VISA_TYPES.map((v) => (
-                    <option key={v.value} value={v.value}>
-                      {v.label}
-                    </option>
-                  ))}
-                </select>
+                <FormSelect id="visaType" name="visaType" options={[...VISA_TYPES]} defaultValue={preferences?.visaType} placeholder="Prefer not to say" clearable />
               </div>
               <div>
                 <Label htmlFor="visaExpiry" optional>

@@ -50,7 +50,7 @@ export function MainNav() {
             <SheetTitle className="font-expanded text-base font-extrabold">Menu</SheetTitle>
           </SheetHeader>
           <nav aria-label="Main" className="flex flex-col px-2">
-            {[...NAV, { href: "/account", label: "Your account" }, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }].map((item) => (
+            {[...NAV, { href: "/account/jobs", label: "Your jobs" }, { href: "/account", label: "Your account" }, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }].map((item) => (
               // Closing on tap: the panel would otherwise stay open over the new page.
               <SheetClose
                 key={item.href}

@@ -29,6 +29,7 @@ export type Filters = {
 export const PAGE_SIZE = 25;
 
 export type JobListItem = {
+  id: number;
   slug: string;
   title: string;
   employerName: string;
@@ -48,7 +49,8 @@ export type JobListItem = {
   isNew: boolean;
 };
 
-const listColumns = {
+export const listColumns = {
+  id: jobs.id,
   slug: jobs.slug,
   title: jobs.title,
   employerName: jobs.employerName,
@@ -66,12 +68,21 @@ const listColumns = {
   isNew: sql<boolean>`${jobs.firstSeenAt} > now() - interval '3 days'`.as("is_new"),
 };
 
-const toItem = (r: { firstSeenAt: Date } & Omit<JobListItem, "firstSeenAt">): JobListItem => ({
+export const toItem = (r: { firstSeenAt: Date } & Omit<JobListItem, "firstSeenAt">): JobListItem => ({
   ...r,
   firstSeenAt: r.firstSeenAt.toISOString(),
 });
 
 const badgeRank = sql`array_position(array['sponsorship_mentioned','likely_eligible','check_with_employer','unknown','ineligible']::sponsorability[], ${jobs.sponsorability})`;
+
+/** Today in the UK, where closing dates are set; the database clock is UTC. */
+const ukToday = sql`(now() at time zone 'Europe/London')::date`;
+
+/**
+ * A job worth listing: still on the employer's board and not past its closing date. A
+ * board can keep an ad up for a day or two after it closes, so "live" alone isn't enough.
+ */
+const isOpen = and(eq(jobs.status, "live"), or(isNull(jobs.closingDate), gte(jobs.closingDate, ukToday)))!;
 
 const escapeLike = (s: string) => s.replace(/[%_\\]/g, "\\$&");
 
@@ -82,7 +93,7 @@ const ORDER: Record<Sort, SQL[]> = {
 };
 
 function whereFor(f: Filters): SQL | undefined {
-  const parts: (SQL | undefined)[] = [eq(jobs.status, "live")];
+  const parts: (SQL | undefined)[] = [isOpen];
   parts.push(f.show === "passes" ? inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]) : ne(jobs.sponsorability, "ineligible"));
   if (!f.includeSenior) parts.push(ne(jobs.seniority, "senior"));
   if (f.gradSchemes) parts.push(eq(jobs.isGradScheme, true));
@@ -121,13 +132,12 @@ export async function fieldCounts(): Promise<Record<string, number>> {
   const rows = await getDb()
     .select({ field: jobs.field, n: sql<number>`count(*)::int` })
     .from(jobs)
-    .where(and(eq(jobs.status, "live"), inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]), ne(jobs.seniority, "senior")))
+    .where(and(isOpen, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]), ne(jobs.seniority, "senior")))
     .groupBy(jobs.field);
   return Object.fromEntries(rows.map((r) => [r.field ?? "other", r.n]));
 }
 
 export type JobDetail = JobListItem & {
-  id: number;
   snippet: string | null;
   salaryText: string | null;
   employmentType: string | null;
@@ -136,6 +146,8 @@ export type JobDetail = JobListItem & {
   reasons: Reason[];
   postedAt: string | null;
   isRemote: boolean;
+  /** Past its closing date (UK time) but still on the board; the page says so. */
+  closed: boolean;
   ats: string;
   sponsor: { slug: string; name: string; town: string; rating: string | null; status: string } | null;
 };
@@ -162,6 +174,7 @@ export async function getJob(slug: string): Promise<JobDetail | null> {
       postedAt: jobs.postedAt,
       isRemote: jobs.isRemote,
       status: jobs.status,
+      closed: sql<boolean>`coalesce(${jobs.closingDate} < ${ukToday}, false)`,
       ats: jobSources.ats,
       sponsorId: sponsors.id,
       sponsorName: sponsors.name,
@@ -186,6 +199,7 @@ export async function getJob(slug: string): Promise<JobDetail | null> {
     reasons: r.reasons as Reason[],
     postedAt: r.postedAt?.toISOString() ?? null,
     isRemote: r.isRemote,
+    closed: r.closed,
     ats: r.ats,
     sponsor: r.sponsorId
       ? { slug: sponsorSlug({ id: r.sponsorId, name: r.sponsorName! }), name: r.sponsorName!, town: r.sponsorTown!, rating: r.sponsorRating, status: r.sponsorStatus! }
@@ -200,7 +214,7 @@ export async function recentJobSlugs(limit = 50): Promise<string[]> {
   const rows = await getDb()
     .select({ slug: jobs.slug })
     .from(jobs)
-    .where(and(eq(jobs.status, "live"), inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"])))
+    .where(and(isOpen, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"])))
     .orderBy(desc(jobs.firstSeenAt))
     .limit(limit);
   return rows.map((r) => r.slug);
@@ -228,7 +242,7 @@ export async function getSponsor(id: number): Promise<SponsorDetail | null> {
   const rows = await db
     .select(listColumns)
     .from(jobs)
-    .where(and(eq(jobs.sponsorId, id), eq(jobs.status, "live"), ne(jobs.sponsorability, "ineligible")))
+    .where(and(eq(jobs.sponsorId, id), isOpen, ne(jobs.sponsorability, "ineligible")))
     .orderBy(badgeRank, desc(jobs.firstSeenAt))
     .limit(100);
   return {
@@ -251,7 +265,7 @@ export async function topSponsorIds(limit = 30): Promise<{ id: number; name: str
   return getDb()
     .select({ id: sponsors.id, name: sponsors.name })
     .from(sponsors)
-    .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), eq(jobs.status, "live")))
+    .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isOpen))
     .groupBy(sponsors.id, sponsors.name)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
@@ -273,7 +287,7 @@ export async function doctorJobs(): Promise<JobListItem[]> {
     .innerJoin(jobSources, eq(jobSources.id, jobs.sourceId))
     .where(
       and(
-        eq(jobs.status, "live"),
+        isOpen,
         eq(jobSources.ats, "nhs_jobs"),
         eq(jobs.socCode, "2211"),
         sql`${jobs.title} ~* ${JUNIOR_DOCTOR_TITLE}`,
@@ -296,7 +310,7 @@ export async function siteStats(): Promise<{ jobs: number; sponsors: number; upd
       updatedAt: sql<string | null>`max(${jobs.lastSeenAt})::text`,
     })
     .from(jobs)
-    .where(eq(jobs.status, "live"));
+    .where(isOpen);
   return row;
 }
 
@@ -323,7 +337,7 @@ export async function postCandidates(days: number): Promise<JobListItem[]> {
     .from(jobs)
     .where(
       and(
-        eq(jobs.status, "live"),
+        isOpen,
         inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]),
         notInArray(jobs.seniority, ["mid", "senior"]),
         isNotNull(jobs.field),
@@ -364,13 +378,13 @@ export async function sitemapEntries(): Promise<{
     db
       .select({ slug: jobs.slug, updatedAt: jobs.updatedAt })
       .from(jobs)
-      .where(and(eq(jobs.status, "live"), ne(jobs.sponsorability, "ineligible")))
+      .where(and(isOpen, ne(jobs.sponsorability, "ineligible")))
       .orderBy(desc(jobs.firstSeenAt))
       .limit(45_000),
     db
       .select({ id: sponsors.id, name: sponsors.name, updatedAt: sql<string>`max(${jobs.updatedAt})::text` })
       .from(sponsors)
-      .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), eq(jobs.status, "live")))
+      .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isOpen))
       .groupBy(sponsors.id, sponsors.name),
   ]);
   return {

@@ -9,6 +9,7 @@ import { OutboundLink } from "@/components/site/outbound-link";
 import { Page } from "@/components/site/container";
 import { JobList } from "@/components/site/job-row";
 import { Monogram } from "@/components/site/monogram";
+import { SaveButton } from "@/components/site/saved-jobs";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,8 +38,8 @@ export async function generateMetadata(props: PageProps<"/jobs/[slug]">): Promis
     // Post links carry UTM tags; search engines should index the plain address.
     alternates: { canonical: `/jobs/${job.slug}` },
     openGraph: { type: "article", title, description, url: `/jobs/${job.slug}` },
-    // Not-sponsorable jobs stay reachable from links but out of search results.
-    ...(job.sponsorability === "ineligible" ? { robots: { index: false, follow: true } } : {}),
+    // Not-sponsorable and closed jobs stay reachable from links but out of search results.
+    ...(job.sponsorability === "ineligible" || job.closed ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -85,7 +86,7 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
 
   return (
     <>
-      {job.sponsorability !== "ineligible" ? (
+      {job.sponsorability !== "ineligible" && !job.closed ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jobPostingJsonLd(job)) }} />
       ) : null}
       <Breadcrumb>
@@ -133,6 +134,16 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
             </div>
           </header>
 
+          {job.closed ? (
+            <p role="status" className="mt-6 rounded-lg border border-line bg-paper p-4 text-[0.94rem]">
+              <strong>This job has closed.</strong> The closing date was {closing ? closing.replace("Closes ", "") : "earlier"}, so applications
+              have ended.{" "}
+              <Link href={job.field && job.field !== "other" ? `/?field=${job.field}` : "/"} className="font-semibold text-teal underline-offset-4 hover:underline">
+                See open {fieldLabel && job.field !== "other" ? `${fieldLabel} ` : ""}jobs
+              </Link>
+            </p>
+          ) : null}
+
           <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 rounded-lg border border-line bg-white p-5 text-[0.94rem] tabular sm:grid-cols-3">
             <Fact label="Salary">{salary ? `${salary} a year` : "Not shown"}</Fact>
             <Fact label="Closing date">{closing ? closing.replace("Closes ", "") : "Not shown"}</Fact>
@@ -179,15 +190,22 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
               <Fact label="Salary">{salary ? `${salary} a year` : "Not shown"}</Fact>
               <Fact label="Closing date">{closing ? closing.replace("Closes ", "") : "Not shown"}</Fact>
             </dl>
-            <OutboundLink
-              jobId={job.id}
-              medium="job_page"
-              aria-describedby="apply-note"
-              className="mt-5 flex h-12 w-full items-center justify-center rounded-md bg-ink px-6 font-semibold text-white hover:bg-ink/90"
-            >
-              Apply for this job
-            </OutboundLink>
-            <p id="apply-note" className="mt-2 text-center text-sm text-ink-soft">Opens {source} in a new tab.</p>
+            {job.closed ? (
+              <p className="mt-5 rounded-md border border-line bg-paper px-4 py-3 text-center font-semibold text-ink-soft">Applications have closed</p>
+            ) : (
+              <>
+                <OutboundLink
+                  jobId={job.id}
+                  medium="job_page"
+                  aria-describedby="apply-note"
+                  className="mt-5 flex h-12 w-full items-center justify-center rounded-md bg-ink px-6 font-semibold text-white hover:bg-ink/90"
+                >
+                  Apply for this job
+                </OutboundLink>
+                <p id="apply-note" className="mt-2 text-center text-sm text-ink-soft">Opens {source} in a new tab.</p>
+              </>
+            )}
+            <SaveButton jobId={job.id} title={job.title} variant="full" className="mt-4" />
             {job.sponsor ? (
               <p className="mt-4 border-t border-line pt-4 text-sm">
                 <Link href={`/sponsors/${job.sponsor.slug}`} className="font-semibold text-teal underline-offset-4 hover:underline">
@@ -199,18 +217,23 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
         </aside>
       </div>
 
-      {/* Phones: the apply button stays at the bottom of the screen. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
-        <OutboundLink
-          jobId={job.id}
-          medium="job_page"
-          aria-describedby="apply-note-mobile"
-          className="flex h-12 w-full items-center justify-center rounded-md bg-ink px-6 font-semibold text-white hover:bg-ink/90"
-        >
-          Apply for this job
-        </OutboundLink>
-        <p id="apply-note-mobile" className="mt-1.5 text-center text-xs text-ink-soft">Opens {source} in a new tab.</p>
-      </div>
+      {/* Phones: the apply button stays at the bottom of the screen (not for closed jobs). */}
+      {job.closed ? null : (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
+          <div className="flex gap-2">
+            <OutboundLink
+              jobId={job.id}
+              medium="job_page"
+              aria-describedby="apply-note-mobile"
+              className="flex h-12 flex-1 items-center justify-center rounded-md bg-ink px-6 font-semibold text-white hover:bg-ink/90"
+            >
+              Apply for this job
+            </OutboundLink>
+            <SaveButton jobId={job.id} title={job.title} className="size-12 shrink-0 rounded-md border border-line bg-white" />
+          </div>
+          <p id="apply-note-mobile" className="mt-1.5 text-center text-xs text-ink-soft">Opens {source} in a new tab.</p>
+        </div>
+      )}
     </>
   );
 }

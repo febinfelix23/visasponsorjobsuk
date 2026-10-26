@@ -17,7 +17,8 @@ import {
 
 let n = 0;
 const job = (over: Partial<JobListItem>): JobListItem => ({
-  slug: `job-${++n}`,
+  id: ++n,
+  slug: `job-${n}`,
   title: `Graduate Analyst ${n}`,
   employerName: `Employer ${n}`,
   locationText: "London",

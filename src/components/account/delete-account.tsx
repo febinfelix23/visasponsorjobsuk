@@ -17,7 +17,7 @@ export function DeleteAccount() {
   }
   return (
     <form action={action} className="rounded-lg border border-stamp-red/40 bg-stamp-wash p-4">
-      <p className="font-semibold text-stamp-red">This deletes your profile, saved jobs and settings straight away. It can&apos;t be undone.</p>
+      <p className="font-semibold text-stamp-red">This deletes your degrees, experience, preferences and saved jobs straight away. It can&apos;t be undone.</p>
       <label htmlFor="confirm" className="mt-3 block text-[0.94rem]">
         Type <strong>DELETE</strong> to confirm
       </label>

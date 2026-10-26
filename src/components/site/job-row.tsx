@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import type { JobListItem } from "@/lib/site/queries";
 import { formatAdded, formatClosing, formatSalary, shortLocation } from "./format";
 import { Monogram } from "./monogram";
+import { SaveButton } from "./saved-jobs";
 import { Stamp } from "./stamp";
 
 export function JobRow({ job, query, showEmployer = true }: { job: JobListItem; query?: string; showEmployer?: boolean }) {
@@ -23,7 +24,10 @@ export function JobRow({ job, query, showEmployer = true }: { job: JobListItem; 
               {job.title}
             </Link>
           </h3>
-          <Stamp status={job.sponsorability} className="mt-0.5 hidden shrink-0 sm:inline-flex" />
+          <div className="relative z-10 -mt-1.5 -mr-2 flex shrink-0 items-center gap-2">
+            <Stamp status={job.sponsorability} className="hidden sm:inline-flex" />
+            <SaveButton jobId={job.id} title={job.title} />
+          </div>
         </div>
         {showEmployer ? <p className="mt-0.5 text-[0.94rem] text-ink-soft">{job.employerName}</p> : null}
         <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-ink-soft tabular">

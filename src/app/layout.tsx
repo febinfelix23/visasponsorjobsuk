@@ -6,6 +6,7 @@ import { AccountMenu } from "@/components/site/account-menu";
 import { Container } from "@/components/site/container";
 import { LogoMark } from "@/components/site/logo";
 import { MainNav } from "@/components/site/main-nav";
+import { SavedJobsProvider } from "@/components/site/saved-jobs";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
 import { CONTACT_EMAIL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site/config";
 import "./globals.css";
@@ -68,7 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
 
         <main id="main" className="w-full flex-1">
-          {children}
+          <SavedJobsProvider>{children}</SavedJobsProvider>
         </main>
 
         <footer className="border-t border-line bg-white text-sm">

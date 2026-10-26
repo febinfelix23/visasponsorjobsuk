@@ -69,6 +69,9 @@ export function AccountMenu() {
             <span className="block truncate text-xs text-ink-soft">{user.email}</span>
           </div>
           <DropdownMenuSeparator />
+          <DropdownMenuItem render={<Link href="/account/jobs" />} className="px-2 py-2 text-[0.94rem]">
+            Your jobs
+          </DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/account" />} className="px-2 py-2 text-[0.94rem]">
             Your account
           </DropdownMenuItem>
