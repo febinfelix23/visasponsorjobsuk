@@ -40,7 +40,7 @@ export function MainNav() {
 
       <Sheet>
         <SheetTrigger
-          className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-white/90 hover:bg-white/10 sm:hidden"
+          className="order-last -mr-2 inline-flex size-11 items-center justify-center rounded-md text-white/90 hover:bg-white/10 sm:hidden"
           aria-label="Open menu"
         >
           <MenuIcon className="size-6" />
@@ -50,7 +50,7 @@ export function MainNav() {
             <SheetTitle className="font-expanded text-base font-extrabold">Menu</SheetTitle>
           </SheetHeader>
           <nav aria-label="Main" className="flex flex-col px-2">
-            {[...NAV, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }].map((item) => (
+            {[...NAV, { href: "/account", label: "Your account" }, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }].map((item) => (
               // Closing on tap: the panel would otherwise stay open over the new page.
               <SheetClose
                 key={item.href}

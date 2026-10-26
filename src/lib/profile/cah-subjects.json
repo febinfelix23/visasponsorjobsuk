@@ -1,0 +1,841 @@
+{
+ "source": "HESA Common Aggregation Hierarchy (CAH) level 3, via DfE reference data (github.com/DFE-Digital/dfe-reference-data-dotnet, updated 2026-10-13); labels from the Office for Students where published",
+ "count": 167,
+ "subjects": [
+  {
+   "code": "CAH01-01-01",
+   "name": "Medical sciences (non-specific)",
+   "group": "Medicine and dentistry"
+  },
+  {
+   "code": "CAH01-01-02",
+   "name": "Medicine (non-specific)",
+   "group": "Medicine and dentistry"
+  },
+  {
+   "code": "CAH01-01-03",
+   "name": "Medicine by specialism",
+   "group": "Medicine and dentistry"
+  },
+  {
+   "code": "CAH01-01-04",
+   "name": "Dentistry",
+   "group": "Medicine and dentistry"
+  },
+  {
+   "code": "CAH02-02-01",
+   "name": "Pharmacology",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-02-02",
+   "name": "Toxicology",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-02-03",
+   "name": "Pharmacy",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-01",
+   "name": "Nursing (non-specific)",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-02",
+   "name": "Adult nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-03",
+   "name": "Community nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-04",
+   "name": "Midwifery",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-05",
+   "name": "Children's nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-06",
+   "name": "Dental nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-07",
+   "name": "Mental health nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-08",
+   "name": "Learning disabilities nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-04-09",
+   "name": "Others in Nursing",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-05-01",
+   "name": "Medical technology",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-05-02",
+   "name": "Healthcare science (non-specific)",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-05-03",
+   "name": "Biomedical sciences (non-specific)",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-05-04",
+   "name": "Anatomy, physiology and pathology",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-01",
+   "name": "Health sciences (non-specific)",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-02",
+   "name": "Nutrition and dietetics",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-03",
+   "name": "Ophthalmics",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-04",
+   "name": "Environmental and public health",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-05",
+   "name": "Physiotherapy",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-06",
+   "name": "Complementary and alternative medicine",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH02-06-07",
+   "name": "Counselling, psychotherapy and occupational therapy",
+   "group": "Subjects allied to medicine"
+  },
+  {
+   "code": "CAH03-01-01",
+   "name": "Biosciences (non-specific)",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-02",
+   "name": "Biology (non-specific)",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-03",
+   "name": "Ecology and environmental biology",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-04",
+   "name": "Microbiology and cell science",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-05",
+   "name": "Plant sciences",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-06",
+   "name": "Zoology",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-07",
+   "name": "Genetics",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-08",
+   "name": "Molecular biology, biophysics and biochemistry",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-09",
+   "name": "Hair and beauty sciences",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-01-10",
+   "name": "Others in biosciences",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH03-02-01",
+   "name": "Sport and exercise sciences",
+   "group": "Biological and sport sciences"
+  },
+  {
+   "code": "CAH04-01-01",
+   "name": "Psychology (non-specific)",
+   "group": "Psychology"
+  },
+  {
+   "code": "CAH04-01-02",
+   "name": "Applied psychology",
+   "group": "Psychology"
+  },
+  {
+   "code": "CAH04-01-03",
+   "name": "Developmental psychology",
+   "group": "Psychology"
+  },
+  {
+   "code": "CAH04-01-04",
+   "name": "Psychology and health",
+   "group": "Psychology"
+  },
+  {
+   "code": "CAH04-01-05",
+   "name": "Others in psychology",
+   "group": "Psychology"
+  },
+  {
+   "code": "CAH05-01-01",
+   "name": "Veterinary medicine and dentistry",
+   "group": "Veterinary sciences"
+  },
+  {
+   "code": "CAH05-01-02",
+   "name": "Others in veterinary sciences",
+   "group": "Veterinary sciences"
+  },
+  {
+   "code": "CAH06-01-01",
+   "name": "Animal science",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-02",
+   "name": "Agricultural sciences",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-03",
+   "name": "Agriculture",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-04",
+   "name": "Rural estate management",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-05",
+   "name": "Forestry and arboriculture",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-06",
+   "name": "Food and beverage studies (non-specific)",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-07",
+   "name": "Food sciences",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH06-01-08",
+   "name": "Food and beverage production",
+   "group": "Agriculture, food and related studies"
+  },
+  {
+   "code": "CAH07-01-01",
+   "name": "Physics",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-01-02",
+   "name": "Astronomy",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-02-01",
+   "name": "Chemistry",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-04-01",
+   "name": "Physical sciences (non-specific)",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-04-02",
+   "name": "Forensic and archaeological sciences",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-04-03",
+   "name": "Sciences (non-specific)",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH07-04-04",
+   "name": "Natural sciences (non-specific)",
+   "group": "Physical sciences"
+  },
+  {
+   "code": "CAH09-01-01",
+   "name": "Mathematics",
+   "group": "Mathematical sciences"
+  },
+  {
+   "code": "CAH09-01-02",
+   "name": "Operational research",
+   "group": "Mathematical sciences"
+  },
+  {
+   "code": "CAH09-01-03",
+   "name": "Statistics",
+   "group": "Mathematical sciences"
+  },
+  {
+   "code": "CAH10-01-01",
+   "name": "Engineering (non-specific)",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-02",
+   "name": "Mechanical engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-03",
+   "name": "Production and manufacturing engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-04",
+   "name": "Aeronautical and aerospace engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-05",
+   "name": "Naval architecture",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-06",
+   "name": "Bioengineering, medical and biomedical engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-07",
+   "name": "Civil engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-08",
+   "name": "Electrical and electronic engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-09",
+   "name": "Chemical, process and energy engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-01-10",
+   "name": "Others in engineering",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-01",
+   "name": "Minerals technology",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-02",
+   "name": "Materials technology",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-03",
+   "name": "Polymers and textiles",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-04",
+   "name": "Maritime technology",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-05",
+   "name": "Biotechnology",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-06",
+   "name": "Others in technology",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH10-03-07",
+   "name": "Materials science",
+   "group": "Engineering and technology"
+  },
+  {
+   "code": "CAH11-01-01",
+   "name": "Computer science",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-02",
+   "name": "Information technology",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-03",
+   "name": "Information systems",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-04",
+   "name": "Software engineering",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-05",
+   "name": "Artificial intelligence",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-06",
+   "name": "Computer games and animation",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-07",
+   "name": "Business computing",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH11-01-08",
+   "name": "Others in computing",
+   "group": "Computing"
+  },
+  {
+   "code": "CAH13-01-01",
+   "name": "Architecture",
+   "group": "Architecture, building and planning"
+  },
+  {
+   "code": "CAH13-01-02",
+   "name": "Building",
+   "group": "Architecture, building and planning"
+  },
+  {
+   "code": "CAH13-01-03",
+   "name": "Landscape design",
+   "group": "Architecture, building and planning"
+  },
+  {
+   "code": "CAH13-01-04",
+   "name": "Planning (urban, rural and regional)",
+   "group": "Architecture, building and planning"
+  },
+  {
+   "code": "CAH15-01-01",
+   "name": "Social sciences (non-specific)",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-01-02",
+   "name": "Sociology",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-01-03",
+   "name": "Social policy",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-01-04",
+   "name": "Anthropology",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-01-05",
+   "name": "Development studies",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-01-06",
+   "name": "Cultural studies",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-02-01",
+   "name": "Economics",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-03-01",
+   "name": "Politics",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-04-01",
+   "name": "Social work",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-04-02",
+   "name": "Childhood and youth studies",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH15-04-03",
+   "name": "Health studies",
+   "group": "Social sciences"
+  },
+  {
+   "code": "CAH16-01-01",
+   "name": "Law",
+   "group": "Law"
+  },
+  {
+   "code": "CAH17-01-01",
+   "name": "Business and management (non-specific)",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-02",
+   "name": "Business studies",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-03",
+   "name": "Marketing",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-04",
+   "name": "Management studies",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-05",
+   "name": "Human resource management",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-06",
+   "name": "Tourism, transport and travel",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-07",
+   "name": "Finance",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-08",
+   "name": "Accounting",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH17-01-09",
+   "name": "Others in business and management",
+   "group": "Business and management"
+  },
+  {
+   "code": "CAH19-01-01",
+   "name": "English studies (non-specific)",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-02",
+   "name": "English language",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-03",
+   "name": "Literature in English",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-04",
+   "name": "Studies of specific authors",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-05",
+   "name": "Creative writing",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-06",
+   "name": "Others in English studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-01-07",
+   "name": "Linguistics",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-02-01",
+   "name": "Celtic studies (non-specific)",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-02-02",
+   "name": "Gaelic studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-02-03",
+   "name": "Welsh studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-02-04",
+   "name": "Others in Celtic studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-01",
+   "name": "French studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-02",
+   "name": "German and Scandinavian studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-03",
+   "name": "Italian studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-04",
+   "name": "Iberian studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-05",
+   "name": "Slavic studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-06",
+   "name": "Asian studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-07",
+   "name": "African and modern Middle Eastern studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-08",
+   "name": "American and Australasian studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH19-04-09",
+   "name": "Others in language and area studies",
+   "group": "Language and area studies"
+  },
+  {
+   "code": "CAH20-01-01",
+   "name": "History",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-01-02",
+   "name": "History of art, architecture and design",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-01-03",
+   "name": "Archaeology",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-01-04",
+   "name": "Heritage studies",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-01-05",
+   "name": "Classics",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-02-01",
+   "name": "Philosophy",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH20-02-02",
+   "name": "Theology and religious studies",
+   "group": "Historical, philosophical and religious studies"
+  },
+  {
+   "code": "CAH22-01-01",
+   "name": "Education",
+   "group": "Education and teaching"
+  },
+  {
+   "code": "CAH22-01-02",
+   "name": "Teacher training",
+   "group": "Education and teaching"
+  },
+  {
+   "code": "CAH23-01-01",
+   "name": "Combined, general or negotiated studies",
+   "group": "Combined and general studies"
+  },
+  {
+   "code": "CAH23-01-02",
+   "name": "Personal development",
+   "group": "Combined and general studies"
+  },
+  {
+   "code": "CAH23-01-03",
+   "name": "Humanities (non-specific)",
+   "group": "Combined and general studies"
+  },
+  {
+   "code": "CAH23-01-04",
+   "name": "Liberal arts (non-specific)",
+   "group": "Combined and general studies"
+  },
+  {
+   "code": "CAH24-01-01",
+   "name": "Information services",
+   "group": "Media, journalism and communications"
+  },
+  {
+   "code": "CAH24-01-02",
+   "name": "Publicity studies",
+   "group": "Media, journalism and communications"
+  },
+  {
+   "code": "CAH24-01-03",
+   "name": "Publishing",
+   "group": "Media, journalism and communications"
+  },
+  {
+   "code": "CAH24-01-04",
+   "name": "Journalism",
+   "group": "Media, journalism and communications"
+  },
+  {
+   "code": "CAH24-01-05",
+   "name": "Media studies",
+   "group": "Media, journalism and communications"
+  },
+  {
+   "code": "CAH25-01-01",
+   "name": "Creative arts and design (non-specific)",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-01-02",
+   "name": "Art",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-01-03",
+   "name": "Design studies",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-01-04",
+   "name": "Cinematics and photography",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-01-05",
+   "name": "Others in creative arts and design",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-02-01",
+   "name": "Performing arts (non-specific)",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-02-02",
+   "name": "Music",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-02-03",
+   "name": "Drama",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH25-02-04",
+   "name": "Dance",
+   "group": "Design, and creative and performing arts"
+  },
+  {
+   "code": "CAH26-01-01",
+   "name": "Geography (non-specific)",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAH26-01-02",
+   "name": "Physical geographical sciences",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAH26-01-03",
+   "name": "Human geography",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAH26-01-04",
+   "name": "Environmental sciences",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAH26-01-05",
+   "name": "Others in geographical studies",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAH26-01-06",
+   "name": "Earth sciences",
+   "group": "Geography, earth and environmental studies"
+  },
+  {
+   "code": "CAHZ5",
+   "name": "Not applicable",
+   "group": "Not applicable"
+  }
+ ]
+}

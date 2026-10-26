@@ -7,12 +7,14 @@ import type { JwtPayload } from "@supabase/supabase-js";
 export const isAdminClaims = (claims: JwtPayload | null | undefined): boolean => claims?.app_metadata?.role === "admin";
 
 export const ADMIN_HOME = "/admin";
+/** Where people land after signing in when no page was asked for. */
+export const ACCOUNT_HOME = "/account";
 
 /**
  * Where to send someone after signing in. Only a path on this site: "//evil.example" and
- * "/\evil.example" are other sites to a browser, so they fall back to the admin home.
+ * "/\evil.example" are other sites to a browser, so they fall back to the account page.
  */
-export function safeNext(value: string | null | undefined, fallback = ADMIN_HOME): string {
+export function safeNext(value: string | null | undefined, fallback = ACCOUNT_HOME): string {
   if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return fallback;
   try {
     const url = new URL(value, "https://placeholder.invalid");

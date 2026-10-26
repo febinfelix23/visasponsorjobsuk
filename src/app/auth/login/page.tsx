@@ -20,7 +20,9 @@ async function SignIn({ searchParams }: { searchParams: Promise<SearchParams> })
   const next = safeNext(one(sp.next));
   const { data } = await (await createClient()).auth.getClaims();
   const claims = data?.claims;
-  if (claims && isAdminClaims(claims)) redirect(next);
+  const forAdmin = next === "/admin" || next.startsWith("/admin/") || next.startsWith("/admin?");
+  // Already signed in: carry on, unless they're heading for the admin area without the role.
+  if (claims && (!forAdmin || isAdminClaims(claims))) redirect(next);
 
   if (claims) {
     return (
@@ -59,7 +61,7 @@ export default function LoginPage(props: PageProps<"/auth/login">) {
     <Page>
       <div className="mx-auto max-w-[26rem]">
         <h1 className="font-expanded text-[1.9rem] leading-tight font-extrabold tracking-tight">Sign in</h1>
-        <p className="mt-2 text-ink-soft">With your Google account. Job listings are free to browse without one.</p>
+        <p className="mt-2 text-ink-soft">Save jobs, track your applications and see jobs matched to your degree. Searching jobs doesn&apos;t need an account.</p>
         <div className="mt-6 overflow-hidden rounded-lg border border-line bg-white">
           <Guilloche className="h-6 w-full bg-teal-wash text-teal/40" />
           <div className="p-6">

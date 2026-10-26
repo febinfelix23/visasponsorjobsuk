@@ -19,6 +19,6 @@ export const SITE_DESCRIPTION =
   "Graduate and early-career jobs at UK employers licensed to sponsor Skilled Worker visas, each checked against the salary and occupation rules.";
 
 /** The legal pages' "last updated" date. Change it whenever their wording changes. */
-export const LEGAL_UPDATED = "2026-10-25";
+export const LEGAL_UPDATED = "2026-10-26";
 
 export const absoluteUrl = (path: string) => new URL(path, `${SITE_URL}/`).toString();

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { Guilloche } from "@/components/site/guilloche";
+import { AccountMenu } from "@/components/site/account-menu";
 import { Container } from "@/components/site/container";
 import { LogoMark } from "@/components/site/logo";
 import { MainNav } from "@/components/site/main-nav";
@@ -58,7 +59,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <LogoMark className="size-7 shrink-0 rounded-[7px] ring-1 ring-white/25" />
               {SITE_NAME}
             </Link>
-            <MainNav />
+            <div className="flex items-center gap-2 sm:gap-4">
+              <MainNav />
+              <AccountMenu />
+            </div>
           </Container>
           <Guilloche className="h-5 w-full text-teal-wash/40" />
         </header>

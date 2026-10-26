@@ -5,7 +5,7 @@ import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site/config";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: `What ${SITE_NAME} collects, why, and your rights. No accounts, cookies or tracking for job seekers.`,
+  description: `What ${SITE_NAME} collects, why, and your rights. Searching jobs needs no account, cookies or tracking.`,
   alternates: { canonical: "/privacy" },
 };
 
@@ -30,8 +30,8 @@ export default function PrivacyPage() {
       <h2>If you&apos;re looking for jobs</h2>
       <ul>
         <li>
-          <strong>No cookies, no tracking.</strong> We don&apos;t use cookies, analytics, advertising or tracking scripts, and we don&apos;t
-          store anything in your browser.
+          <strong>No cookies, no tracking.</strong> Unless you sign in, we don&apos;t use cookies or store anything in your browser, and we
+          never use analytics, advertising or tracking scripts.
         </li>
         <li>
           <strong>Apply clicks.</strong> When you press Apply, we record which job it was, the time, and the channel tag in the link you
@@ -48,12 +48,22 @@ export default function PrivacyPage() {
         </li>
       </ul>
 
-      <h2>If you sign in</h2>
-      <p>
-        Signing in is only for the people who run the site. Google shares the account&apos;s name, email address and profile picture with
-        us so we can sign you in; we keep them for as long as the account exists. Signing in sets cookies that keep the session open;
-        they&apos;re needed for sign-in to work and are only set on the sign-in and admin pages.
-      </p>
+      <h2>If you create an account</h2>
+      <ul>
+        <li>
+          <strong>Sign-in.</strong> You sign in with Google, which shares your name, email address and profile picture with us. Signing in
+          sets cookies that keep you signed in; they&apos;re needed for your account to work, and we don&apos;t set any others.
+        </li>
+        <li>
+          <strong>Your profile.</strong> Your degrees (level, subject and year) and the places you want to work decide which jobs are matched
+          to you. University, work and professional experience, and visa details are optional: experience adds a second view of matches, and
+          your visa expiry is used only to flag jobs that close after it, never to give advice.
+        </li>
+        <li>
+          <strong>Keeping and deleting it.</strong> We keep your account until you delete it. Deleting it, from your account page, removes
+          your profile and settings straight away.
+        </li>
+      </ul>
 
       <h2>Jobs and employers</h2>
       <p>
@@ -63,15 +73,15 @@ export default function PrivacyPage() {
 
       <h2>Why we&apos;re allowed to use this data</h2>
       <p>
-        We rely on our legitimate interests: running a reliable, secure site, understanding which jobs and channels help people, and
-        answering messages. We don&apos;t sell personal data, use it for advertising, or make automated decisions about you.
+        For accounts, we use your data to provide the service you signed up for (our contract with you). Otherwise we rely on our
+        legitimate interests: running a reliable, secure site, understanding which jobs and channels help people, and answering messages. We don&apos;t sell personal data, use it for advertising, or make automated decisions about you.
       </p>
 
       <h2>Who else handles it</h2>
       <ul>
         <li><strong>Vercel</strong> hosts the website.</li>
         <li><strong>Supabase</strong> hosts our database and handles sign-in.</li>
-        <li><strong>Google</strong> provides sign-in for the site&apos;s administrators.</li>
+        <li><strong>Google</strong> provides sign-in.</li>
       </ul>
       <p>
         Some of these providers process data outside the UK. Where they do, they use the safeguards UK law requires, such as the UK
@@ -87,8 +97,8 @@ export default function PrivacyPage() {
 
       <h2>Changes</h2>
       <p>
-        If we add accounts or email alerts for job seekers, we&apos;ll update this page before they launch, and the date at the top will
-        change. See also our <Link href="/terms">terms of use</Link>.
+        If we add new features that use personal data, such as payments or alerts, we&apos;ll update this page before they launch, and the
+        date at the top will change. See also our <Link href="/terms">terms of use</Link>.
       </p>
     </LegalPage>
   );

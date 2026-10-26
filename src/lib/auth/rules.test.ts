@@ -31,7 +31,7 @@ describe("safeNext", () => {
 
   it("falls back for other sites and junk", () => {
     for (const bad of ["//evil.example", "/\\evil.example", "https://evil.example/admin", "evil.example", "javascript:alert(1)", "", null, undefined]) {
-      assert.equal(safeNext(bad), "/admin", String(bad));
+      assert.equal(safeNext(bad), "/account", String(bad));
     }
   });
 

@@ -43,9 +43,11 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims
 
-  // Only /admin needs an account; the job listings stay public.
+  // Only the admin area and account pages need sign-in; the job listings stay public.
   const { pathname, search } = request.nextUrl
-  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+  const under = (base: string) => pathname === base || pathname.startsWith(`${base}/`)
+  const isAdminArea = under('/admin')
+  if (isAdminArea || under('/account')) {
     // Responses other than supabaseResponse must carry its cookies, or a refreshed session is lost.
     const withCookies = (response: NextResponse) => {
       supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie))
@@ -60,7 +62,7 @@ export async function updateSession(request: NextRequest) {
       return withCookies(NextResponse.redirect(url))
     }
     // Signed in but not an admin: the admin area doesn't exist for them.
-    if (!isAdminClaims(user)) return withCookies(new NextResponse('Not found', { status: 404 }))
+    if (isAdminArea && !isAdminClaims(user)) return withCookies(new NextResponse('Not found', { status: 404 }))
     return withCookies(supabaseResponse)
   }
 

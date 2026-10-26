@@ -1,6 +1,6 @@
 # VisaSponsorJobsUK — Product & Development Blueprint
 
-_Last updated: 2026-10-23 · Status: v4, adds the premium tailored feed (§13) and the AI blog writer (§14)_
+_Last updated: 2026-10-26 · Status: v5, premium decided: one-off passes, Telegram alerts, saved jobs and tracker (§13)_
 
 > **One-line thesis:** Every job board lets you search for "visa sponsorship" as a keyword. Nobody reliably tells you whether **this job, at this salary, for this occupation, can actually lead to a Skilled Worker visa for a UK graduate.** Our moat isn't the scraping. It's being **verified and checked for eligibility**.
 
@@ -13,12 +13,13 @@ _Last updated: 2026-10-23 · Status: v4, adds the premium tailored feed (§13) a
 | Audience | **UK graduates only** (Student → Skilled Worker, Graduate visa → Skilled Worker). No overseas applicants yet | Every user switches in-country, so they all qualify for **new-entrant salary rates**. One threshold model, not two. Lower scam exposure. Tone: "early career" |
 | Sectors | **Tech, Finance, Engineering, Healthcare** | Filter sponsors by SIC code and jobs by SOC code. Cuts the crawl from ~120k sponsors to a few thousand |
 | Team and budget | **Solo build, near-zero running cost** | Free tiers everywhere: GitHub Actions for scraping, Supabase + Vercel free tiers, rules before AI, no paid WhatsApp API (§4.3) |
-| Pricing | **Free at launch → freemium later** | Collect accounts and alert sign-ups from day one, and track clicks, so a paid tier can be added later without rework |
+| Pricing | **Free job board + paid premium (changed 2026-10-26)** | Search, badges, job and sponsor pages stay free for everyone, like a normal job board. Premium is sold as **one-off passes** (§13.8), never subscriptions |
 | Brand and channels | **Domain, Telegram, Instagram and WhatsApp channels secured** | Posting is manual at first (§8 Phase 0), helped by an admin "posting helper" page |
 | Repo | **Public** (changed 2026-10-19) | Unlimited free GitHub Actions minutes on standard runners. The scraper code being public is accepted for now. Rules: keys only in GitHub Actions secrets and `.env*` (already gitignored); no scraped data, bulk files or user data in the repo; admin password via env |
 | Healthcare scope | **Includes junior doctors** | NHS Jobs doctor posts + national training recruitment (§2.3.1) |
 | Curation | **No hand curation**: the founder has no time for it | Phase 0 *is* an automated scraper plus a demo listing site. The founder only posts the output to channels |
-| Premium feature (2026-10-23) | **Tailored feed + email alerts** for paid users, matched to their degree, with an extra view based on recent work experience | Education and experience collected at sign-up; jobs matched by occupation code (§13) |
+| Premium feature (2026-10-23) | **Tailored feed + relevant-job alerts** for paid users, matched to their degree, with an extra view based on recent work experience | Education and experience collected at sign-up; jobs matched by occupation code (§13) |
+| Premium terms (2026-10-26) | **Passes: £4.99 a week, £12.99 a month, £39 lifetime**, paid once through **Stripe Checkout**. No auto-renewal: users buy again when a pass ends. **Alerts go by Telegram only in v1** (no email). Free accounts get **saved jobs and an application tracker**; premium adds **closing-date reminders** | §13.5 (free vs premium), §13.8 (passes and payments), §13.9 (build order) |
 | Content (2026-10-23) | **AI blog writer in the admin area**: suggests data-driven topics, drafts posts; the founder reviews, edits and publishes | No auto-publishing; no immigration advice or promises (§14) |
 
 ---
@@ -51,7 +52,7 @@ The emotional job matters as much as the functional one: **cutting anxiety and a
 | A1 | We can classify jobs as "likely sponsorable" accurately enough to earn trust | False positives = angry users, scam-like reputation | Hand-label 300 scraped jobs; measure rule/LLM precision. Target ≥90% precision on the "Likely" label |
 | A2 | Enough sponsors use structured ATSes to give useful coverage cheaply | If coverage is <5k live jobs, the product feels empty | Resolve the top 1,000 sponsors → count ATS hits and live roles |
 | A3 | Users will join and stay on Telegram/WhatsApp channels | Distribution is the whole growth plan | Post scraper output (via the posting helper) to Telegram, Instagram and Reddit for 2 weeks. Measure joins and clicks per channel with UTM links |
-| A4 | The free audience is big and loyal enough to convert to freemium later | No business without it | Not tested at launch (free first). Track alert sign-ups and weekly returning users as leading indicators. Add a "Pro" waitlist only once there are 2k+ alert subscribers |
+| A4 | Enough graduates will pay for a pass (week, month or lifetime) to cover running costs | No business without it | Track free accounts, the 3-match preview → pass conversion, which pass people choose, and repeat purchases (§13.7) |
 | A5 | Graduate-level, sponsorable roles in our 4 sectors are numerous enough | Too few jobs and the product feels empty | In Phase 0, count live roles from the top 200 sponsors that pass the new-entrant rule |
 
 ---
@@ -195,15 +196,16 @@ Fallback chain for unknown sites:
 
 | Concern | Choice | Notes |
 |---|---|---|
-| Web app | **Next.js 16** (already in repo) on **Vercel Hobby** | SSR/ISR job pages for SEO: `/jobs/[slug]`, `/sponsors/[slug]`, `/jobs/in/[city]`, `/jobs/[sector]`. Hobby is for non-commercial use, so move to Pro when freemium launches |
+| Web app | **Next.js 16** (already in repo) on **Vercel Hobby** | SSR/ISR job pages for SEO: `/jobs/[slug]`, `/sponsors/[slug]`, `/jobs/in/[city]`, `/jobs/[sector]`. Hobby is for non-commercial use, so move to Pro before the first premium payment |
 | DB | **Supabase Free** Postgres + **Drizzle** (already in repo) | `pg_trgm` for fuzzy name match, full-text search for jobs. Free projects pause after about a week of inactivity, but the daily scrapes keep it active. Store snippets, not full descriptions, to stay under the 500 MB limit |
-| Auth | Supabase Auth (magic link) | Needed only for saved searches and alerts. Gives us an email list for the future freemium launch |
+| Auth | **Supabase Auth with Google** (built 2026-10-24) | One sign-in for job seekers and admins. Admin is `app_metadata.role = "admin"`, which users can't set themselves; the proxy and every admin page check it |
+| Payments | **Stripe Checkout, one-off payments** (`mode: payment`) | Hosted page (cards, Apple Pay, Google Pay); card details never reach our servers. A signed webhook grants the pass. About 1.5% + 20p per UK card. No VAT registration until sales pass £90k a year |
 | Workers + scheduling | **GitHub Actions cron** running `tsx` scripts (**public repo: unlimited minutes**) | Minutes are no longer a constraint, but each job is limited to 6 hours. Points to watch: (1) **GitHub disables scheduled workflows in public repos after 60 days without repo activity**, so commit regularly or add a keep-alive; (2) cron start times can drift by minutes under load, which is fine for us; (3) never print secrets or scraped personal data in public Action logs; (4) workflows triggered by pull requests from forks don't get secrets. Playwright is now affordable for the few sites that need it (Phase 2) |
 | Queue | **None at first.** A `job_sources.next_crawl_at` column plus a script that processes the N most overdue sources | Add `pgmq` only if a single run gets too slow |
 | Crawling | Native `fetch` for APIs, Playwright only when unavoidable | |
 | LLM | Claude Haiku-class, **only as a fallback** (unknown titles, unstructured pages) | Rules first, cache by content hash, Batch API for backfills, hard monthly cap in code |
 | Images (Instagram) | `next/og` (Satori) job-card templates | Free, rendered on Vercel |
-| Email | Resend free tier | Weekly digest only. Telegram carries instant alerts (free, no daily cap) |
+| Email | **Not used in v1** (decided 2026-10-26) | Premium alerts and reminders go by Telegram (free, instant). Resend stays the option if email alerts are added later |
 | Observability | Sentry free tier + an adapter-health table + a daily Telegram message to you | Adapters break silently. The daily "yield report" bot message is the cheapest form of monitoring |
 
 ### 4.1 Repo layout (proposal)
@@ -234,7 +236,7 @@ thresholds          route, type(general|new_entrant), amount, valid_from, valid_
 users / saved_searches / alert_deliveries
 channel_posts       job_id, channel, external_post_id, posted_at, clicks
 ```
-Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`, `sponsors.sic_codes[]`, `jobs.sector`, `jobs.seniority`, `jobs.is_grad_scheme`, `jobs.closing_date`. Add `users.plan` (default `free`) now so freemium is a flag flip later, not a migration.
+Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`, `sponsors.sic_codes[]`, `jobs.sector`, `jobs.seniority`, `jobs.is_grad_scheme`, `jobs.closing_date`. Premium access comes from a `passes` table (one row per purchase, §13.6), not a `users.plan` flag: a user is premium while any pass is current.
 
 ### 4.3 Monthly running cost (target ≈ £0–5)
 | Item | Cost |
@@ -245,7 +247,8 @@ Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`,
 | Job classification: field of work + occupation code (Claude Haiku 5.5, cached per title; first pass of 5,490 titles cost $0.27) | ~£0.30/month |
 | AI board check for ambiguous job boards (Claude Opus 5.5, about $0.005 per board, once per board) | ~£1/month |
 | Domain | ~£10–15/year |
-| **Upgrade triggers** (at freemium launch): Vercel Pro (~$20) when monetising, Supabase Pro (~$25) when the DB nears 500 MB or needs backups | Later |
+| Stripe fees: about 1.5% + 20p per UK card payment (no monthly fee) | Per sale |
+| **Upgrade triggers:** **Vercel Pro (~$20/month) before taking the first payment**, because Hobby is for non-commercial use only; Supabase Pro (~$25) when the DB nears 500 MB or needs backups | At premium launch |
 
 ---
 
@@ -254,7 +257,7 @@ Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`,
 - Search plus filters, with a sponsorability badge and reasons on each job
 - Sponsor profile pages: licence rating, live jobs, history ("licensed since…")
 - Programmatic SEO pages: "Visa sponsorship software engineer jobs in Manchester". This is the largest free acquisition channel.
-- **Saved-search alerts:** email + Telegram bot DM (instant, daily or weekly). Telegram bot DMs are free and personal, which makes them the best retention channel.
+- **Saved jobs and tracker (free account), relevant-job alerts and closing-date reminders (premium):** sent as Telegram bot DMs, which are free, instant and personal, the best retention channel (§13.4).
 - Track outbound clicks (`/out/[jobId]`) so we can measure value and show employers later
 
 ---
@@ -336,8 +339,8 @@ Build order (each step is usable on its own):
 
 ### Phase 4: Public site + alerts (weeks 8–11)
 - Job search, job pages, sponsor pages, programmatic SEO pages
-- Auth, saved searches, email + Telegram bot alerts
-- **Sign-up profile** (education + work experience, §13.2) collected from the start, so the premium feed has data the day it launches
+- Auth (Google), saved jobs and tracker, Telegram bot alerts (premium, §13)
+- **Sign-up profile** (education + work experience, §13.2) asked of every account, so the 3-match preview works before anyone pays
 - Click tracking, analytics, disclaimer and anti-scam pages
 
 ### Phase 5: Distribution automation (weeks 10–13)
@@ -351,18 +354,16 @@ Build order (each step is usable on its own):
 - "Sponsor intelligence": newly licensed sponsors in the 4 sectors
 - **AI blog writer** in the admin area (§14): SEO compounds over time, so it starts while the site is still free
 
-### Phase 7: Freemium (when the leading indicators justify it)
-- Trigger: about 2k+ active alert subscribers and steady weekly returning users
-- Pro waitlist → paid tier (§9), upgrade to Vercel Pro / Supabase Pro
-- **Tailored feed + relevant-job email alerts** (§13), the core of Pro
-- Payments (Stripe), plan gating on `users.plan`
+### Phase 7: Premium (brought forward, decided 2026-10-26)
+- Built straight after the Phase 0 site, in steps A–F (§13.9): accounts and profile, saved jobs and tracker, passes and payments, matching and the matches page, Telegram alerts and reminders, legal pages
+- Move to Vercel Pro before the first payment; Supabase Pro when the database nears its limits
 
 ---
 
-## 9. Business model options (later: launch is 100% free)
-**Free forever:** search, sponsorability badges, Telegram/WhatsApp/Instagram channels, a weekly email digest. Never paywall the trust layer.
+## 9. Business model
+**Free forever:** search, sponsorability badges, job and sponsor pages, the public Telegram/WhatsApp/Instagram channels, and (with a free account) saved jobs and an application tracker. Never paywall the trust layer.
 
-1. **Freemium (decided, §13):** Pro gets the **tailored feed** (jobs matched to the user's degree, plus a work-experience view) and **email alerts for strongly relevant new jobs**; also grad-scheme deadline reminders (£3–£7/month, price to be tested)
+1. **Premium passes (decided 2026-10-26, §13):** the **tailored feed** (jobs matched to the user's degree, plus a work-experience view), **Telegram alerts for strongly relevant new jobs** and **closing-date reminders**, sold as one-off passes: **£4.99 a week, £12.99 a month, £39 lifetime**. No subscriptions
 2. **Employer featured listings:** sponsors pay to reach a pre-qualified international talent pool
 3. **Affiliate:** CV review, English tests, relocation services. **Vet these carefully**, because a bad affiliate destroys trust
 4. **Data product:** sponsor register analytics for recruiters and immigration law firms
@@ -410,18 +411,18 @@ A paid graduate opens their feed and sees **only jobs in their field**. A Comput
 |---|---|---|
 | Field-accurate feed from degree subject | CV parsing or AI career coaching (v1) | A job from an unrelated field appears in someone's feed |
 | Closely related roles included, ranked below core ones | Matching on skills or keywords in free text | Showing a job that fails the visa checks without saying so |
-| Optional view based on recent work experience | Employer-side candidate search | Alert emails that feel like spam |
-| Email alerts for strongly relevant new jobs | Paywalling the trust layer (badges stay free) | Collecting more personal data than the matching needs |
+| Optional view based on recent work experience | Employer-side candidate search | Alerts that feel like spam |
+| Telegram alerts for strongly relevant new jobs | Paywalling the trust layer (badges stay free) | Collecting more personal data than the matching needs |
 
 ### 13.2 Sign-up profile
-Collected from **every** user at sign-up, from Phase 4 onwards, so the feed has data on launch day. The feed itself is premium. _(My call: collect early, gate later.)_
+Asked of **every** user when they create an account (free or paid), so the 3-match preview works before anyone pays and the feed has data the moment a pass is bought. Sign-in is Google through Supabase Auth.
 
 | Field | Detail |
 |---|---|
 | Degree(s) | Level (Bachelor's, Master's, MBA, PhD, MBBS/MBChB and similar), **subject chosen from a fixed list** (not free text, so it maps cleanly), university (optional), graduation year |
 | Work experience (optional) | Entries of job title, employer, start and end dates. Most recent first |
 | Visa situation (optional) | Student visa or Graduate visa, and the Graduate visa expiry date (used for "closing soon" urgency, never for advice) |
-| Preferences | Locations, remote/hybrid, and an alert frequency |
+| Preferences | Locations, remote/hybrid, and how alerts arrive (instant or daily digest) |
 
 The subject list is based on the HESA **Common Aggregation Hierarchy (CAH)** subject codes used by UK universities, so every UK degree has a home. _(My call.)_
 
@@ -439,29 +440,59 @@ Every job already gets a **SOC 2020 occupation code** and a **field of work** (P
 4. **Visa checks apply in both views:** graduate/entry/junior seniority, salary at or above the new-entrant rate (or the NHS pay scale), and a licensed sponsor. Jobs that fail are hidden. Borderline ones ("Check with employer") are shown with their badge.
 5. **Ranking:** core before related, then sponsorability (sponsorship mentioned, then likely eligible, then check with employer), then closing soon, then newest. Preferences (location, remote) filter the list.
 
-### 13.4 Email alerts (premium)
-- Sent when a **new** job is a core match, or a related match with "Sponsorship mentioned", **and** passes the visa checks.
-- The user picks which view the alerts follow (degree, experience or both) and how often: **daily digest** (default) or **instant**. Instant is capped at 5 a day, and anything over the cap rolls into the next digest, so a big employer posting 40 roles at once can't flood an inbox.
-- Every email has a one-click unsubscribe and a link to preferences (UK GDPR / PECR).
-- Sent with Resend. The free tier (100 a day) covers early paid users; upgrade when daily sends approach the limit.
+### 13.4 Telegram alerts and reminders (premium)
+- **Linking:** on the account page, a premium user taps "Connect Telegram", which opens our public bot through a one-time link (`t.me/<bot>?start=<token>`). The bot's webhook matches the token to the account and stores the chat ID. A separate bot from the founder's run-report bot, so customer messages and operations alerts never mix. Users can disconnect at any time, and `/stop` in the bot does the same.
+- **Relevant-job alerts:** sent when a **new** job is a core match, or a related match with "Sponsorship mentioned", **and** passes the visa checks. The user picks which view alerts follow (degree, experience or both) and how they arrive: **instant** (default, capped at 5 a day; anything over rolls into the next digest, so a big employer posting 40 roles can't flood them) or a **daily digest**.
+- **Closing-date reminders:** 3 days before a saved job or a core match closes, unless the tracker already says "Applied" or later.
+- **When:** a step in the scrape workflow, after scoring, so alerts go out minutes after jobs arrive. Every message is recorded in `alert_deliveries`, which stops repeats.
+- **When a pass ends:** alerts stop, and one message says the pass has ended and how to buy another. No other marketing messages.
+- Email alerts aren't in v1. Resend is the option if they're added later.
 
 ### 13.5 Free vs premium
-| Free | Premium |
-|---|---|
-| Search with filters (sector, location, salary, badge) | **Tailored feed** by degree + work-experience view |
-| Sponsorship badges with reasons | **Relevant-job email alerts** (digest or instant) |
-| Weekly general digest, Telegram/WhatsApp/Instagram channels | Grad-scheme deadline reminders for their matches |
-| **Preview:** the top 3 matches from their tailored feed, to show what Pro unlocks _(my call)_ | |
+| Free, no account | Free account | Premium (a current pass) |
+|---|---|---|
+| Search with filters, sort and pagination | **Saved jobs** | **Matches page**: tailored feed by degree, plus the work-experience view |
+| Sponsorship stamps with reasons, job and sponsor pages | **Application tracker**: saved, applied, interview, offer, rejected | **Telegram alerts** for strongly relevant new jobs |
+| Public Telegram, WhatsApp and Instagram channels | **Preview**: the top 3 matches from their tailored feed, to show what premium unlocks | **Closing-date reminders** for saved jobs and core matches |
 
 ### 13.6 Data and privacy
-- New tables: `user_profiles` (degree level, CAH subject codes, graduation year, visa type and expiry, preferences), `user_experience` (title, employer, dates, derived SOC), `subject_occupations` (subject, SOC, strength, version), `alert_deliveries` (already planned, §4.2).
-- The profile is personal data. Explain why each field is asked for, keep it to what matching needs, and let users edit or delete it (account deletion removes everything). No special-category data is asked for.
-- Row-level security: users can read and write only their own profile rows.
+- New tables: `user_profiles` (degree level, CAH subject codes, graduation year, visa type and expiry, preferences, alert settings), `user_experience` (title, employer, dates, derived SOC), `subject_occupations` (subject, SOC, strength, version), `saved_jobs` (user, job, tracker status, dates), `passes` (§13.8), `telegram_links` (user, chat ID, linked at), `alert_deliveries` (user, job, kind, sent at), `match_feedback` ("Not relevant to me" reports).
+- The profile is personal data. Explain why each field is asked for, keep it to what matching needs, and let users edit or delete it (account deletion removes everything except payment records, which the law requires us to keep for six years).
+- No special-category data is asked for. Visa type and expiry are optional and used only for "closing soon" urgency, never for advice.
+- All user data is read and written on the server with the user's ID from their verified session; row-level security stays on with no public policies, so the database can't be read from the browser.
 
 ### 13.7 Success measures
-- Premium users opening the feed weekly, and the click-through rate from feed and alert emails
+- Premium users opening the matches page weekly, and the click-through rate from the feed and from alerts
 - **"Not relevant" reports per 100 feed views.** Every card gets a "Not relevant to me" button, and this number should trend towards zero. It is the direct measure of the anti-goal
-- Conversion from the free 3-match preview to Pro
+- Conversion from the free 3-match preview to a pass, and which pass people choose
+- Repeat purchases: how many week and month buyers buy again when their pass ends
+
+### 13.8 Passes and payments
+| Pass | Price | Access |
+|---|---|---|
+| Week | £4.99 | 7 days from purchase |
+| Month | £12.99 | 30 days from purchase |
+| Lifetime | £39 | For as long as the service runs |
+
+- **One-off payments through Stripe Checkout** (`mode: payment`): no stored cards, no auto-renewal, no subscriptions to cancel. Stripe sends the receipt.
+- **Renewing:** buying while a pass is current adds the new period to the current end date, so nobody loses days by renewing early. A lifetime pass makes further passes unnecessary, and the pricing page says so.
+- **Granting access:** Stripe's signed webhook (`checkout.session.completed`) creates the `passes` row. The handler verifies the signature, and it is idempotent: one row per Stripe session, so a repeated notification can't grant twice. The return page shows "Payment received" only once the row exists.
+- **UK consumer law:** digital services carry a 14-day right to cancel. Checkout asks for explicit consent to start premium immediately and an acknowledgement that this ends the right to cancel once the service has been fully provided; Terms set out refunds.
+- **Lifetime promise:** the Terms define "lifetime" as for as long as the service runs, and say what happens if it ever closes (pro-rata refunds, or the rule the founder decides).
+- **VAT:** no registration needed until sales pass £90,000 in 12 months.
+- **Founder setup:** a Stripe account (test mode first), `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in `.env.local` and Vercel, and a webhook endpoint at `/api/stripe/webhook`.
+
+### 13.9 Build order
+Each step is usable on its own and verified before the next.
+
+| Step | Delivers | Needs from the founder |
+|---|---|---|
+| A. Accounts and profile | Job-seeker sign-in (same Google sign-in), account menu in the header, profile page (degree from the CAH list, graduation year, optional experience, visa type and expiry, location preferences), edit and delete account | Nothing |
+| B. Saved jobs and tracker | Save button on job rows and job pages, a "My jobs" page with application status | Nothing |
+| C. Passes and payments | Pricing page, Stripe Checkout, signed webhook, current pass and receipts on the account page, consent for immediate access | Stripe account and keys (test mode) |
+| D. Matching | `subject_occupations` table drafted by Claude Haiku, then reviewed; matches page with "Core match" and "Related", the work-experience view, the 3-match preview for free accounts, "Not relevant to me" feedback | About 20 minutes to review the subject → occupation table |
+| E. Telegram alerts and reminders | Public bot and webhook, "Connect Telegram", alert and reminder step in the scrape workflow, delivery log | A second Telegram bot from BotFather, for job seekers |
+| F. Legal and launch | Terms (passes, no auto-renewal, refunds, lifetime), Privacy (profile data, Stripe, Telegram), move to Vercel Pro | Review both pages; upgrade Vercel |
 
 ---
 

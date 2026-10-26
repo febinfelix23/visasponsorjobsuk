@@ -33,8 +33,9 @@ async function HeroSearch({ searchParams }: { searchParams: Promise<SearchParams
 }
 
 function SearchForm({ q, location, kept = [] }: { q?: string; location?: string; kept?: [string, string][] }) {
+  // text-ink: the hero band sets white text, which the inputs would otherwise inherit.
   return (
-    <form action="/" method="get" role="search" aria-label="Search jobs" className="grid gap-2 rounded-xl bg-white p-2 shadow-[0_1px_0_rgba(255,255,255,0.12)] sm:grid-cols-[1fr_15rem_auto]">
+    <form action="/" method="get" role="search" aria-label="Search jobs" className="grid gap-2 rounded-xl bg-white p-2 text-ink shadow-[0_1px_0_rgba(255,255,255,0.12)] sm:grid-cols-[1fr_15rem_auto]">
       {kept.map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
       ))}

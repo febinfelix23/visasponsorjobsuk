@@ -14,7 +14,10 @@ import {
   text,
   timestamp,
   uniqueIndex,
+  uuid,
 } from "drizzle-orm/pg-core";
+// Referenced for foreign keys only; never exported, so drizzle-kit leaves the auth schema alone.
+import { authUsers } from "drizzle-orm/supabase";
 
 // Every table has RLS enabled with no policies, so nothing is reachable through
 // the Supabase Data API. The app and scripts connect as `postgres`, which
@@ -302,3 +305,70 @@ export const jobClassifications = snakeCase.table.withRLS("job_classifications",
   model: text().notNull(),
   createdAt: createdAt(),
 });
+
+// ── Job seekers' accounts (premium §13). Rows belong to a Supabase Auth user and are
+// deleted with it (on delete cascade), so deleting an account removes everything here.
+
+export const degreeLevel = pgEnum("degree_level", ["bachelors", "masters", "mba", "phd", "medicine", "other"]);
+export const visaType = pgEnum("visa_type", ["student", "graduate", "other"]);
+export const alertMode = pgEnum("alert_mode", ["instant", "daily"]);
+export const alertView = pgEnum("alert_view", ["degree", "experience", "both"]);
+
+export const experienceKind = pgEnum("experience_kind", ["job", "internship", "placement", "volunteering"]);
+
+/** Job preferences and alert settings: one row per user. Degrees and experience have their own tables. */
+export const userProfiles = snakeCase.table.withRLS("user_profiles", {
+  userId: uuid()
+    .primaryKey()
+    .references(() => authUsers.id, { onDelete: "cascade" }),
+  /** Optional, used only for "closing soon" urgency, never for advice. */
+  visaType: visaType(),
+  visaExpiry: date({ mode: "string" }),
+  /** Towns or regions the user wants to work in; empty means anywhere in the UK. */
+  locations: text().array().notNull().default(sql`'{}'::text[]`),
+  remoteOk: boolean().notNull().default(true),
+  alertMode: alertMode().notNull().default("instant"),
+  alertView: alertView().notNull().default("degree"),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+});
+
+/** A user's degrees; matching uses every subject across them. */
+export const userEducation = snakeCase.table.withRLS(
+  "user_education",
+  {
+    id: id(),
+    userId: uuid()
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    level: degreeLevel().notNull(),
+    /** CAH level 3 codes (src/lib/profile/cah-subjects.json); joint honours have two. */
+    subjects: text().array().notNull(),
+    university: text(),
+    /** The year it was or will be completed. */
+    graduationYear: smallint().notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("user_education_user_id_idx").on(t.userId)],
+);
+
+export const userExperience = snakeCase.table.withRLS(
+  "user_experience",
+  {
+    id: id(),
+    userId: uuid()
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    title: text().notNull(),
+    employer: text(),
+    kind: experienceKind().notNull().default("job"),
+    /** First of the month. */
+    startedOn: date({ mode: "string" }),
+    /** Null while it's the current job. */
+    endedOn: date({ mode: "string" }),
+    /** SOC 2020 code for the title, from the job classifier (step D). */
+    socCode: text(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("user_experience_user_id_idx").on(t.userId)],
+);

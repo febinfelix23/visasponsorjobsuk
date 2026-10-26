@@ -6,6 +6,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Sessions are only used on the admin area and the sign-in pages; public pages skip the proxy.
-  matcher: ['/admin', '/admin/:path*', '/auth/:path*'],
+  // Sessions are only needed on the admin area, accounts and sign-in; public pages skip the proxy.
+  matcher: ['/admin', '/admin/:path*', '/account', '/account/:path*', '/auth/:path*'],
 }
