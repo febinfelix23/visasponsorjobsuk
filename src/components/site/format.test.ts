@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { formatContract, formatSalary, shortLocation } from "./format";
+import { initials } from "./monogram";
 
 describe("formatContract", () => {
   it("turns ATS labels into plain words", () => {
@@ -30,5 +31,16 @@ describe("shortLocation", () => {
     assert.equal(shortLocation("United Kingdom"), "United Kingdom");
     assert.equal(shortLocation(""), null);
     assert.equal(shortLocation(null), null);
+  });
+});
+
+describe("initials", () => {
+  it("takes the first letters of the two names that identify the employer", () => {
+    assert.equal(initials("Wise Payments Limited"), "WP");
+    assert.equal(initials("Monzo Bank Ltd"), "MB");
+    assert.equal(initials("Mid and South Essex NHS Foundation Trust"), "MS");
+    assert.equal(initials("Accenture (UK) Limited"), "A");
+    assert.equal(initials("LSEG"), "L");
+    assert.equal(initials("3M United Kingdom PLC"), "3U");
   });
 });

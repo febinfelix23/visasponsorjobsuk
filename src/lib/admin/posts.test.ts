@@ -30,6 +30,7 @@ const job = (over: Partial<JobListItem>): JobListItem => ({
   isGradScheme: false,
   closingDate: null,
   firstSeenAt: "2026-10-24T06:00:00.000Z",
+  isNew: false,
   ...over,
 });
 

@@ -1,200 +1,230 @@
+import { MapPinIcon, SearchIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AutoSubmitForm } from "@/components/site/auto-submit";
-import { FIELD_KEYS, FIELD_LABEL, isFieldKey } from "@/lib/scoring/fields";
+import { Container } from "@/components/site/container";
+import { FilterPanel, MobileFilters, SortSelect } from "@/components/site/filters";
+import { Guilloche } from "@/components/site/guilloche";
 import { JobList } from "@/components/site/job-row";
 import { Stamp } from "@/components/site/stamp";
-import { fieldCounts, PAGE_SIZE, searchJobs, siteStats, type Filters } from "@/lib/site/queries";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FIELD_KEYS } from "@/lib/scoring/fields";
 import { RULES_UPDATED_AT } from "@/lib/scoring/occupations";
+import { fieldCounts, PAGE_SIZE, searchJobs, siteStats } from "@/lib/site/queries";
+import { filterQuery, parseFilters, searchHref, type SearchParams } from "@/lib/site/search";
 import { jsonLdScript, siteJsonLd } from "@/lib/site/structured-data";
 import { utmQuery } from "@/lib/site/utm";
 
 // Filtered, paged and tagged addresses all point search engines at the home page.
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-type SearchParams = Record<string, string | string[] | undefined>;
+const tagsFrom = (sp: SearchParams) => utmQuery({ get: (k) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]) ?? null });
 
-function parseFilters(sp: SearchParams): Filters {
-  const one = (k: string) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]) ?? "";
-  // "sector" (tech/finance/engineering/healthcare) was the old parameter; keep those links working.
-  const legacy: Record<string, string> = { tech: "software" };
-  const field = one("field") || legacy[one("sector")] || one("sector");
-  const page = Number(one("page"));
-  return {
-    q: one("q").trim().slice(0, 80) || undefined,
-    field: isFieldKey(field) ? field : undefined,
-    show: one("show") === "all" ? "all" : "passes",
-    includeSenior: one("senior") === "1",
-    gradSchemes: one("grad") === "1",
-    page: Number.isInteger(page) && page > 1 ? Math.min(page, 200) : 1,
-  };
+/** The search form on the hero band. A plain GET form: it works before (and without) JavaScript. */
+async function HeroSearch({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const sp = await searchParams;
+  const filters = parseFilters(sp);
+  // Keep the panel's filters and a post's tags when searching again; the two typed fields come from the inputs.
+  const kept = [...new URLSearchParams(filterQuery({ ...filters, q: undefined, location: undefined }, 1, tagsFrom(sp)))];
+  return <SearchForm q={filters.q} location={filters.location} kept={kept} />;
 }
 
-function hrefFor(f: Filters, page: number, utm = "") {
-  const p = new URLSearchParams(utm);
-  if (f.q) p.set("q", f.q);
-  if (f.field) p.set("field", f.field);
-  if (f.show === "all") p.set("show", "all");
-  if (f.includeSenior) p.set("senior", "1");
-  if (f.gradSchemes) p.set("grad", "1");
-  if (page > 1) p.set("page", String(page));
-  const qs = p.toString();
-  return qs ? `/?${qs}` : "/";
-}
-
-async function Intro() {
-  const stats = await siteStats();
+function SearchForm({ q, location, kept = [] }: { q?: string; location?: string; kept?: [string, string][] }) {
   return (
-    <section aria-labelledby="intro" className="mb-8">
+    <form action="/" method="get" role="search" aria-label="Search jobs" className="grid gap-2 rounded-xl bg-white p-2 shadow-[0_1px_0_rgba(255,255,255,0.12)] sm:grid-cols-[1fr_15rem_auto]">
+      {kept.map(([k, v]) => (
+        <input key={k} type="hidden" name={k} value={v} />
+      ))}
+      <InputGroup className="h-12 border-line">
+        <InputGroupAddon>
+          <SearchIcon aria-hidden className="text-ink-soft" />
+        </InputGroupAddon>
+        <InputGroupInput name="q" type="search" defaultValue={q} placeholder="Job title or employer" aria-label="Job title or employer" className="text-base" />
+      </InputGroup>
+      <InputGroup className="h-12 border-line">
+        <InputGroupAddon>
+          <MapPinIcon aria-hidden className="text-ink-soft" />
+        </InputGroupAddon>
+        <InputGroupInput name="location" defaultValue={location} placeholder="Town or city" aria-label="Town or city" className="text-base" />
+      </InputGroup>
+      <button type="submit" className="h-12 rounded-lg bg-teal px-6 font-semibold text-white hover:bg-teal/90">
+        Search jobs
+      </button>
+    </form>
+  );
+}
+
+async function Stats() {
+  const stats = await siteStats();
+  const updated = stats.updatedAt
+    ? new Date(stats.updatedAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" })
+    : null;
+  return (
+    <p className="mt-4 text-[0.94rem] text-white/70 tabular">
+      {stats.jobs.toLocaleString("en-GB")} live jobs from {stats.sponsors.toLocaleString("en-GB")} licensed sponsors.
+      {updated ? ` Updated ${updated}.` : ""}
+    </p>
+  );
+}
+
+function Hero({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  return (
+    <section aria-labelledby="hero" className="relative overflow-hidden bg-ink-deep text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd()) }} />
-      <h1 id="intro" className="font-expanded text-[1.9rem] leading-[1.08] font-extrabold tracking-tight text-balance sm:text-[2.4rem]">
-        Graduate jobs at UK employers licensed to sponsor visas
-      </h1>
-      <p className="mt-4 max-w-[34rem] text-[1.05rem] leading-relaxed text-ink-soft">
-        Every job is checked against the Skilled Worker rules for people switching from a Student or Graduate visa:
-        the employer&apos;s licence, the occupation, and the new-entrant salary. {stats.jobs.toLocaleString("en-GB")} live
-        jobs from {stats.sponsors.toLocaleString("en-GB")} licensed sponsors.
-      </p>
+      {/* The passport data page: fine guilloche lines behind the search. */}
+      <Guilloche className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-teal-wash/15" />
+      <Container className="relative py-10 sm:py-14">
+        <h1 id="hero" className="max-w-[42rem] font-expanded text-[2rem] leading-[1.05] font-extrabold tracking-tight text-balance sm:text-[2.6rem]">
+          Graduate jobs at UK employers licensed to sponsor visas
+        </h1>
+        <p className="mt-3 max-w-[38rem] text-[1.05rem] leading-relaxed text-white/80">
+          Every job is checked against the Skilled Worker rules for switching from a Student or Graduate visa: the licence, the
+          occupation and the new-entrant salary.
+        </p>
+        <div className="mt-7 max-w-[56rem]">
+          <Suspense fallback={<SearchForm />}>
+            <HeroSearch searchParams={searchParams} />
+          </Suspense>
+        </div>
+        <Suspense fallback={<p className="mt-4 h-6" />}>
+          <Stats />
+        </Suspense>
+      </Container>
     </section>
   );
 }
 
-async function SearchAndResults({ searchParams }: { searchParams: Promise<SearchParams> }) {
+/** Page numbers around the current one: 1 … 4 5 6 … 100. */
+function pageWindow(page: number, pages: number): (number | "gap")[] {
+  const set = new Set([1, pages, page - 1, page, page + 1].filter((p) => p >= 1 && p <= pages));
+  const sorted = [...set].sort((a, b) => a - b);
+  return sorted.flatMap((p, i) => (i > 0 && p - sorted[i - 1] > 1 ? (["gap", p] as const) : [p]));
+}
+
+async function Results({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams;
   const filters = parseFilters(sp);
   // A visitor from a tagged post keeps the tag on every link here, so their apply click is credited to it.
-  const utm = utmQuery({ get: (k) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]) ?? null });
-  const utmParams = [...new URLSearchParams(utm)];
+  const utm = tagsFrom(sp);
   const [{ items, total }, counts] = await Promise.all([searchJobs(filters), fieldCounts()]);
-  // Fields with nothing to show stay out of the row, unless it's the one selected.
-  const chips = FIELD_KEYS.filter((k) => k !== "other" && ((counts[k] ?? 0) > 0 || filters.field === k));
+  // Fields with nothing to show stay out of the list, unless it's the one selected.
+  const fields = FIELD_KEYS.filter((k) => k !== "other" && ((counts[k] ?? 0) > 0 || filters.field === k));
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const allCount = Object.values(counts).reduce((a, b) => a + b, 0);
+  const panel = { filters, counts, fields, utm };
+  // "for “nurse” in Leeds", "for “nurse”", "in Leeds"
+  const searched = [filters.q && `for “${filters.q}”`, filters.location && `in ${filters.location}`].filter(Boolean).join(" ");
 
   return (
-    <>
-      <AutoSubmitForm action="/" method="get" role="search" aria-label="Search jobs" className="space-y-4">
-        {utmParams.map(([k, v]) => (
-          <input key={k} type="hidden" name={k} value={v} />
-        ))}
-        <div className="flex gap-2">
-          <label htmlFor="q" className="sr-only">Job title, employer or town</label>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            defaultValue={filters.q}
-            placeholder="Job title, employer or town"
-            className="h-11 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-base placeholder:text-ink-soft/70"
-          />
-          <button type="submit" className="h-11 shrink-0 rounded-md bg-ink px-4 font-semibold text-white hover:bg-ink/90">
-            Search
-          </button>
+    <div className="lg:grid lg:grid-cols-[15.5rem_1fr] lg:gap-10">
+      <aside aria-label="Filters" className="hidden lg:block">
+        <div className="sticky top-6 space-y-8">
+          <FilterPanel {...panel} />
+          <StampKey />
         </div>
+      </aside>
 
-        {/* min-w-0: fieldsets default to min-content width, which would widen the page instead of scrolling the chips. */}
-        <fieldset className="min-w-0">
-          <legend className="sr-only">Field of work</legend>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-            {[undefined, ...chips].map((s) => {
-              const checked = filters.field === s;
-              const n = s ? (counts[s] ?? 0) : allCount;
-              return (
-                <label
-                  key={s ?? "all"}
-                  // relative: keeps the visually hidden radio inside the scrolling row instead of widening the page.
-                  className={`relative flex shrink-0 cursor-pointer items-baseline gap-1.5 rounded-full border px-3.5 py-1.5 text-[0.94rem] has-focus-visible:outline-2 has-focus-visible:outline-teal ${
-                    checked ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-ink-soft"
-                  }`}
-                >
-                  <input type="radio" name="field" value={s ?? ""} defaultChecked={checked} className="sr-only" />
-                  {s ? FIELD_LABEL[s] : "All fields"}
-                  <span className={`text-xs tabular ${checked ? "text-white/70" : "text-ink-soft"}`}>{n}</span>
-                </label>
-              );
-            })}
+      <section aria-labelledby="results" className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="results" className="text-[0.94rem] text-ink-soft" aria-live="polite">
+            <strong className="font-semibold text-ink tabular">{total.toLocaleString("en-GB")}</strong> {total === 1 ? "job" : "jobs"}
+            {searched ? ` ${searched}` : ""}
+            {filters.show === "passes" ? " that pass our checks" : " at licensed sponsors"}
+          </h2>
+          <div className="flex items-center gap-2">
+            <MobileFilters {...panel} total={total} />
+            <SortSelect filters={filters} utm={utm} />
           </div>
-        </fieldset>
-
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-[0.94rem]">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="grad" value="1" defaultChecked={filters.gradSchemes} className="size-4 accent-teal" />
-            Graduate schemes only
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="show" value="all" defaultChecked={filters.show === "all"} className="size-4 accent-teal" />
-            Include jobs to check with the employer
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="senior" value="1" defaultChecked={filters.includeSenior} className="size-4 accent-teal" />
-            Include senior roles
-          </label>
         </div>
-      </AutoSubmitForm>
-
-      <section aria-labelledby="results" className="mt-8">
-        <h2 id="results" className="text-[0.94rem] text-ink-soft" aria-live="polite">
-          {total.toLocaleString("en-GB")} {total === 1 ? "job" : "jobs"}
-          {filters.show === "passes" ? " that pass our checks" : " at licensed sponsors"}
-          {pages > 1 ? `, page ${filters.page} of ${pages}` : ""}
-        </h2>
 
         {items.length > 0 ? (
-          <div className="mt-3">
+          <div className="mt-4">
             <JobList jobs={items} query={utm} />
           </div>
         ) : (
-          <div className="mt-4 rounded-lg border border-dashed border-line bg-white p-6">
-            <p className="font-semibold">No jobs match these filters.</p>
-            <p className="mt-1 text-ink-soft">
-              Try another field, or{" "}
-              <Link className="underline underline-offset-2" href={hrefFor({ ...filters, show: "all", page: 1 }, 1, utm)}>
-                include jobs to check with the employer
+          <Empty className="mt-4 border border-dashed border-line bg-white">
+            <EmptyHeader>
+              <EmptyTitle>No jobs match this search</EmptyTitle>
+              <EmptyDescription>Try a nearby town, a broader job title, or include jobs to check with the employer.</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent className="flex-row flex-wrap justify-center gap-3">
+              <Link className="font-semibold text-teal underline-offset-4 hover:underline" href={searchHref({ ...filters, show: "all" }, 1, utm)}>
+                Include jobs to check with the employer
               </Link>
-              .
-            </p>
-          </div>
+              <Link className="font-semibold text-teal underline-offset-4 hover:underline" href={searchHref(parseFilters({}), 1, utm)}>
+                Clear the search
+              </Link>
+            </EmptyContent>
+          </Empty>
         )}
 
         {pages > 1 ? (
-          <nav aria-label="Pages" className="mt-6 flex items-center justify-between text-[0.94rem]">
-            {filters.page > 1 ? (
-              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page - 1, utm)}>
-                Previous page
-              </Link>
-            ) : <span />}
-            {filters.page < pages ? (
-              <Link className="rounded-md border border-line bg-white px-3 py-2 hover:border-ink-soft" href={hrefFor(filters, filters.page + 1, utm)}>
-                Next page
-              </Link>
-            ) : null}
-          </nav>
+          <Pagination className="mt-6">
+            <PaginationContent className="flex-wrap">
+              {filters.page > 1 ? (
+                <PaginationItem>
+                  <PaginationPrevious href={searchHref(filters, filters.page - 1, utm)} />
+                </PaginationItem>
+              ) : null}
+              {pageWindow(filters.page, pages).map((p, i) =>
+                p === "gap" ? (
+                  <PaginationItem key={`gap-${i}`} className="hidden sm:block">
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={p} className={p === filters.page ? undefined : "hidden sm:block"}>
+                    <PaginationLink href={searchHref(filters, p, utm)} isActive={p === filters.page} className="tabular">
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              )}
+              {filters.page < pages ? (
+                <PaginationItem>
+                  <PaginationNext href={searchHref(filters, filters.page + 1, utm)} />
+                </PaginationItem>
+              ) : null}
+            </PaginationContent>
+          </Pagination>
         ) : null}
+
+        <div className="mt-10 lg:hidden">
+          <StampKey />
+        </div>
       </section>
-    </>
+    </div>
   );
 }
 
-function Key() {
+const rulesDate = new Date(RULES_UPDATED_AT).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/London" });
+
+function StampKey() {
   return (
-    <aside aria-labelledby="key" className="mt-12 rounded-lg border border-line bg-white p-5">
+    <aside aria-labelledby="key" className="rounded-lg border border-line bg-white p-4">
       <h2 id="key" className="font-semibold">What the stamps mean</h2>
-      <dl className="mt-3 space-y-3 text-[0.94rem]">
-        {(["sponsorship_mentioned", "likely_eligible", "check_with_employer"] as const).map((s) => (
-          <div key={s} className="grid gap-1 sm:grid-cols-[13rem_1fr] sm:gap-3">
-            <dt><Stamp status={s} /></dt>
-            <dd className="text-ink-soft">
-              {s === "sponsorship_mentioned" && "The job ad itself says sponsorship is available."}
-              {s === "likely_eligible" && "Licensed sponsor, an eligible occupation, and a salary at or above the new-entrant rate for that occupation."}
-              {s === "check_with_employer" && "Licensed sponsor, but the ad doesn't show everything needed to confirm the rules, often the salary."}
-            </dd>
+      <dl className="mt-3 space-y-3 text-sm">
+        {(
+          [
+            ["sponsorship_mentioned", "The ad itself says sponsorship is available."],
+            ["likely_eligible", "Licensed sponsor, eligible occupation, and the salary meets the new-entrant rate."],
+            ["check_with_employer", "Licensed sponsor, but the ad doesn't show everything, often the salary."],
+          ] as const
+        ).map(([s, text]) => (
+          <div key={s}>
+            <dt>
+              <Stamp status={s} />
+            </dt>
+            <dd className="mt-1.5 text-ink-soft">{text}</dd>
           </div>
         ))}
       </dl>
-      <p className="mt-4 text-sm text-ink-soft">
-        Salary rules as of {new Date(RULES_UPDATED_AT).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/London" })}.{" "}
-        <Link className="underline underline-offset-2" href="/how-we-check">How we check</Link>
+      <p className="mt-3 text-xs text-ink-soft">
+        Rules as of {rulesDate}.{" "}
+        <Link className="underline underline-offset-2" href="/how-we-check">
+          How we check
+        </Link>
       </p>
     </aside>
   );
@@ -202,17 +232,26 @@ function Key() {
 
 function ResultsFallback() {
   return (
-    <div aria-busy="true" className="space-y-4">
-      <div className="h-11 rounded-md bg-white" />
-      <div className="h-9 w-2/3 rounded-full bg-white" />
-      <ul className="mt-8 divide-y divide-line border-y border-line">
-        {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className="py-4">
-            <div className="h-4 w-3/4 rounded bg-line/60" />
-            <div className="mt-2 h-3 w-1/2 rounded bg-line/40" />
-          </li>
+    <div aria-busy="true" className="lg:grid lg:grid-cols-[15.5rem_1fr] lg:gap-10">
+      <div className="hidden space-y-2 lg:block">
+        {Array.from({ length: 8 }, (_, i) => (
+          <Skeleton key={i} className="h-7 bg-line/50" />
         ))}
-      </ul>
+      </div>
+      <div>
+        <Skeleton className="h-10 w-64 bg-line/50" />
+        <ul className="mt-4 divide-y divide-line rounded-lg border border-line bg-white">
+          {Array.from({ length: 6 }, (_, i) => (
+            <li key={i} className="flex gap-4 px-5 py-4">
+              <Skeleton className="size-11 rounded-lg bg-line/50" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4 bg-line/60" />
+                <Skeleton className="h-3 w-1/2 bg-line/40" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -220,11 +259,12 @@ function ResultsFallback() {
 export default function Home(props: PageProps<"/">) {
   return (
     <>
-      <Intro />
-      <Suspense fallback={<ResultsFallback />}>
-        <SearchAndResults searchParams={props.searchParams} />
-      </Suspense>
-      <Key />
+      <Hero searchParams={props.searchParams} />
+      <Container className="py-8 sm:py-10">
+        <Suspense fallback={<ResultsFallback />}>
+          <Results searchParams={props.searchParams} />
+        </Suspense>
+      </Container>
     </>
   );
 }

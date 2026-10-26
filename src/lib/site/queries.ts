@@ -10,13 +10,19 @@ import type { FieldKey } from "@/lib/scoring/fields";
 /** What a graduate wants first: confirmed or likely sponsorship, then roles worth a question. */
 export const BADGE_ORDER: Sponsorability[] = ["sponsorship_mentioned", "likely_eligible", "check_with_employer", "unknown", "ineligible"];
 
+export const SORTS = ["best", "newest", "salary"] as const;
+export type Sort = (typeof SORTS)[number];
+
 export type Filters = {
   q?: string;
+  /** Town, city or region, matched against the job's location. */
+  location?: string;
   field?: FieldKey;
   /** "passes": sponsorship mentioned or likely eligible (default). "all": everything except ineligible. */
   show: "passes" | "all";
   includeSenior: boolean;
   gradSchemes: boolean;
+  sort: Sort;
   page: number;
 };
 
@@ -38,6 +44,8 @@ export type JobListItem = {
   isGradScheme: boolean;
   closingDate: string | null;
   firstSeenAt: string;
+  /** First seen in the last three days, judged when the (cached) query ran. */
+  isNew: boolean;
 };
 
 const listColumns = {
@@ -54,6 +62,8 @@ const listColumns = {
   isGradScheme: jobs.isGradScheme,
   closingDate: jobs.closingDate,
   firstSeenAt: jobs.firstSeenAt,
+  // Aliased so it can also be selected back out of a subquery (postCandidates).
+  isNew: sql<boolean>`${jobs.firstSeenAt} > now() - interval '3 days'`.as("is_new"),
 };
 
 const toItem = (r: { firstSeenAt: Date } & Omit<JobListItem, "firstSeenAt">): JobListItem => ({
@@ -63,6 +73,14 @@ const toItem = (r: { firstSeenAt: Date } & Omit<JobListItem, "firstSeenAt">): Jo
 
 const badgeRank = sql`array_position(array['sponsorship_mentioned','likely_eligible','check_with_employer','unknown','ineligible']::sponsorability[], ${jobs.sponsorability})`;
 
+const escapeLike = (s: string) => s.replace(/[%_\\]/g, "\\$&");
+
+const ORDER: Record<Sort, SQL[]> = {
+  best: [badgeRank, desc(jobs.isGradScheme), desc(jobs.firstSeenAt)],
+  newest: [desc(jobs.firstSeenAt), badgeRank],
+  salary: [sql`${jobs.salaryAnnualMin} desc nulls last`, badgeRank, desc(jobs.firstSeenAt)],
+};
+
 function whereFor(f: Filters): SQL | undefined {
   const parts: (SQL | undefined)[] = [eq(jobs.status, "live")];
   parts.push(f.show === "passes" ? inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]) : ne(jobs.sponsorability, "ineligible"));
@@ -70,8 +88,9 @@ function whereFor(f: Filters): SQL | undefined {
   if (f.gradSchemes) parts.push(eq(jobs.isGradScheme, true));
   // Filter by the kind of work, not the employer's industry: Monzo's software roles are Software & IT.
   if (f.field) parts.push(eq(jobs.field, f.field));
+  if (f.location) parts.push(ilike(jobs.locationText, `%${escapeLike(f.location)}%`));
   if (f.q) {
-    const like = `%${f.q.replace(/[%_\\]/g, "\\$&")}%`;
+    const like = `%${escapeLike(f.q)}%`;
     parts.push(or(ilike(jobs.title, like), ilike(jobs.employerName, like), ilike(jobs.locationText, like)));
   }
   return and(...parts);
@@ -88,7 +107,7 @@ export async function searchJobs(f: Filters): Promise<{ items: JobListItem[]; to
       .select(listColumns)
       .from(jobs)
       .where(where)
-      .orderBy(badgeRank, desc(jobs.isGradScheme), desc(jobs.firstSeenAt))
+      .orderBy(...ORDER[f.sort])
       .limit(PAGE_SIZE)
       .offset((f.page - 1) * PAGE_SIZE),
     db.select({ total: sql<number>`count(*)::int` }).from(jobs).where(where),

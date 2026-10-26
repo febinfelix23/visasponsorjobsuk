@@ -12,6 +12,7 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
+  --color-ink-deep: var(--ink-deep);
   --color-line: var(--line);
   --color-teal: var(--teal);
   --color-teal-wash: var(--teal-wash);
@@ -62,6 +63,8 @@
   --paper: #f4f7f6;
   --ink: #16233f;
   --ink-soft: #4a5872;
+  /* The home hero band: a shade deeper than the header, so the two read as separate bands. */
+  --ink-deep: #101b33;
   --line: #d3dcd9;
   --teal: #0e6e68;
   --teal-wash: #e3f1ef;

@@ -5,6 +5,7 @@ import { LoginForm } from "@/components/login-form";
 import { Guilloche } from "@/components/site/guilloche";
 import { isAdminClaims, safeNext } from "@/lib/auth/rules";
 import { createClient } from "@/lib/supabase/server";
+import { Page } from "@/components/site/container";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -55,17 +56,19 @@ async function SignIn({ searchParams }: { searchParams: Promise<SearchParams> })
 
 export default function LoginPage(props: PageProps<"/auth/login">) {
   return (
-    <div className="mx-auto max-w-[26rem] pt-4">
-      <h1 className="font-expanded text-[1.9rem] leading-tight font-extrabold tracking-tight">Sign in</h1>
-      <p className="mt-2 text-ink-soft">With your Google account. Job listings are free to browse without one.</p>
-      <div className="mt-6 overflow-hidden rounded-lg border border-line bg-white">
-        <Guilloche className="h-6 w-full bg-teal-wash text-teal/40" />
-        <div className="p-6">
-          <Suspense fallback={<div aria-busy="true" className="h-12 rounded-md bg-line/40" />}>
-            <SignIn searchParams={props.searchParams} />
-          </Suspense>
+    <Page>
+      <div className="mx-auto max-w-[26rem]">
+        <h1 className="font-expanded text-[1.9rem] leading-tight font-extrabold tracking-tight">Sign in</h1>
+        <p className="mt-2 text-ink-soft">With your Google account. Job listings are free to browse without one.</p>
+        <div className="mt-6 overflow-hidden rounded-lg border border-line bg-white">
+          <Guilloche className="h-6 w-full bg-teal-wash text-teal/40" />
+          <div className="p-6">
+            <Suspense fallback={<div aria-busy="true" className="h-12 rounded-md bg-line/40" />}>
+              <SignIn searchParams={props.searchParams} />
+            </Suspense>
+          </div>
         </div>
       </div>
-    </div>
+    </Page>
   );
 }

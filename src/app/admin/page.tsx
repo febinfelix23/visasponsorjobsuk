@@ -22,6 +22,7 @@ import {
 import { SITE_URL } from "@/lib/site/config";
 import { clicksByChannel, postCandidates } from "@/lib/site/queries";
 import { cn } from "@/lib/utils";
+import { Page } from "@/components/site/container";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -209,19 +210,21 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
 
 export default function AdminPage(props: PageProps<"/admin">) {
   return (
-    <>
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h1 className="font-expanded text-[1.9rem] leading-tight font-extrabold tracking-tight">Posting helper</h1>
-        <form action="/auth/signout" method="post">
-          <button type="submit" className="text-[0.94rem] text-ink-soft underline-offset-4 hover:text-ink hover:underline">
-            Sign out
-          </button>
-        </form>
+    <Page>
+      <div className="max-w-3xl">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h1 className="font-expanded text-[1.9rem] leading-tight font-extrabold tracking-tight">Posting helper</h1>
+          <form action="/auth/signout" method="post">
+            <button type="submit" className="text-[0.94rem] text-ink-soft underline-offset-4 hover:text-ink hover:underline">
+              Sign out
+            </button>
+          </form>
+        </div>
+        <p className="mt-2 mb-8 text-ink-soft">Today&apos;s posts for each channel, picked automatically. Edit if you need to, copy, then paste.</p>
+        <Suspense fallback={<div aria-busy="true" className="h-96 rounded-lg bg-white" />}>
+          <AdminContent searchParams={props.searchParams} />
+        </Suspense>
       </div>
-      <p className="mt-2 mb-8 text-ink-soft">Today&apos;s posts for each channel, picked automatically. Edit if you need to, copy, then paste.</p>
-      <Suspense fallback={<div aria-busy="true" className="h-96 rounded-lg bg-white" />}>
-        <AdminContent searchParams={props.searchParams} />
-      </Suspense>
-    </>
+    </Page>
   );
 }

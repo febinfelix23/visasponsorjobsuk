@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JobList } from "@/components/site/job-row";
 import { doctorJobs } from "@/lib/site/queries";
+import { Page } from "@/components/site/container";
 
 export const metadata: Metadata = {
   title: "Junior doctor jobs with visa sponsorship",
@@ -29,7 +30,7 @@ const OFFICIAL = [
 export default async function JuniorDoctorsPage() {
   const posts = await doctorJobs();
   return (
-    <>
+    <Page>
       <h1 className="font-expanded text-[1.9rem] leading-[1.08] font-extrabold tracking-tight text-balance sm:text-[2.4rem]">
         Junior doctor jobs at sponsoring NHS employers
       </h1>
@@ -66,6 +67,6 @@ export default async function JuniorDoctorsPage() {
           </p>
         )}
       </section>
-    </>
+    </Page>
   );
 }
