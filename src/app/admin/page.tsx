@@ -7,10 +7,8 @@ import { Stamp } from "@/components/site/stamp";
 import { isAdmin } from "@/lib/admin/access";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
 import {
-  channelLink,
   groupByField,
   instagramCaption,
-  isoDay,
   londonDate,
   POST_SIZE,
   redditRoundup,
@@ -72,8 +70,8 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
 
   const siteUrl = SITE_URL;
   const now = new Date();
-  const daily = { siteUrl, date: now, campaign: `daily-${isoDay(now)}` };
-  const weekly = { siteUrl, date: now, campaign: `weekly-${isoDay(now)}` };
+  const daily = { siteUrl, date: now };
+  const weekly = daily;
 
   const [recent, week, clicks] = await Promise.all([postCandidates(days), postCandidates(7), clicksByChannel(7)]);
   // Fixed sizes: Telegram's picks include WhatsApp's and Instagram's, as all three take the same order.
@@ -168,7 +166,7 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
               ))}
             </ol>
             <CopyBlock key={`ig-${days}`} label="Caption" text={instagramCaption(slides, daily)} limit={2200} rows={10} />
-            <CopyBlock label="Link for the bio" text={channelLink(siteUrl, "/", "instagram", "bio")} rows={2} />
+            <CopyBlock label="Link for the bio" text={`${siteUrl}/`} rows={2} />
           </Section>
 
           <Section
@@ -182,7 +180,7 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
         </>
       )}
 
-      <Section id="clicks" title="Apply clicks by channel" note="Last 7 days. A click is someone opening the employer's ad from a job page.">
+      <Section id="clicks" title="Apply clicks" note="Last 7 days. A click is someone opening the employer's ad from a job page. Post links have no tracking tags, so clicks aren't split by channel.">
         {clicks.length === 0 ? (
           <p className="text-ink-soft">No apply clicks yet.</p>
         ) : (

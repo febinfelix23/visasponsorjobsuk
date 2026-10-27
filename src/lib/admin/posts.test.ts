@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { JobListItem } from "@/lib/site/queries";
 import {
-  channelLink,
   groupByField,
   instagramCaption,
+  jobLink,
   pickTop,
   POST_SIZE,
   redditRoundup,
@@ -35,15 +35,11 @@ const job = (over: Partial<JobListItem>): JobListItem => ({
   ...over,
 });
 
-const opts = { siteUrl: "https://example.test", date: new Date("2026-10-24T09:00:00Z"), campaign: "daily-2026-10-24" };
+const opts = { siteUrl: "https://example.test", date: new Date("2026-10-24T09:00:00Z") };
 
-describe("channelLink", () => {
-  it("tags the link with the channel and campaign", () => {
-    const url = new URL(channelLink("https://example.test", "/jobs/a-b", "telegram", "daily-2026-10-24"));
-    assert.equal(url.pathname, "/jobs/a-b");
-    assert.equal(url.searchParams.get("utm_source"), "telegram");
-    assert.equal(url.searchParams.get("utm_medium"), "social");
-    assert.equal(url.searchParams.get("utm_campaign"), "daily-2026-10-24");
+describe("jobLink", () => {
+  it("is the job's short link, with no tracking tags", () => {
+    assert.equal(jobLink("https://example.test", { id: 15992 }), "https://example.test/j/cc8");
   });
 });
 
@@ -115,7 +111,8 @@ describe("telegramPost", () => {
     assert.match(post, /^\*\*Graduate jobs at UK visa sponsors: 24 October\*\*/);
     assert.match(post, /\*\*Software & IT\*\*/);
     assert.match(post, /• Graduate Software Engineer\nMonzo, London\n£45,000 a year\. Graduate scheme\. Likely eligible\n/);
-    assert.match(post, /utm_source=telegram&utm_medium=social&utm_campaign=daily-2026-10-24/);
+    assert.match(post, /\nhttps:\/\/example\.test\/j\/[0-9a-z]+\n/);
+    assert.doesNotMatch(post, /utm_/);
     assert.match(post, /not immigration advice/);
   });
 
@@ -136,17 +133,18 @@ describe("whatsappDigest", () => {
   it("uses WhatsApp's bold and tags links for WhatsApp", () => {
     const post = whatsappDigest(pickTop([job({})], 3), opts);
     assert.match(post, /^\*Graduate jobs at UK visa sponsors: 24 October\*/);
-    assert.match(post, /utm_source=whatsapp/);
+    assert.match(post, /https:\/\/example\.test\/j\/[0-9a-z]+/);
+    assert.doesNotMatch(post, /utm_/);
     assert.doesNotMatch(post, /\*\*/);
   });
 });
 
 describe("redditRoundup", () => {
   it("writes Markdown links and escapes Markdown in job text", () => {
-    const { title, body } = redditRoundup(pickTop([job({ title: "C# Developer [Graduate]", employerName: "Acme_Co" })], 3), { ...opts, campaign: "weekly-2026-10-24" });
+    const { title, body } = redditRoundup(pickTop([job({ title: "C# Developer [Graduate]", employerName: "Acme_Co" })], 3), opts);
     assert.equal(title, "Graduate jobs at UK licensed visa sponsors, week of 24 October");
     assert.match(body, /## Software & IT/);
-    assert.match(body, /- \[C# Developer \\\[Graduate\\\]\]\(https:\/\/example\.test\/jobs\/job-\d+\?utm_source=reddit&utm_medium=social&utm_campaign=weekly-2026-10-24\), Acme\\_Co, London\./);
+    assert.match(body, /- \[C# Developer \\\[Graduate\\\]\]\(https:\/\/example\.test\/j\/[0-9a-z]+\), Acme\\_Co, London\./);
   });
 });
 

@@ -1,27 +1,22 @@
 import { BADGE, formatSalary, shortLocation } from "@/components/site/format";
 import { FIELD_KEYS, FIELD_LABEL } from "@/lib/scoring/fields";
 import type { JobListItem } from "@/lib/site/queries";
+import { shortJobPath } from "@/lib/site/short-link";
 
 /**
  * Copy-ready posts for the channels the founder posts to by hand. Jobs arrive ranked
  * best first; everything here is plain text so it can be tested and edited before posting.
  */
 
-export type Channel = "telegram" | "whatsapp" | "reddit" | "instagram";
 export type FieldGroup = { field: string; label: string; jobs: JobListItem[] };
-export type PostOptions = { siteUrl: string; date: Date; campaign: string };
+export type PostOptions = { siteUrl: string; date: Date };
 
 export const TELEGRAM_LIMIT = 4096;
 const DISCLAIMER = "Facts from the sponsor register, the job ad and the Skilled Worker rules, not immigration advice. Confirm sponsorship with the employer before you apply.";
 
-/** Every link says which channel and which post it came from, so clicks can be counted per channel. */
-export function channelLink(siteUrl: string, path: string, channel: Channel, campaign: string): string {
-  const url = new URL(path, siteUrl);
-  url.searchParams.set("utm_source", channel);
-  url.searchParams.set("utm_medium", "social");
-  url.searchParams.set("utm_campaign", campaign);
-  return url.toString();
-}
+/** A job's short link (/j/<code>), about 40 characters, so posts stay readable and fit more jobs. */
+export const jobLink = (siteUrl: string, job: Pick<JobListItem, "id">) => new URL(shortJobPath(job.id), siteUrl).toString();
+const siteLink = (siteUrl: string, path: string) => new URL(path, siteUrl).toString();
 
 export const londonDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "Europe/London" });
 export const isoDay = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Europe/London" });
@@ -113,9 +108,9 @@ export function telegramPost(groups: FieldGroup[], o: PostOptions): string {
       `**Graduate jobs at UK visa sponsors: ${londonDate(o.date)}**`,
       `${roles(total(gs))} just added at employers licensed to sponsor Skilled Worker visas, each checked against the salary and occupation rules.`,
       ...gs.map((g) =>
-        [`**${g.label}**`, ...g.jobs.map((j) => `• ${j.title}\n${where(j)}\n${facts(j)}\n${channelLink(o.siteUrl, `/jobs/${j.slug}`, "telegram", o.campaign)}`)].join("\n\n"),
+        [`**${g.label}**`, ...g.jobs.map((j) => `• ${j.title}\n${where(j)}\n${facts(j)}\n${jobLink(o.siteUrl, j)}`)].join("\n\n"),
       ),
-      `More jobs: ${channelLink(o.siteUrl, "/", "telegram", o.campaign)}`,
+      `More jobs: ${siteLink(o.siteUrl, "/")}`,
       DISCLAIMER,
     ].join("\n\n");
   return fit(groups, render, TELEGRAM_LIMIT);
@@ -127,9 +122,9 @@ export function whatsappDigest(groups: FieldGroup[], o: PostOptions): string {
     [
       `*Graduate jobs at UK visa sponsors: ${londonDate(o.date)}*`,
       ...gs.map((g) =>
-        [`*${g.label}*`, ...g.jobs.map((j) => `${j.title}, ${where(j)}\n${facts(j)}\n${channelLink(o.siteUrl, `/jobs/${j.slug}`, "whatsapp", o.campaign)}`)].join("\n\n"),
+        [`*${g.label}*`, ...g.jobs.map((j) => `${j.title}, ${where(j)}\n${facts(j)}\n${jobLink(o.siteUrl, j)}`)].join("\n\n"),
       ),
-      `All jobs: ${channelLink(o.siteUrl, "/", "whatsapp", o.campaign)}`,
+      `All jobs: ${siteLink(o.siteUrl, "/")}`,
       `_${DISCLAIMER}_`,
     ].join("\n\n");
   return fit(groups, render, 3500);
@@ -143,9 +138,9 @@ export function redditRoundup(groups: FieldGroup[], o: PostOptions): { title: st
   const body = [
     `${roles(total(groups))} for graduates and early-career applicants from the past week at employers on the Home Office Register of Licensed Sponsors. Each one is checked against the Skilled Worker rules for people switching from a Student or Graduate visa: the sponsor licence, the occupation code and the new-entrant salary.`,
     ...groups.map((g) =>
-      [`## ${md(g.label)}`, ...g.jobs.map((j) => `- [${md(j.title)}](${channelLink(o.siteUrl, `/jobs/${j.slug}`, "reddit", o.campaign)}), ${md(where(j))}. ${md(facts(j))}.`)].join("\n\n"),
+      [`## ${md(g.label)}`, ...g.jobs.map((j) => `- [${md(j.title)}](${jobLink(o.siteUrl, j)}), ${md(where(j))}. ${md(facts(j))}.`)].join("\n\n"),
     ),
-    `How the checks work: ${channelLink(o.siteUrl, "/how-we-check", "reddit", o.campaign)}`,
+    `How the checks work: ${siteLink(o.siteUrl, "/how-we-check")}`,
     `*${DISCLAIMER}*`,
   ].join("\n\n");
   return { title, body };

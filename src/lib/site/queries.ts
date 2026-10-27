@@ -392,3 +392,11 @@ export async function sitemapEntries(): Promise<{
     sponsors: sponsorRows.map((r) => ({ id: r.id, name: r.name, updatedAt: new Date(r.updatedAt).toISOString() })),
   };
 }
+
+/** The slug for a short link's job ID; closed jobs too, since their page says they've closed. */
+export async function jobSlugById(id: number): Promise<string | null> {
+  "use cache";
+  cacheLife("days");
+  const [row] = await getDb().select({ slug: jobs.slug }).from(jobs).where(eq(jobs.id, id)).limit(1);
+  return row?.slug ?? null;
+}
