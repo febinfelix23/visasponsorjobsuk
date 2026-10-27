@@ -160,7 +160,7 @@ export const sponsorIdFromSlug = (slug: string) => {
 
 export async function getJob(slug: string): Promise<JobDetail | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   const [r] = await getDb()
     .select({
       ...listColumns,
@@ -210,7 +210,7 @@ export async function getJob(slug: string): Promise<JobDetail | null> {
 /** Newest jobs, prerendered at build time; every other job renders on its first visit and is then cached. */
 export async function recentJobSlugs(limit = 50): Promise<string[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   const rows = await getDb()
     .select({ slug: jobs.slug })
     .from(jobs)
@@ -235,7 +235,7 @@ export type SponsorDetail = {
 
 export async function getSponsor(id: number): Promise<SponsorDetail | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   const db = getDb();
   const [s] = await db.select().from(sponsors).where(eq(sponsors.id, id)).limit(1);
   if (!s) return null;
@@ -261,7 +261,7 @@ export async function getSponsor(id: number): Promise<SponsorDetail | null> {
 
 export async function topSponsorIds(limit = 30): Promise<{ id: number; name: string }[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   return getDb()
     .select({ id: sponsors.id, name: sponsors.name })
     .from(sponsors)
@@ -280,7 +280,7 @@ const JUNIOR_DOCTOR_TITLE = String.raw`\m(foundation|fy ?[12]|f[12]|clinical fel
 /** Junior doctors' posts on NHS Jobs that aren't ruled out. */
 export async function doctorJobs(): Promise<JobListItem[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   const rows = await getDb()
     .select(listColumns)
     .from(jobs)
@@ -302,7 +302,7 @@ export async function doctorJobs(): Promise<JobListItem[]> {
 
 export async function siteStats(): Promise<{ jobs: number; sponsors: number; updatedAt: string | null }> {
   "use cache";
-  cacheLife("minutes");
+  cacheLife("pages");
   const [row] = await getDb()
     .select({
       jobs: sql<number>`count(*)::int`,
@@ -372,7 +372,7 @@ export async function sitemapEntries(): Promise<{
   sponsors: { id: number; name: string; updatedAt: string }[];
 }> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("pages");
   const db = getDb();
   const [jobRows, sponsorRows] = await Promise.all([
     db
