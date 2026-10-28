@@ -1,3 +1,5 @@
+import { MONTHLY_CAP_USD } from "@/lib/reading/budget";
+
 /**
  * The run report sent to Telegram after each workflow: what the run did and what needs
  * attention. Telegram's HTML mode: only <b>, <i>, <a>, <code> are used, and all data is escaped.
@@ -16,6 +18,17 @@ export type ScrapeReport = {
   aiUsage: { estimatedCostUsd: number } | null;
 };
 export type ClassifyReport = { titles: number; classified: number; failedBatches: number; stopped: string | null; estimatedCostUsd: number };
+export type ReadReport = {
+  read: number;
+  failed: number;
+  stopped: string | null;
+  costUsd: number;
+  monthToDateUsd: number;
+  projectedMonthUsd: number;
+  /** Live jobs without a reading of their current text: hidden until read. */
+  waiting: number;
+  oldestWaitingHours: number | null;
+};
 export type ScoreReport = { scored: number };
 export type Health = {
   liveJobs: number;
@@ -33,6 +46,7 @@ export type RunReportInput = {
   runUrl: string | null;
   scrape?: ScrapeReport | null;
   classify?: ClassifyReport | null;
+  read?: ReadReport | null;
   score?: ScoreReport | null;
   health?: Health | null;
 };
@@ -69,9 +83,22 @@ export function formatRunReport(r: RunReportInput): string {
     if (c.stopped) attention.push(`• Classification stopped: ${escapeHtml(c.stopped)}`);
     if (c.failedBatches) attention.push(`• ${plural(c.failedBatches, "classification batch", "classification batches")} failed; they retry next run`);
   }
+  if (r.read) {
+    const d = r.read;
+    lines.push(`Read ${plural(d.read, "new or changed ad")} (${usd(d.costUsd)})`);
+    lines.push(`AI reading this month: ${usd(d.monthToDateUsd)}, on course for ${usd(d.projectedMonthUsd)}`);
+    if (d.stopped) attention.push(`• Reading stopped: ${escapeHtml(d.stopped)}`);
+    if (d.waiting && (d.oldestWaitingHours ?? 0) > 12) {
+      attention.push(`• ${plural(d.waiting, "job")} waiting to be read (oldest ${n(d.oldestWaitingHours!)} hours); they stay hidden until read`);
+    }
+    if (d.projectedMonthUsd > MONTHLY_CAP_USD) {
+      attention.push(`• AI reading is on course for ${usd(d.projectedMonthUsd)} this month, over the ${usd(MONTHLY_CAP_USD).replace(".00", "")} limit: time to switch to the Batch API`);
+    }
+    if (d.failed) attention.push(`• ${plural(d.failed, "ad")} couldn't be read; they retry next run`);
+  }
   if (r.score) lines.push(`Scored ${plural(r.score.scored, "job")}`);
 
-  const ai = (r.scrape?.aiUsage?.estimatedCostUsd ?? 0) + (r.classify?.estimatedCostUsd ?? 0);
+  const ai = (r.scrape?.aiUsage?.estimatedCostUsd ?? 0) + (r.classify?.estimatedCostUsd ?? 0) + (r.read?.costUsd ?? 0);
   if (r.scrape?.aiUsage && ai > 0) lines.push(`AI cost this run: ${usd(ai)}`);
 
   if (r.health) {

@@ -2,7 +2,7 @@ name: Scrape jobs
 
 on:
   schedule:
-    # Twice a day. Each run only crawls sources that are due (12h for ATS boards, 24h for NHS Jobs).
+    # Twice a day. Each run crawls every source due within the next 3 hours (all on a 12h cycle).
     - cron: "0 6,18 * * *"
   workflow_dispatch:
     inputs:
@@ -54,6 +54,12 @@ jobs:
       # Classifies new job titles (field of work, occupation code) with Claude Haiku 5.5.
       # Skipped without the key; scoring then falls back to the keyword rules.
       - run: npm run classify:jobs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Reads new and changed ads in full with Claude Haiku 5.5: sponsorship, contract, hours,
+      # salary, experience, closing date. Jobs stay hidden until read. Capped at $15 a month.
+      - run: npm run read:jobs
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

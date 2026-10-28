@@ -17,6 +17,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+import type { Reading } from "@/lib/reading/schema";
 // Referenced for foreign keys only; never exported, so drizzle-kit leaves the auth schema alone.
 import { authUsers } from "drizzle-orm/supabase";
 
@@ -308,6 +309,27 @@ export const jobClassifications = snakeCase.table.withRLS("job_classifications",
   model: text().notNull(),
   createdAt: createdAt(),
 });
+
+/**
+ * The AI reader's facts about a job (src/lib/reading), one row per version of the ad's
+ * text. The row whose hash matches the job's current text is the one used; older rows
+ * stay so the month's reading spend can be added up.
+ */
+export const jobReadings = snakeCase.table.withRLS(
+  "job_readings",
+  {
+    jobId: bigint({ mode: "number" })
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+    /** Hash of everything the reader saw (src/lib/reading/text-hash.ts). */
+    textHash: text().notNull(),
+    model: text().notNull(),
+    facts: jsonb().$type<Reading>().notNull(),
+    costUsd: numeric({ precision: 10, scale: 6, mode: "number" }).notNull(),
+    readAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.jobId, t.textHash] }), index("job_readings_read_at_idx").on(t.readAt)],
+);
 
 // ── Job seekers' accounts (premium §13). Rows belong to a Supabase Auth user and are
 // deleted with it (on delete cascade), so deleting an account removes everything here.

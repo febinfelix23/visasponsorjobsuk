@@ -11,7 +11,7 @@ import { parseArgs } from "node:util";
 import { and, desc, eq, gte, inArray, max, ne, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { crawlRuns, jobs, jobSources } from "@/lib/db/schema";
-import { formatRunReport, type ClassifyReport, type Health, type ScoreReport, type ScrapeReport } from "@/lib/notify/format";
+import { formatRunReport, type ClassifyReport, type Health, type ReadReport, type ScoreReport, type ScrapeReport } from "@/lib/notify/format";
 import { loadReport } from "@/lib/notify/run-report";
 import { sendTelegram } from "@/lib/notify/telegram";
 
@@ -79,15 +79,16 @@ async function main() {
   const runUrl = process.env.GITHUB_RUN_ID
     ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
     : null;
-  const [scrape, classify, score] = await Promise.all([
+  const [scrape, classify, read, score] = await Promise.all([
     loadReport<ScrapeReport>("scrape"),
     loadReport<ClassifyReport>("classify"),
+    loadReport<ReadReport>("read"),
     loadReport<ScoreReport>("score"),
   ]);
   // A broken database is itself worth reporting; the message still goes out without the health lines.
   const health = args.health ? await readHealth().catch((error) => (console.warn(`Health check failed: ${error instanceof Error ? error.message : error}`), null)) : null;
 
-  const text = formatRunReport({ workflow: args.workflow, status: args.status, runUrl, scrape, classify, score, health });
+  const text = formatRunReport({ workflow: args.workflow, status: args.status, runUrl, scrape, classify, read, score, health });
   if (args["dry-run"]) {
     console.log(text);
     return;

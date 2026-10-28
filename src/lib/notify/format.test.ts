@@ -91,3 +91,24 @@ describe("escapeHtml", () => {
     assert.equal(escapeHtml(`a<b>&"c"`), `a&lt;b&gt;&amp;"c"`);
   });
 });
+
+describe("formatRunReport: reading", () => {
+  it("reports reading, this month's AI spend and its projection", () => {
+    const read = { read: 412, failed: 0, stopped: null, costUsd: 0.29, monthToDateUsd: 3.1, projectedMonthUsd: 9.6, waiting: 0, oldestWaitingHours: null };
+    const text = formatRunReport({ workflow: "Scrape", status: "success", runUrl: url, scrape: scrape(), read, health });
+    assert.match(text, /Read 412 new or changed ads \(\$0\.29\)/);
+    assert.match(text, /AI reading this month: \$3\.10, on course for \$9\.60/);
+    assert.match(text, /AI cost this run: \$0\.36/);
+    assert.doesNotMatch(text, /Needs attention/);
+  });
+
+  it("flags jobs waiting too long, a stopped reader and a month heading over the limit", () => {
+    const read = { read: 3000, failed: 4, stopped: "Anthropic credit exhausted or spend limit reached", costUsd: 2.1, monthToDateUsd: 9, projectedMonthUsd: 18.2, waiting: 950, oldestWaitingHours: 26 };
+    const text = formatRunReport({ workflow: "Scrape", status: "success", runUrl: url, scrape: scrape(), read, health });
+    assert.match(text, /• Reading stopped: Anthropic credit exhausted/);
+    assert.match(text, /• 950 jobs waiting to be read \(oldest 26 hours\); they stay hidden until read/);
+    assert.match(text, /• AI reading is on course for \$18\.20 this month, over the \$15 limit: time to switch to the Batch API/);
+    assert.match(text, /• 4 ads couldn't be read; they retry next run/);
+  });
+});
+
