@@ -244,7 +244,7 @@ Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`,
 | Vercel Hobby, Supabase Free, GitHub Actions, Sentry Free, Resend Free | £0 |
 | Telegram Bot API, Instagram Graph API, WhatsApp Channel (manual) | £0 |
 | LLM fallback (Haiku-class, cached, capped) | ~£0–5 |
-| Job classification: field of work + occupation code (Claude Haiku 5.5, cached per title; first pass of 5,490 titles cost $0.27) | ~£0.30/month |
+| Job classification: field of work + occupation code (Claude Haiku 5.5 at medium effort, reading the first 1,500 characters of the ad, cached per title and employer; about $0.10 per 1,000 jobs, so a full re-classification of ~11,400 is about $1.20) | ~£1–2/month |
 | AI board check for ambiguous job boards (Claude Opus 5.5, about $0.005 per board, once per board) | ~£1/month |
 | Domain | ~£10–15/year |
 | Stripe fees: about 1.5% + 20p per UK card payment (no monthly fee) | Per sale |

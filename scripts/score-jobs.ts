@@ -15,7 +15,7 @@ import { and, asc, eq, gt, or, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
 import { jobClassifications, jobs, jobSources, sponsors } from "@/lib/db/schema";
 import { saveReport } from "@/lib/notify/run-report";
-import { classificationKey } from "@/lib/scoring/ai-classify";
+import { classificationKey, legacyClassificationKey } from "@/lib/scoring/ai-classify";
 import { SCORE_VERSION, scoreJob, type ScoreResult } from "@/lib/scoring/score";
 
 const BATCH = 1000;
@@ -41,7 +41,7 @@ async function main() {
   };
 
   try {
-    // AI classifications, one per distinct title; the scorer falls back to rules without one.
+    // AI classifications, one per title and employer (or per title, from before); the scorer falls back to rules without one.
     const classified = new Map(
       (await db.select().from(jobClassifications)).map((c) => [c.key, { socCode: c.socCode, field: c.field }]),
     );
@@ -62,6 +62,7 @@ async function main() {
           salaryPeriod: jobs.salaryPeriod,
           employmentType: jobs.employmentType,
           sector: jobs.sector,
+          employerName: jobs.employerName,
           ats: jobSources.ats,
           sponsorName: sponsors.name,
           sponsorStatus: sponsors.status,
@@ -77,7 +78,7 @@ async function main() {
       lastId = rows.at(-1)!.id;
 
       const results: (ScoreResult & { id: number })[] = rows.map((r) => {
-        const ai = classified.get(classificationKey(r.title, r.sector));
+        const ai = classified.get(classificationKey(r.title, r.employerName)) ?? classified.get(legacyClassificationKey(r.title, r.sector));
         if (ai) fromAi++;
         return {
         id: r.id,

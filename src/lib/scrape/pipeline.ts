@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db";
 import { jobs, jobSources } from "@/lib/db/schema";
 import { ReviewUnavailableError, type BoardReview, type BoardReviewer } from "@/lib/discovery/ai-review";
 import { ADAPTERS } from "./adapters";
+import { checkAdvert, type AdvertStatus } from "./adapters/nhs-jobs";
 import { snippetOf, slugify } from "./text";
 import type { RawJob, SourceRef } from "./types";
 import { checkSponsorInJobs } from "./verify";
@@ -11,8 +12,40 @@ import { checkSponsorInJobs } from "./verify";
 const BATCH = 200;
 /** A job missing from this many crawls in a row is expired (one miss can be an API hiccup). */
 const EXPIRE_AFTER_MISSES = 2;
-const RECRAWL_HOURS: Partial<Record<SourceRef["ats"], number>> = { nhs_jobs: 24 };
-const DEFAULT_RECRAWL_HOURS = 12;
+/** Every source is crawled on each twice-daily run (NHS too, so closed adverts drop out within a run or two). */
+export const RECRAWL_HOURS = 12;
+
+/**
+ * GitHub starts scheduled runs late, sometimes by hours, so runs land 10 to 14 hours apart.
+ * Sources falling due within this window are crawled now rather than skipped until the next run.
+ */
+const DUE_WINDOW_HOURS = 3;
+export const dueBefore = (now: Date) => new Date(now.getTime() + DUE_WINDOW_HOURS * 3_600_000);
+/**
+ * Bump an adapter's version when its detail parsing changes: stored jobs from an older
+ * version count as unseen, so adapters that skip known jobs (NHS Jobs, Workday,
+ * SmartRecruiters) fetch each advert once more. 2: whole NHS advert, 20,000-character cap.
+ */
+export const DETAIL_VERSION: Record<SourceRef["ats"], number> = {
+  greenhouse: 2, lever: 2, ashby: 2, smartrecruiters: 2, workable: 2, workday: 2, nhs_jobs: 2,
+};
+
+/** External IDs whose stored details are current, so their adverts needn't be fetched again. */
+export function knownForDetail(stored: { externalId: string; detailVersion: number }[], ats: SourceRef["ats"]): Set<string> {
+  return new Set(stored.filter((s) => s.detailVersion >= DETAIL_VERSION[ats]).map((s) => s.externalId));
+}
+
+/** Boards whose adverts can be checked one by one when a job goes missing from the listing. */
+const ADVERT_CHECKS: Partial<Record<SourceRef["ats"], (externalId: string) => Promise<AdvertStatus>>> = { nhs_jobs: checkAdvert };
+/** Most missing adverts checked per crawl; the rest wait for the normal two-miss rule. */
+const MAX_ADVERT_CHECKS = 300;
+
+/** Missing jobs, by what their advert showed: closed ones expire now, open ones stay, the rest count a miss. */
+export function settleMissing(missing: string[], statuses: ReadonlyMap<string, AdvertStatus>) {
+  const by = (s: AdvertStatus) => missing.filter((id) => statuses.get(id) === s);
+  return { expire: by("closed"), keep: by("open"), count: missing.filter((id) => !["closed", "open"].includes(statuses.get(id) ?? "unknown")) };
+}
+
 /** Unverified boards with too few UK jobs to judge are checked again after this. */
 const UNVERIFIED_RECHECK_DAYS = 7;
 const FAILING_AFTER = 3;
@@ -93,8 +126,8 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
 
   let raw: RawJob[];
   try {
-    const known = await db.select({ id: jobs.externalId }).from(jobs).where(eq(jobs.sourceId, target.id));
-    raw = uniqueJobs(await adapter(target, { knownIds: new Set(known.map((k) => k.id)) }));
+    const stored = await db.select({ externalId: jobs.externalId, detailVersion: jobs.detailVersion }).from(jobs).where(eq(jobs.sourceId, target.id));
+    raw = uniqueJobs(await adapter(target, { knownIds: knownForDetail(stored, target.ats) }));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (!options.dryRun) await recordFailure(db, target, message);
@@ -221,6 +254,8 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
         department: r.department,
         sector,
         description: r.description ?? null,
+        // A row without details (detail fetch skipped) keeps the stored version on update.
+        detailVersion: r.description === undefined ? 0 : DETAIL_VERSION[target.ats],
         snippet: r.description ? snippetOf(r.description) : null,
         applyUrl: r.applyUrl,
         postedAt: r.postedAt,
@@ -248,6 +283,7 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
           sector: sql`coalesce(excluded.sector, ${jobs.sector})`,
           sponsorId: sql`coalesce(excluded.sponsor_id, ${jobs.sponsorId})`,
           description: sql`coalesce(excluded.description, ${jobs.description})`,
+          detailVersion: sql`case when excluded.description is null then ${jobs.detailVersion} else excluded.detail_version end`,
           snippet: sql`coalesce(excluded.snippet, ${jobs.snippet})`,
           postedAt: sql`coalesce(excluded.posted_at, ${jobs.postedAt})`,
           closingDate: sql`coalesce(excluded.closing_date, ${jobs.closingDate})`,
@@ -263,6 +299,34 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
   }
 
   const seen = raw.map((r) => r.externalId);
+  let expiredNow = 0;
+  const check = ADVERT_CHECKS[target.ats];
+  if (check) {
+    const missing = (
+      await db
+        .select({ id: jobs.externalId })
+        .from(jobs)
+        .where(and(eq(jobs.sourceId, target.id), eq(jobs.status, "live"), sql`${jobs.externalId} <> all(${sql.param(seen)}::text[])`))
+    ).map((r) => r.id);
+    const statuses = new Map<string, AdvertStatus>();
+    for (const id of missing.slice(0, MAX_ADVERT_CHECKS)) statuses.set(id, await check(id));
+    const settled = settleMissing(missing, statuses);
+    if (settled.expire.length > 0) {
+      await db
+        .update(jobs)
+        .set({ status: "expired", missedCrawls: sql`${jobs.missedCrawls} + 1`, updatedAt: sql`now()` })
+        .where(and(eq(jobs.sourceId, target.id), inArray(jobs.externalId, settled.expire)));
+      expiredNow = settled.expire.length;
+    }
+    if (settled.keep.length > 0) {
+      // Still open on the board, just outside the listing we crawl: not a miss.
+      await db
+        .update(jobs)
+        .set({ missedCrawls: 0, lastSeenAt: sql`now()` })
+        .where(and(eq(jobs.sourceId, target.id), inArray(jobs.externalId, settled.keep)));
+      seen.push(...settled.keep);
+    }
+  }
   const expired = await db
     .update(jobs)
     .set({
@@ -281,7 +345,7 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
       lastError: null,
       lastCrawledAt: sql`now()`,
       lastJobCount: raw.length,
-      nextCrawlAt: hoursFromNow(RECRAWL_HOURS[target.ats] ?? DEFAULT_RECRAWL_HOURS),
+      nextCrawlAt: hoursFromNow(RECRAWL_HOURS),
       ...(promoted
         ? { discovery: sql`coalesce(${jobSources.discovery}, '{}'::jsonb) || ${JSON.stringify(promotion)}::jsonb` }
         : {}),
@@ -292,7 +356,7 @@ async function crawlOne(db: Db, target: CrawlTarget, options: CrawlOptions): Pro
     outcome: "stored",
     ukJobs: raw.length,
     inserted,
-    expired: expired.filter((e) => e.status === "expired").length,
+    expired: expiredNow + expired.filter((e) => e.status === "expired").length,
     promoted,
     aiPromoted: promotion.verifiedBy === "ai_review",
   };

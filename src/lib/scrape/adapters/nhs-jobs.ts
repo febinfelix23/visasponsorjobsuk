@@ -66,30 +66,74 @@ export function elementById(html: string, id: string): string | null {
   return html.slice(start);
 }
 
-/** The "Certificate of Sponsorship" section: its heading has an id, the text follows it. */
-export function sponsorshipSection(html: string): string | null {
-  const m = /<h3[^>]*\bid="tier-two-sponsorship"[^>]*>[\s\S]*?<\/h3>([\s\S]*?)(?=<h[23]\b|$)/i.exec(html);
-  return m ? htmlToText(m[1]).slice(0, 1_000) : null;
+/** Sections that aren't about the job, or that hold personal data (recruiters' names and emails). */
+const SKIPPED_SECTION = /cookie|contact|supporting documents|privacy|support links|employer (name|details|website)|^address$|reference number|date posted|job locations/i;
+
+/**
+ * The advert's sections as headed text, each once. Sponsorship notes can sit anywhere
+ * (often "About us"), and the Person Specification holds the experience asked for, so
+ * the whole advert is kept. The page repeats its details block for mobile.
+ */
+export function advertSections(html: string): { heading: string; text: string }[] {
+  const parts = (elementById(html, "maincontent") ?? html).split(/(<h[23]\b[^>]*>[\s\S]*?<\/h[23]>)/i);
+  const seen = new Set<string>();
+  const sections: { heading: string; text: string }[] = [];
+  for (let i = 1; i < parts.length; i += 2) {
+    const heading = htmlToText(parts[i]);
+    const text = htmlToText(parts[i + 1]);
+    const key = `${heading}\n${text}`;
+    if (!heading || !text || SKIPPED_SECTION.test(heading) || seen.has(key)) continue;
+    seen.add(key);
+    sections.push({ heading, text });
+  }
+  return sections;
 }
+
+/** "Full-time", "Part-time", "Flexible working": in the paragraph after its heading, which has no id. */
+const workingPatternOf = (html: string) => {
+  const m = /<h3[^>]*\bid="working_pattern_heading"[^>]*>[\s\S]*?<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/i.exec(html);
+  return m ? htmlToText(m[1]) || null : null;
+};
 
 export function parseAdvert(html: string) {
   const text = (id: string) => {
     const inner = elementById(html, id);
     return inner === null ? null : htmlToText(inner) || null;
   };
-  const sponsorship = sponsorshipSection(html);
-  const description = [text("job_overview"), text("job_description_large") ?? text("job_description"), sponsorship ? `Certificate of Sponsorship\n${sponsorship}` : null]
-    .filter(Boolean)
-    .join("\n\n");
   return {
     town: text("employer_town"),
     postcode: text("employer_postcode"),
     band: text("payscheme-band"),
     salary: text("range_salary") ?? text("fixed_salary") ?? text("negotiable_salary"),
     contractType: text("contract_type"),
-    workingPattern: text("working_pattern"),
-    description,
+    workingPattern: workingPatternOf(html),
+    description: advertSections(html).map((s) => `${s.heading}\n${s.text}`).join("\n\n"),
   };
+}
+
+export type AdvertStatus = "open" | "closed" | "unknown";
+
+/**
+ * Whether an advert still takes applications. A closed advert still returns 200 and its text,
+ * but says "This job is now closed" and has no Apply button. Adverts can drop out of our
+ * search slices while still open, so a missing job is checked here before it's expired.
+ */
+export function advertStatus(status: number, html: string): AdvertStatus {
+  if (status === 404 || status === 410) return "closed";
+  if (status !== 200) return "unknown";
+  if (/id="closing_date"[^>]*>[\s\S]{0,120}?this job is now closed/i.test(html)) return "closed";
+  if (/<a\b[^>]*\bid="apply(-ats-direct)?"/i.test(html)) return "open";
+  return "unknown";
+}
+
+export async function checkAdvert(reference: string): Promise<AdvertStatus> {
+  const url = `${ADVERT}${reference}`;
+  try {
+    const { status, body } = await limited(url, () => requestText(url));
+    return advertStatus(status, body ?? "");
+  } catch {
+    return "unknown";
+  }
 }
 
 /** NHS Jobs is one shared board: each vacancy carries its own employer, matched to a sponsor later. */

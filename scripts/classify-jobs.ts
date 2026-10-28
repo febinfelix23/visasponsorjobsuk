@@ -1,7 +1,7 @@
 /**
- * Classifies live jobs whose title hasn't been classified yet (field of work and SOC
- * code) with Claude Haiku 5.5, caching one result per distinct title. Run before
- * score:jobs. Without ANTHROPIC_API_KEY it does nothing and scoring uses the rules.
+ * Classifies live jobs whose title hasn't been classified yet at their employer (field
+ * of work and SOC code) with Claude Haiku 5.5, caching one result per title and
+ * employer. Run before score:jobs. Without ANTHROPIC_API_KEY it does nothing and scoring uses the rules.
  *
  *   npm run classify:jobs
  *   npm run classify:jobs -- --limit 100 --dry-run   # print results, store nothing (still billed)
@@ -40,7 +40,7 @@ async function main() {
   const db = createDb(undefined, { max: 2 });
   try {
     const live = await db
-      .select({ id: jobs.id, title: jobs.title, employer: jobs.employerName, industry: jobs.sector, snippet: jobs.snippet })
+      .select({ id: jobs.id, title: jobs.title, employer: jobs.employerName, industry: jobs.sector, description: jobs.description })
       .from(jobs)
       .where(eq(jobs.status, "live"));
     const known = new Set((await db.select({ key: jobClassifications.key }).from(jobClassifications)).map((r) => r.key));
@@ -48,11 +48,11 @@ async function main() {
     // One request item per distinct key; remember every job id that shares it.
     const pending = new Map<string, ClassifyInput & { jobIds: number[] }>();
     for (const j of live) {
-      const key = classificationKey(j.title, j.industry);
+      const key = classificationKey(j.title, j.employer);
       if (known.has(key)) continue;
       const entry = pending.get(key);
       if (entry) entry.jobIds.push(j.id);
-      else pending.set(key, { key, title: j.title, employer: j.employer, employerIndustry: j.industry, snippet: j.snippet, jobIds: [j.id] });
+      else pending.set(key, { key, title: j.title, employer: j.employer, employerIndustry: j.industry, description: j.description, jobIds: [j.id] });
     }
     const todo = [...pending.values()].slice(0, limit);
     console.log(`${pending.size} titles to classify; this run takes ${todo.length}${args["dry-run"] ? " (dry run)" : ""}`);

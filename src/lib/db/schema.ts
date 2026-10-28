@@ -237,6 +237,8 @@ export const jobs = snakeCase.table.withRLS(
     status: jobStatus().notNull().default("live"),
     /** Crawls in a row where the source no longer listed this job; expired at 2. */
     missedCrawls: smallint().notNull().default(0),
+    /** Which version of the adapter's detail parser produced the description (see DETAIL_VERSION). */
+    detailVersion: smallint().notNull().default(1),
     contentHash: text(),
     firstSeenAt: createdAt(),
     lastSeenAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -296,7 +298,7 @@ export const clicks = snakeCase.table.withRLS(
  * the employer's industry) is only classified once.
  */
 export const jobClassifications = snakeCase.table.withRLS("job_classifications", {
-  /** Normalised title + "|" + employer industry. */
+  /** "v2|" + normalised title + "|" + employer (older rows: title + "|" + employer industry). */
   key: text().primaryKey(),
   title: text().notNull(),
   employerIndustry: text(),

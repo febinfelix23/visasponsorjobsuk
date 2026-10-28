@@ -18,7 +18,7 @@ import { saveReport } from "@/lib/notify/run-report";
 import { crawlRuns, jobSources, sponsors } from "@/lib/db/schema";
 import { createBoardReviewer } from "@/lib/discovery/ai-review";
 import { getBlockedHosts } from "@/lib/http";
-import { crawlSource, type CrawlResult, type CrawlTarget } from "@/lib/scrape/pipeline";
+import { crawlSource, dueBefore, type CrawlResult, type CrawlTarget } from "@/lib/scrape/pipeline";
 import { createNhsMatcher } from "@/lib/sponsors/nhs-match";
 import { splitTradingName } from "@/lib/sponsors/normalise";
 
@@ -70,7 +70,7 @@ async function main() {
           ? eq(jobSources.id, Number(args.source))
           : and(
               inArray(jobSources.status, ["active", "unverified", "failing"]),
-              lte(jobSources.nextCrawlAt, sql`now()`),
+              lte(jobSources.nextCrawlAt, dueBefore(new Date())),
               args.ats ? eq(jobSources.ats, args.ats as CrawlTarget["ats"]) : undefined,
             ),
       )

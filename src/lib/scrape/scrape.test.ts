@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { elementById, parseAdvert, parseSearchXml, sponsorshipSection } from "./adapters/nhs-jobs";
+import { advertStatus, elementById, parseAdvert, parseSearchXml } from "./adapters/nhs-jobs";
 import { approximatePostedOn, ukFacetFilter } from "./adapters/workday";
-import { jobSlug, uniqueJobs } from "./pipeline";
+import { DETAIL_VERSION, dueBefore, jobSlug, knownForDetail, RECRAWL_HOURS, settleMissing, uniqueJobs } from "./pipeline";
 import { htmlToText, snippetOf } from "./text";
 import { emptyJob } from "./types";
 import { checkSponsorInJobs, mentionsSponsor, sponsorPhrases } from "./verify";
@@ -136,10 +136,107 @@ describe("NHS Jobs", () => {
     const html = `<div id="job_description_large"><div><p>Main duties</p></div><p>More</p></div><p id="employer_town">Leeds</p>
       <h3 id="tier-two-sponsorship" class="x">Certificate of Sponsorship</h3><p>Applications from job seekers who require current Skilled worker sponsorship to work in the UK are welcome.</p><h3>Next</h3>`;
     assert.equal(htmlToText(elementById(html, "job_description_large")), "Main duties\n\nMore");
-    assert.match(sponsorshipSection(html)!, /require current Skilled worker sponsorship/);
     const advert = parseAdvert(html);
     assert.equal(advert.town, "Leeds");
     assert.match(advert.description, /Certificate of Sponsorship\nApplications from job seekers/);
+  });
+
+  // Invented text in the live page's structure (Oct 2026): headed sections, the working
+  // pattern in an unlabelled paragraph, and the details block repeated for mobile.
+  const LIVE_LAYOUT = `<html><body><div id="cookie-banner"><h2>Cookies on NHS Jobs</h2><p>We use cookies.</p></div>
+    <main id="maincontent"><div id="main-body">
+      <h2>Job summary</h2><p id="job_overview">Join our physiotherapy team.</p>
+      <h3>Main duties of the job</h3><p id="job_description">Assess patients.</p>
+      <h3>About us</h3><p id="about_organisation">We are unable to offer sponsorship for this post.</p>
+      <h2>Details</h2>
+      <h3>Band</h3><p id="payscheme-band">Band 6</p>
+      <h3 id="contract_type_heading">Contract</h3><p id="contract_type">Permanent</p>
+      <h3 id="working_pattern_heading">Working pattern</h3><p> Part-time </p>
+      <h2>Job description</h2><h3>Job responsibilities</h3><div id="job_description_large"><p>Run clinics.</p></div>
+      <h2>Person Specification</h2><h3 id="skill_category_2">Experience</h3><ul><li>Two years post-registration experience</li></ul>
+      <h3 id="tier-two-sponsorship">Certificate of Sponsorship</h3><p>Applications from job seekers who require current Skilled worker sponsorship to work in the UK are welcome.</p>
+      <h2>Details</h2>
+      <h3>Band</h3><p>Band 6</p>
+      <h3 id="working_pattern_heading">Working pattern</h3><p> Part-time </p>
+      <h3>Employer contact details</h3><h3>For questions about the job, contact:</h3><p>Jane Example, jane@example.nhs.uk</p>
+      <h3 id="supporting_documents_heading">Supporting documents</h3><p>Job description.pdf</p>
+    </div></main></body></html>`;
+
+  it("keeps the whole advert, section by section, once", () => {
+    const { description } = parseAdvert(LIVE_LAYOUT);
+    for (const part of ["Job summary\nJoin our physiotherapy team.", "About us\nWe are unable to offer sponsorship", "Job responsibilities\nRun clinics.", "Experience\n• Two years post-registration experience", "Certificate of Sponsorship\nApplications from job seekers"]) {
+      assert.ok(description.includes(part), `missing: ${part}`);
+    }
+    // The mobile copy of the details block isn't repeated.
+    assert.equal(description.match(/Working pattern/g)?.length, 1);
+  });
+
+  it("reads the working pattern, which has no id of its own", () => {
+    assert.equal(parseAdvert(LIVE_LAYOUT).workingPattern, "Part-time");
+  });
+
+  it("leaves out contact names, cookies and attachments", () => {
+    const { description } = parseAdvert(LIVE_LAYOUT);
+    assert.doesNotMatch(description, /Jane Example|jane@example|cookies|\.pdf/i);
+  });
+});
+
+describe("detail versions", () => {
+  it("counts a stored job as known only when its details came from the current parser", () => {
+    const stored = [
+      { externalId: "A", detailVersion: DETAIL_VERSION.nhs_jobs },
+      { externalId: "B", detailVersion: DETAIL_VERSION.nhs_jobs - 1 },
+    ];
+    assert.deepEqual([...knownForDetail(stored, "nhs_jobs")], ["A"]);
+  });
+
+  it("re-fetches details once after the whole-advert NHS parser and the 20,000-character cap", () => {
+    for (const ats of ["nhs_jobs", "workday", "smartrecruiters"] as const) assert.ok(DETAIL_VERSION[ats] >= 2, ats);
+  });
+});
+
+describe("crawl scheduling", () => {
+  const at = (iso: string) => new Date(iso);
+  const hours = (h: number) => h * 3_600_000;
+
+  it("crawls a source due shortly after the run starts (NHS skipped on 27 Oct 2026)", () => {
+    // Crawled 26 Oct 22:10; the next run started 27 Oct 21:32, 38 minutes before NHS fell due.
+    const nextCrawl = new Date(at("2026-10-26T22:10:44Z").getTime() + hours(RECRAWL_HOURS));
+    assert.ok(nextCrawl <= dueBefore(at("2026-10-27T21:32:12Z")));
+  });
+
+  it("keeps every source on twice-daily runs that start hours early or late", () => {
+    const crawled = at("2026-10-27T11:10:26Z");
+    const nextCrawl = new Date(crawled.getTime() + hours(RECRAWL_HOURS));
+    // GitHub's 06:00/18:00 runs drifted to 11:10 and 21:32: about 10 hours apart.
+    assert.ok(nextCrawl <= dueBefore(new Date(crawled.getTime() + hours(10))));
+  });
+});
+
+describe("missing NHS adverts", () => {
+  const page = (closing: string, button: string) =>
+    `<main><h1>Staff Nurse</h1><p id="closing_date" class="closing-date"><strong>${closing}</strong></p>${button}<h2>Job summary</h2></main>`;
+
+  it("reads a closed advert as closed", () => {
+    assert.equal(advertStatus(200, page("This job is now closed", "")), "closed");
+    assert.equal(advertStatus(404, ""), "closed");
+    assert.equal(advertStatus(410, ""), "closed");
+  });
+
+  it("reads an advert with an Apply button as open, whichever kind of button (A0087 regression)", () => {
+    assert.equal(advertStatus(200, page("The closing date is 13 November 2026", `<a id="apply" class="nhsuk-button" href="/candidate/application/X">Apply for this job</a>`)), "open");
+    assert.equal(advertStatus(200, page("The closing date is 02 November 2026", `<a id="apply-ats-direct" class="nhsuk-button" href="/x">Apply for this job</a>`)), "open");
+  });
+
+  it("doesn't guess when the page is unclear or unreachable", () => {
+    assert.equal(advertStatus(200, page("The closing date is 13 November 2026", "")), "unknown");
+    assert.equal(advertStatus(503, ""), "unknown");
+    assert.equal(advertStatus(429, ""), "unknown");
+  });
+
+  it("expires closed jobs now, keeps open ones, and counts the rest as a normal miss", () => {
+    const statuses = new Map([["A", "closed"], ["B", "open"], ["C", "unknown"]] as const);
+    assert.deepEqual(settleMissing(["A", "B", "C", "D"], statuses), { expire: ["A"], keep: ["B"], count: ["C", "D"] });
   });
 });
 

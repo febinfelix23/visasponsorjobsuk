@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { getOccupation } from "./occupations";
 import { annualise, parseSalary, salaryFromDescription } from "./salary";
@@ -7,7 +8,9 @@ import { classifySeniority, yearsRequired } from "./seniority";
 import { sponsorshipSignal } from "./signals";
 import { classifyOccupation, CLASSIFIER_CODES } from "./soc";
 import { FIELD_KEYS, FIELD_RULE_CODES, FIELDS, fieldFromOccupation, isFieldKey } from "./fields";
-import { classificationKey, parseClassifications } from "./ai-classify";
+import { classificationKey, legacyClassificationKey, parseClassifications } from "./ai-classify";
+import { capDescription, MAX_DESCRIPTION_CHARS } from "../scrape/text";
+import { rowsFor } from "@/components/site/sponsorship-check";
 
 describe("occupation table", () => {
   it("has the official new-entrant rates", () => {
@@ -49,9 +52,12 @@ describe("fields", () => {
 });
 
 describe("AI classification", () => {
-  it("shares one cached result across title variants", () => {
-    assert.equal(classificationKey("Software Engineer Graduate Scheme (Manchester)", "finance"), classificationKey("software engineer graduate scheme  (Leeds)", "finance"));
-    assert.notEqual(classificationKey("Consultant", "healthcare"), classificationKey("Consultant", "tech"));
+  it("shares one cached result across title variants, only within an employer", () => {
+    assert.equal(classificationKey("Software Engineer Graduate Scheme (Manchester)", "Lloyds Bank plc"), classificationKey("software engineer graduate scheme  (Leeds)", "LLOYDS BANK PLC"));
+    assert.notEqual(classificationKey("Associate", "Deloitte LLP"), classificationKey("Associate", "Lloyds Bank plc"));
+    // Older rows stay readable until re-classified, and never collide with new keys.
+    assert.equal(legacyClassificationKey("Consultant (Leeds)", "healthcare"), "consultant|healthcare");
+    assert.notEqual(classificationKey("Consultant", "healthcare"), legacyClassificationKey("Consultant", "healthcare"));
   });
 
   it("keeps only known fields and codes that exist in the official table", () => {
@@ -187,6 +193,20 @@ describe("parseSalary", () => {
     assert.equal(annualise(400, "day"), 104000);
   });
 
+  it("reads 'up to £X' as a ceiling, with no starting figure", () => {
+    assert.deepEqual(parseSalary("Depending on experience Up to £129,500 per annum"), { min: 129500, max: 129500, period: "year", ceilingOnly: true });
+    assert.equal(parseSalary("£45,000 - £55,000")?.ceilingOnly, undefined);
+  });
+
+  it("takes every figure in a salary field, skipping commission and OTE", () => {
+    assert.deepEqual(parseSalary("London £45,000; National £38,000", { envelope: true }), { min: 38000, max: 45000, period: "year" });
+    assert.deepEqual(parseSalary("£119,140 to £125,693 a year Up to £125,693 per annum", { envelope: true }), { min: 119140, max: 125693, period: "year" });
+    assert.deepEqual(parseSalary("£100K – £120K • Offers Equity • £100K – £120K Commission", { envelope: true }), { min: 100000, max: 120000, period: "year" });
+    assert.deepEqual(parseSalary("Base £40,000, OTE £60,000", { envelope: true }), { min: 40000, max: 40000, period: "year" });
+    // Without envelope (descriptions), the first salary still wins.
+    assert.deepEqual(parseSalary("London £45,000; National £38,000"), { min: 45000, max: 45000, period: "year" });
+  });
+
   it("only takes a salary from a description where it's introduced as pay", () => {
     assert.deepEqual(salaryFromDescription("End Date Sunday 25 October 2026 Salary Range £42,000 Before you start"), { min: 42000, max: 42000, period: "year" });
     assert.equal(salaryFromDescription("We manage £2bn for clients and offer a £500 learning budget."), null);
@@ -214,9 +234,26 @@ describe("classifySeniority", () => {
   });
 });
 
+describe("capDescription", () => {
+  it("keeps up to 20,000 characters, then the start and the end of a longer ad", () => {
+    const long = `${"Duties. ".repeat(1800)}Salary £45,000.`;
+    assert.equal(capDescription(long), long); // about 14,400 characters: kept whole
+    const ad = `${"Duties. ".repeat(4000)}We are unable to offer visa sponsorship.`;
+    const capped = capDescription(ad);
+    assert.ok(capped.length <= MAX_DESCRIPTION_CHARS + 10);
+    assert.equal(MAX_DESCRIPTION_CHARS, 20_000);
+    assert.ok(capped.startsWith("Duties."));
+    assert.ok(capped.endsWith("We are unable to offer visa sponsorship."));
+    assert.equal(capDescription("Short ad."), "Short ad.");
+  });
+});
+
 describe("sponsorshipSignal", () => {
   it("finds explicit yes and no statements, with no winning", () => {
-    assert.ok(sponsorshipSignal("Applications from job seekers who require current Skilled worker sponsorship to work in the UK are welcome and will be considered").positive);
+    const nhs = sponsorshipSignal("Applications from job seekers who require current Skilled worker sponsorship to work in the UK are welcome and will be considered alongside all other applications.");
+    assert.ok(nhs.nhsStatement);
+    assert.equal(nhs.positive, null);
+    assert.equal(nhs.hedged, null);
     assert.ok(sponsorshipSignal("Visa sponsorship is available for this role.").positive);
     assert.ok(sponsorshipSignal("Please note visa sponsorship for this role is unfortunately not available.").negative);
     assert.ok(sponsorshipSignal("We are unable to offer visa sponsorship.").negative);
@@ -228,6 +265,35 @@ describe("sponsorshipSignal", () => {
   it("quotes the sentence that mentions sponsorship, not the text around it", () => {
     const s = sponsorshipSignal("4 weeks Work From Anywhere per year. We are able to offer visa sponsorship for this position. OUR PROCESS - three interviews");
     assert.equal(s.positive, "We are able to offer visa sponsorship for this position.");
+  });
+
+  it("reads typographic apostrophes and 'will not be able to' as a no (live false positives)", () => {
+    const monzo = sponsorshipSignal("We can’t offer visa sponsorship, but we review sponsorship role by role, so keep an eye on our careers site for future opportunities.");
+    assert.ok(monzo.negative);
+    assert.equal(monzo.positive, null);
+    assert.ok(sponsorshipSignal("Airbus will not be able to offer sponsorship for any employment Visas.").negative);
+    assert.ok(sponsorshipSignal("We are not able offer visa sponsorship.").negative);
+    assert.ok(sponsorshipSignal("Right to Work – You’ll need a valid work visa; we’re not able to offer sponsorship at the moment").negative);
+  });
+
+  it("doesn't read export-control or conditional wording as a no for this job (live false negatives)", () => {
+    assert.equal(sponsorshipSignal("Applicants must be able to access export-controlled data under US export laws without sponsorship for an export license.").negative, null);
+    const leeds = sponsorshipSignal("Leeds Teaching Hospital NHS Trust is unable to provide sponsorship to applicants who do not meet the eligibility criteria.");
+    assert.deepEqual([leeds.negative, !!leeds.conditional], [null, true]);
+    const notAll = sponsorshipSignal("Although we are a registered sponsor organisation, we are unable to offer sponsorship for all job roles.");
+    assert.deepEqual([notAll.negative, !!notAll.conditional, notAll.positive], [null, true, null]);
+    assert.equal(sponsorshipSignal("Please note we can not sponsor GMC for this role.").negative, null);
+    assert.equal(sponsorshipSignal("The Trust will not sponsor where the starting salary does not meet immigration rules.").negative, null);
+    // A plain "no" for a whole group of roles is still a no.
+    assert.ok(sponsorshipSignal("We are unable to sponsor work visas for our Early Careers opportunities.").negative);
+  });
+
+  it("treats a maybe as a maybe, and ignores screening questions", () => {
+    const maybe = sponsorshipSignal("Sponsorship may be considered for exceptional candidates.");
+    assert.deepEqual([maybe.positive, !!maybe.hedged], [null, true]);
+    assert.ok(sponsorshipSignal("We are also willing to sponsor UK Visa for the right candidate if required.").positive);
+    const question = sponsorshipSignal("Will you now or in the future require visa sponsorship? Do you require sponsorship to work in the UK without sponsorship?");
+    assert.deepEqual([question.negative, question.positive], [null, null]);
   });
 
   it("treats the right-to-work line as soft", () => {
@@ -270,6 +336,31 @@ describe("scoreJob", () => {
   it("puts the ad's own words first", () => {
     assert.equal(scoreJob({ ...base, description: "Salary £60,000. We are unable to offer visa sponsorship." }).sponsorability, "ineligible");
     assert.equal(scoreJob({ ...base, licensedSponsor: false, description: "Visa sponsorship is available." }).sponsorability, "sponsorship_mentioned");
+  });
+
+  it("doesn't let the NHS statement outrank the band, occupation or contract checks", () => {
+    const cos = "Certificate of Sponsorship\nApplications from job seekers who require current Skilled worker sponsorship to work in the UK are welcome.";
+    const nhs = { ...base, sector: "healthcare", isNhsJobs: true, description: cos, sponsorName: "Leeds Teaching Hospitals NHS Trust" };
+    // Band 3 support worker: limited occupation.
+    const hca = scoreJob({ ...nhs, title: "Respiratory Health Care Support Worker", aiSocCode: "6131", salaryText: "Band 3 · £25,760 a year" });
+    assert.equal(hca.sponsorability, "check_with_employer");
+    assert.ok(codes(hca).includes("nhs_sponsorship_statement"));
+    // Band 4 in a pay-scale occupation.
+    const band4 = scoreJob({ ...nhs, title: "Assistant Practitioner Nurse", aiSocCode: "2237", salaryText: "Band 4 · £28,392 a year" });
+    assert.equal(band4.sponsorability, "check_with_employer");
+    assert.ok(codes(band4).includes("nhs_band_below_5"));
+    // Bank work stays a check, statement or not.
+    assert.equal(scoreJob({ ...nhs, title: "Staff Nurse", employmentType: "Bank", salaryText: "Band 5" }).sponsorability, "check_with_employer");
+    // A locum post the trust says it would sponsor keeps the stamp.
+    assert.equal(scoreJob({ ...nhs, title: "Locum Clinical Fellow", aiSocCode: "2212", employmentType: "Locum", salaryText: "Doctor - other · £67,325 a year" }).sponsorability, "sponsorship_mentioned");
+    // A real "no" elsewhere in the ad still wins.
+    assert.equal(scoreJob({ ...nhs, title: "Staff Nurse", salaryText: "Band 5", description: `${cos}\nPlease note we are unable to provide Visa sponsorship for this post.` }).sponsorability, "ineligible");
+  });
+
+  it("doesn't let an employer's offer outrank a limited occupation", () => {
+    const r = scoreJob({ ...base, title: "Sales Executive", aiSocCode: "3552", salaryText: "£40,000", description: "Visa sponsorship is available." });
+    assert.equal(r.sponsorability, "check_with_employer");
+    assert.ok(codes(r).includes("ad_mentions_sponsorship"));
   });
 
   it("treats NHS posts on the pay scale as likely eligible, and the CoS statement as sponsorship mentioned", () => {
@@ -317,6 +408,35 @@ describe("scoreJob", () => {
     assert.equal(scoreJob({ ...base, title: "Payment Consultant", description: "This is a self-employed role. Earn £143,000 OTE." }).sponsorability, "ineligible");
   });
 
+  it("only rules out self-employed roles, not ads that mention self-employed customers (live false positives)", () => {
+    const afin = "Afin Bank caters to a diverse clientele, including self-employed professionals, foreign nationals, and high-net-worth individuals.";
+    assert.notEqual(scoreJob({ ...base, title: "Senior Product Manager, Savings and Mortgages", description: afin }).sponsorability, "ineligible");
+    assert.notEqual(scoreJob({ ...base, description: "We offer mortgages for the self-employed." }).sponsorability, "ineligible");
+    const roles = [
+      "Field Sales Consultants Wanted | Sell More with Teya\nUncapped Commissions | Self-Employed | Flexible",
+      "Contract Type: Freelance / Self-Employed (Commission-Only)",
+      "We would ideally like to engage someone on a self-employed basis initially.",
+      "We will champion you as a self employed clinician.",
+    ];
+    for (const d of roles) assert.equal(scoreJob({ ...base, title: "Consultant", description: d }).sponsorability, "ineligible", d);
+  });
+
+  it("can't confirm the salary rule from 'up to' pay or for part-time posts", () => {
+    const upTo = scoreJob({ ...base, title: "Software Developer", salaryText: "Up to £45,000" });
+    assert.equal(upTo.sponsorability, "check_with_employer");
+    assert.deepEqual([upTo.salaryAnnualMin, upTo.salaryAnnualMax], [null, 45000]);
+    assert.ok(codes(upTo).includes("salary_ceiling_only"));
+    // A ceiling below the rate is still clearly below it.
+    assert.equal(scoreJob({ ...base, title: "Software Developer", salaryText: "Up to £30,000" }).sponsorability, "ineligible");
+
+    const partTime = scoreJob({ ...base, title: "Software Developer", employmentType: "Part time", salaryText: "£50,000 pro rata" });
+    assert.equal(partTime.sponsorability, "check_with_employer");
+    assert.ok(codes(partTime).includes("part_time"));
+    assert.equal(scoreJob({ ...base, title: "Software Developer", employmentType: "Full time, Part time", salaryText: "£50,000" }).sponsorability, "likely_eligible");
+    const nhs = { ...base, title: "Dental Nurse", aiSocCode: "2237", sector: "healthcare", isNhsJobs: true };
+    assert.equal(scoreJob({ ...nhs, salaryText: "Band 5 · £31,049 a year per annum, pro rata (Actual £12,462.80)" }).sponsorability, "check_with_employer");
+  });
+
   it("only uses the NHS pay-scale shortcut for NHS posts", () => {
     const pharma = { ...base, title: "Senior Clinical Research Physician", sector: "healthcare", sponsorName: "GSK Plc", description: "Experience of NHS clinical practice preferred." };
     assert.equal(scoreJob(pharma).sponsorability, "check_with_employer");
@@ -327,6 +447,13 @@ describe("scoreJob", () => {
     const msg = scoreJob(base).reasons.find((r) => r.code === "salary_unknown")?.message ?? "";
     assert.match(msg, /rules as of \d{1,2} [A-Z][a-z]+ \d{4}\)/);
     assert.doesNotMatch(msg, /\d{4}-\d{2}-\d{2}/);
+  });
+
+  it("only emits reasons the job page knows how to show", () => {
+    const source = readFileSync(new URL("./score.ts", import.meta.url), "utf8");
+    const emitted = [...source.matchAll(/code: "([a-z0-9_]+)"/g)].map((m) => m[1]);
+    assert.ok(emitted.length > 15, "the code pattern no longer finds the reasons");
+    for (const code of emitted) assert.equal(rowsFor([{ code, message: "x" }]).length, 1, `${code} has no row in sponsorship-check.tsx`);
   });
 
   it("never states a visa outcome", () => {

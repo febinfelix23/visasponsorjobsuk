@@ -32,11 +32,15 @@ export function htmlToText(html: string | null | undefined): string {
     .trim();
 }
 
-/** Descriptions are stored for scoring only; this caps storage per job. */
-export const MAX_DESCRIPTION_CHARS = 8_000;
+/** Descriptions are stored for scoring only; this caps storage per job. About 10% of ads are longer than 8,000 characters, few longer than this. */
+export const MAX_DESCRIPTION_CHARS = 20_000;
+/** Kept from the end of a long ad: sponsorship and right-to-work lines usually close it. */
+const TAIL_CHARS = 4_000;
+const GAP = "\n[…]\n";
 
 export function capDescription(text: string): string {
-  return text.length > MAX_DESCRIPTION_CHARS ? text.slice(0, MAX_DESCRIPTION_CHARS) : text;
+  if (text.length <= MAX_DESCRIPTION_CHARS) return text;
+  return text.slice(0, MAX_DESCRIPTION_CHARS - TAIL_CHARS) + GAP + text.slice(-TAIL_CHARS);
 }
 
 /** First couple of sentences, for list cards. */

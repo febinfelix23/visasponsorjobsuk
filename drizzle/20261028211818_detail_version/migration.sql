@@ -1,0 +1,1 @@
+ALTER TABLE "jobs" ADD COLUMN "detail_version" smallint DEFAULT 1 NOT NULL;

@@ -1,5 +1,6 @@
 export type SalaryPeriod = "year" | "month" | "week" | "day" | "hour";
-export type ParsedSalary = { min: number; max: number; period: SalaryPeriod };
+/** `ceilingOnly`: the ad gives only a top figure ("up to £45,000"), so the starting pay is unknown. */
+export type ParsedSalary = { min: number; max: number; period: SalaryPeriod; ceilingOnly?: boolean };
 
 // Skilled Worker salary checks assume a full-time working pattern.
 const ANNUAL_MULTIPLIER: Record<SalaryPeriod, number> = { year: 1, month: 12, week: 52, day: 260, hour: 1950 };
@@ -35,17 +36,22 @@ function periodNear(text: string, index: number, amount: number): SalaryPeriod |
  * Finds a salary in advertised text: "£45,000 - £55,000 per annum", "£42k",
  * "£22.50 per hour", "Band 5 · £32,073 to £39,043 a year". Returns null for
  * "Competitive"/"Negotiable" or anything implausible as UK pay.
+ *
+ * With `envelope`, for a dedicated salary field, every figure with the same pay period
+ * counts: "London £45,000; elsewhere £38,000" is £38,000–£45,000, not just the first.
  */
-export function parseSalary(text: string | null | undefined): ParsedSalary | null {
+export function parseSalary(text: string | null | undefined, options: { envelope?: boolean } = {}): ParsedSalary | null {
   if (!text) return null;
+  let found: ParsedSalary | null = null;
   for (const m of text.matchAll(RANGE)) {
     const min = toNumber(m[1], m[2]);
     const max = m[3] ? toNumber(m[3], m[4] ?? m[2]) : min;
     if (!(min > 0) || max < min) continue;
     const after = text.slice(m.index! + m[0].length, m.index! + m[0].length + 40);
-    // "£3000 joining bonus", "£2,500 relocation allowance": not salary.
+    // "£3000 joining bonus", "£2,500 relocation allowance", "£100K commission": not salary.
     // Up to two words may sit between the amount and the word: "£450 yearly allowance", "£3000 joining bonus".
-    if (/^\s?([a-z-]+\s){0,2}(bonus|allowance|budget|stipend|voucher|credit)\b/i.test(after)) continue;
+    if (/^\s?([a-z-]+\s){0,2}(bonus|allowance|budget|stipend|voucher|credit|commission|ote)\b/i.test(after)) continue;
+    if (/\b(ote|on target earnings)\s*:?\s*$/i.test(text.slice(Math.max(0, m.index! - 25), m.index!))) continue;
     // GP pay is quoted "per session" (one weekly session's annual pay), not a full-time salary.
     if (/^\s?(per|a|\/)\s?session/i.test(after)) continue;
     const period = periodNear(text, m.index! + m[0].length, min);
@@ -55,9 +61,22 @@ export function parseSalary(text: string | null | undefined): ParsedSalary | nul
     // An implausible top of range ("£40,000 - £4,000,000") is a typo: keep the believable floor.
     const top = plausibleAnnual(annualise(max, period)) ? max : min;
     if (/^\s?(bn|billion|m\b|million)/i.test(text.slice(m.index! + m[0].length, m.index! + m[0].length + 9))) continue;
-    return { min, max: top, period };
+    // "Up to £45,000" gives the top of the range only.
+    const ceilingOnly = !m[3] && /\bup\s+to\s*$/i.test(text.slice(Math.max(0, m.index! - 10), m.index!));
+    const salary: ParsedSalary = ceilingOnly ? { min, max: top, period, ceilingOnly } : { min, max: top, period };
+    if (!options.envelope) return salary;
+    if (!found) found = salary;
+    else if (salary.period === found.period) {
+      found = {
+        min: Math.min(found.ceilingOnly ? Infinity : found.min, salary.ceilingOnly ? Infinity : salary.min),
+        max: Math.max(found.max, salary.max),
+        period: found.period,
+        ...(found.ceilingOnly && salary.ceilingOnly ? { ceilingOnly: true } : {}),
+      };
+      if (!Number.isFinite(found.min)) found.min = found.max;
+    }
   }
-  return null;
+  return found;
 }
 
 /**
