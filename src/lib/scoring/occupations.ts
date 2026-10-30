@@ -10,7 +10,12 @@ export type Occupation = {
   goingRate: number | null;
   /** The new-entrant rate UK graduates switching visa need: the higher of £33,400 and 70% of the going rate. */
   newEntrantRate: number | null;
+  /** The rate for everyone else: the higher of £41,700 and the going rate. */
+  generalRate: number | null;
 };
+
+/** The general salary threshold (Immigration Rules, from 22 July 2025): no Skilled Worker salary below this, unless new entrant or other tradeable points. */
+export const GENERAL_THRESHOLD = 41_700;
 
 type Raw = { title: string; eligibility: Eligibility; goingRate: number | null; newEntrantRate: number | null };
 const OCCUPATIONS = data.occupations as Record<string, Raw>;
@@ -27,5 +32,12 @@ export function getOccupation(soc: string | null | undefined): Occupation | null
   if (!soc) return null;
   const raw = OCCUPATIONS[soc];
   if (!raw) return null;
-  return { soc, title: raw.title, eligibility: OVERRIDES[soc] ?? raw.eligibility, goingRate: raw.goingRate, newEntrantRate: raw.newEntrantRate };
+  return {
+    soc,
+    title: raw.title,
+    eligibility: OVERRIDES[soc] ?? raw.eligibility,
+    goingRate: raw.goingRate,
+    newEntrantRate: raw.newEntrantRate,
+    generalRate: raw.goingRate === null ? null : Math.max(GENERAL_THRESHOLD, raw.goingRate),
+  };
 }

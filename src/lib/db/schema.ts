@@ -222,6 +222,17 @@ export const jobs = snakeCase.table.withRLS(
     /** Scoring rules version (src/lib/scoring/score.ts); jobs scored by an older version are re-scored. */
     scoreVersion: smallint(),
     scoredAt: timestamp({ withTimezone: true }),
+    /**
+     * When the AI reader read the ad's current text (job_readings). Null while unread:
+     * an unread job isn't listed anywhere on the site.
+     */
+    readAt: timestamp({ withTimezone: true }),
+    /** From the reading: graduate_or_entry, some_experience, experienced or senior; null when not stated. */
+    experienceLevel: text(),
+    experienceMinYears: smallint(),
+    /** Pay against the occupation's new-entrant rate and general rate; null when it can't be told. */
+    meetsNewEntrantRate: boolean(),
+    meetsGeneralRate: boolean(),
     snippet: text(),
     /**
      * Plain-text description, capped in length. Used only to score the job (sponsorship

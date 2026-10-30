@@ -13,9 +13,10 @@ import { appendFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { and, asc, eq, gt, or, sql } from "drizzle-orm";
 import { createDb } from "@/lib/db";
-import { jobClassifications, jobs, jobSources, sponsors } from "@/lib/db/schema";
+import { jobClassifications, jobReadings, jobs, jobSources, sponsors } from "@/lib/db/schema";
 import { saveReport } from "@/lib/notify/run-report";
 import { classificationKey, legacyClassificationKey } from "@/lib/scoring/ai-classify";
+import { jobTextHash } from "@/lib/reading/text-hash";
 import { SCORE_VERSION, scoreJob, type ScoreResult } from "@/lib/scoring/score";
 
 const BATCH = 1000;
@@ -35,6 +36,8 @@ async function main() {
     withOccupation: 0,
     field: {} as Record<string, number>,
     withSalary: 0,
+    read: 0,
+    unread: 0,
     graduateSchemes: 0,
     scoreVersion: SCORE_VERSION,
     dryRun: args["dry-run"],
@@ -50,7 +53,13 @@ async function main() {
     for (;;) {
       const due = args.all
         ? undefined
-        : or(sql`${jobs.scoreVersion} is distinct from ${SCORE_VERSION}`, sql`${jobs.scoredAt} is null`, sql`${jobs.updatedAt} > ${jobs.scoredAt}`);
+        : or(
+            sql`${jobs.scoreVersion} is distinct from ${SCORE_VERSION}`,
+            sql`${jobs.scoredAt} is null`,
+            sql`${jobs.updatedAt} > ${jobs.scoredAt}`,
+            // Read since it was last scored.
+            sql`exists (select 1 from ${jobReadings} r where r.job_id = ${jobs.id} and r.read_at > ${jobs.scoredAt})`,
+          );
       const rows = await db
         .select({
           id: jobs.id,
@@ -67,22 +76,29 @@ async function main() {
           sponsorName: sponsors.name,
           sponsorStatus: sponsors.status,
           sponsorSkilledWorker: sponsors.isSkilledWorker,
+          sponsorRating: sponsors.workerRating,
+          facts: jobReadings.facts,
+          readAt: jobReadings.readAt,
         })
         .from(jobs)
         .innerJoin(jobSources, eq(jobSources.id, jobs.sourceId))
         .leftJoin(sponsors, eq(sponsors.id, jobs.sponsorId))
+        // Only a reading of the ad's current text counts; an older one is out of date.
+        .leftJoin(jobReadings, and(eq(jobReadings.jobId, jobs.id), eq(jobReadings.textHash, jobTextHash)))
         .where(and(eq(jobs.status, "live"), gt(jobs.id, lastId), due))
         .orderBy(asc(jobs.id))
         .limit(BATCH);
       if (rows.length === 0) break;
       lastId = rows.at(-1)!.id;
 
-      const results: (ScoreResult & { id: number })[] = rows.map((r) => {
+      const results: (ScoreResult & { id: number; readAt: Date | null })[] = rows.map((r) => {
         const ai = classified.get(classificationKey(r.title, r.employerName)) ?? classified.get(legacyClassificationKey(r.title, r.sector));
         if (ai) fromAi++;
         return {
         id: r.id,
+        readAt: r.readAt,
         ...scoreJob({
+          reading: r.facts,
           aiSocCode: ai?.socCode ?? null,
           aiField: ai?.field ?? null,
           title: r.title,
@@ -94,7 +110,8 @@ async function main() {
           employmentType: r.employmentType,
           sector: r.sector,
           isNhsJobs: r.ats === "nhs_jobs",
-          licensedSponsor: r.sponsorStatus === "active" && r.sponsorSkilledWorker === true,
+          // A B-rated sponsor can't assign new Certificates of Sponsorship until it's back to A.
+          licensedSponsor: r.sponsorStatus === "active" && r.sponsorSkilledWorker === true && r.sponsorRating === "A",
           sponsorName: r.sponsorName,
         }),
         };
@@ -108,6 +125,8 @@ async function main() {
         if (r.socCode) stats.withOccupation++;
         if (r.salaryAnnualMin !== null) stats.withSalary++;
         if (r.isGradScheme) stats.graduateSchemes++;
+        if (r.read) stats.read++;
+        else stats.unread++;
       }
       if (args["dry-run"]) continue;
 
@@ -125,6 +144,13 @@ async function main() {
           reasons = v.reasons::jsonb,
           salary_annual_min = v.salary_annual_min,
           salary_annual_max = v.salary_annual_max,
+          read_at = v.read_at,
+          experience_level = v.experience_level,
+          experience_min_years = v.experience_min_years,
+          meets_new_entrant_rate = v.meets_new_entrant_rate,
+          meets_general_rate = v.meets_general_rate,
+          -- The board's own closing date wins; the ad's text fills the gap.
+          closing_date = coalesce(j.closing_date, v.closing_date),
           score_version = ${SCORE_VERSION},
           scored_at = now()
         from unnest(
@@ -136,8 +162,14 @@ async function main() {
           ${tx.array(results.map((r) => r.sponsorability))}::text[],
           ${tx.array(results.map((r) => JSON.stringify(r.reasons)))}::text[],
           ${tx.array(results.map((r) => r.salaryAnnualMin))}::numeric[],
-          ${tx.array(results.map((r) => r.salaryAnnualMax))}::numeric[]
-        ) as v(id, soc_code, field, seniority, is_grad_scheme, sponsorability, reasons, salary_annual_min, salary_annual_max)
+          ${tx.array(results.map((r) => r.salaryAnnualMax))}::numeric[],
+          ${tx.array(results.map((r) => r.readAt?.toISOString() ?? null))}::timestamptz[],
+          ${tx.array(results.map((r) => r.experienceLevel))}::text[],
+          ${tx.array(results.map((r) => r.experienceMinYears))}::smallint[],
+          ${tx.array(results.map((r) => (r.meetsNewEntrantRate === null ? null : String(r.meetsNewEntrantRate))))}::boolean[],
+          ${tx.array(results.map((r) => (r.meetsGeneralRate === null ? null : String(r.meetsGeneralRate))))}::boolean[],
+          ${tx.array(results.map((r) => r.closingDate))}::date[]
+        ) as v(id, soc_code, field, seniority, is_grad_scheme, sponsorability, reasons, salary_annual_min, salary_annual_max, read_at, experience_level, experience_min_years, meets_new_entrant_rate, meets_general_rate, closing_date)
         where j.id = v.id
       `;
     }
