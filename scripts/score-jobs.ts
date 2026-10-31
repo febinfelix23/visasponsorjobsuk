@@ -6,6 +6,7 @@
  *   npm run score:jobs              # score what's due
  *   npm run score:jobs -- --all     # re-score every live job
  *   npm run score:jobs -- --dry-run # score and print the breakdown, write nothing
+ *   npm run score:jobs -- --all --compare   # what the rules would change, to Telegram; writes nothing
  */
 import "./load-env";
 
@@ -17,18 +18,24 @@ import { jobClassifications, jobReadings, jobs, jobSources, sponsors } from "@/l
 import { saveReport } from "@/lib/notify/run-report";
 import { classificationKey, legacyClassificationKey } from "@/lib/scoring/ai-classify";
 import { jobTextHash } from "@/lib/reading/text-hash";
+import { escapeHtml } from "@/lib/notify/format";
+import { sendTelegram } from "@/lib/notify/telegram";
+import { formatComparison, summariseChanges, type StampChange } from "@/lib/scoring/compare";
 import { SCORE_VERSION, scoreJob, type ScoreResult } from "@/lib/scoring/score";
 
 const BATCH = 1000;
 
 const { values: args } = parseArgs({
-  options: { all: { type: "boolean", default: false }, "dry-run": { type: "boolean", default: false } },
+  options: { all: { type: "boolean", default: false }, "dry-run": { type: "boolean", default: false }, compare: { type: "boolean", default: false } },
 });
 
 const countBy = (target: Record<string, number>, key: string) => (target[key] = (target[key] ?? 0) + 1);
 
 async function main() {
   const db = createDb(undefined, { max: 2 });
+  // Comparing never writes.
+  const dryRun = args["dry-run"] || args.compare;
+  const changes: StampChange[] = [];
   const stats = {
     scored: 0,
     sponsorability: {} as Record<string, number>,
@@ -40,7 +47,7 @@ async function main() {
     unread: 0,
     graduateSchemes: 0,
     scoreVersion: SCORE_VERSION,
-    dryRun: args["dry-run"],
+    dryRun,
   };
 
   try {
@@ -64,6 +71,7 @@ async function main() {
         .select({
           id: jobs.id,
           title: jobs.title,
+          liveStamp: jobs.sponsorability,
           description: jobs.description,
           salaryText: jobs.salaryText,
           salaryMin: jobs.salaryMin,
@@ -92,11 +100,13 @@ async function main() {
       if (rows.length === 0) break;
       lastId = rows.at(-1)!.id;
 
-      const results: (ScoreResult & { id: number; readAt: Date | null })[] = rows.map((r) => {
+      const results: (ScoreResult & { id: number; readAt: Date | null; title: string; liveStamp: string })[] = rows.map((r) => {
         const ai = classified.get(classificationKey(r.title, r.employerName)) ?? classified.get(legacyClassificationKey(r.title, r.sector));
         if (ai) fromAi++;
         return {
         id: r.id,
+        title: r.title,
+        liveStamp: r.liveStamp,
         readAt: r.readAt,
         ...scoreJob({
           reading: r.facts,
@@ -129,8 +139,9 @@ async function main() {
         if (r.isGradScheme) stats.graduateSchemes++;
         if (r.read) stats.read++;
         else stats.unread++;
+        if (args.compare) changes.push({ id: r.id, title: r.title, before: r.liveStamp, after: r.sponsorability, reason: r.decidedBy ?? "" });
       }
-      if (args["dry-run"]) continue;
+      if (dryRun) continue;
 
       const tx = db.$client;
       // One UPDATE … FROM unnest() per batch. Reasons travel as JSON text and are cast back.
@@ -177,8 +188,15 @@ async function main() {
     }
 
     Object.assign(stats, { classifiedByAi: fromAi });
+    if (args.compare) {
+      const text = formatComparison(summariseChanges(changes, 3), changes.length);
+      console.log(text);
+      const sent = await sendTelegram(`<pre>${escapeHtml(text)}</pre>`);
+      console.log(sent === "sent" ? "Comparison sent to Telegram." : `Comparison not sent to Telegram (${sent}).`);
+      return;
+    }
     console.log(JSON.stringify(stats, null, 2));
-    if (!args["dry-run"]) await saveReport("score", stats);
+    if (!dryRun) await saveReport("score", stats);
     if (process.env.GITHUB_STEP_SUMMARY) {
       await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Job scoring\n\n\`\`\`json\n${JSON.stringify(stats, null, 2)}\n\`\`\`\n`);
     }

@@ -6,6 +6,7 @@
  *   npm run read:jobs
  *   npm run read:jobs -- --limit 50              # a small batch
  *   npm run read:jobs -- --limit 20 --dry-run    # print facts, store nothing (still billed)
+ *   npm run read:jobs -- --limit 20000 --concurrency 8   # a backfill
  */
 import "./load-env";
 
@@ -22,10 +23,10 @@ import { jobTextHash } from "@/lib/reading/text-hash";
 
 /** Most reads per run whatever the backlog: about $2 at Claude Haiku 5.5 rates. */
 const DEFAULT_MAX_PER_RUN = 3000;
-const CONCURRENCY = 3;
+const DEFAULT_CONCURRENCY = 3;
 
 const { values: args } = parseArgs({
-  options: { limit: { type: "string" }, "dry-run": { type: "boolean", default: false } },
+  options: { limit: { type: "string" }, concurrency: { type: "string" }, "dry-run": { type: "boolean", default: false } },
 });
 
 const unread = sql`not exists (select 1 from ${jobReadings} r where r.job_id = ${jobs.id} and r.text_hash = ${jobTextHash})`;
@@ -98,7 +99,7 @@ async function main() {
             .onConflictDoNothing();
         }
       };
-      await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+      await Promise.all(Array.from({ length: Number(args.concurrency) || DEFAULT_CONCURRENCY }, worker));
       report.costUsd = Number(spentThisRun.toFixed(4));
     }
 

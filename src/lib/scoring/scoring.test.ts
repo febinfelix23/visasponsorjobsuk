@@ -594,6 +594,17 @@ describe("scoreJob with the AI reader's facts", () => {
     assert.equal(scoreJob({ ...dev, salaryText: "£50,000", reading: reading({ location: { place: "uk_or_abroad", quote: "x" } }) }).sponsorability, "likely_eligible");
   });
 
+  it("names the reason that decided the stamp, not just the last one recorded", () => {
+    const offer = reading({ sponsorship: { status: "offered", verified: true, quotes: ["We can sponsor visas."] } });
+    const decided = (over: Partial<Parameters<typeof scoreJob>[0]>) => scoreJob({ ...dev, salaryText: "£50,000", reading: offer, ...over }).decidedBy;
+    assert.equal(decided({}), "ad_mentions_sponsorship");
+    assert.equal(decided({ salaryText: "£25,000 - £60,000" }), "salary_range_spans_rate");
+    assert.equal(decided({ licensedSponsor: false }), "sponsor_not_confirmed");
+    assert.equal(decided({ salaryText: "£20,000" }), "salary_below_new_entrant");
+    assert.equal(decided({ reading: reading({ location: { place: "abroad", quote: "Based in Sydney, Australia." } }) }), "location_outside_uk");
+    assert.equal(decided({ reading: reading() }), "salary_meets_new_entrant");
+  });
+
   it("scores readings stored before the location fact existed", () => {
     const older: Partial<Reading> = reading();
     delete older.location;

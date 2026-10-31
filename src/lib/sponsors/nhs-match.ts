@@ -2,28 +2,37 @@ import { normaliseOrgName } from "./normalise";
 import { isNhsBody } from "./sectors";
 
 // Words that vary freely between NHS Jobs and the register for the same body:
-// "…NHS Trust" vs "…NHS Foundation Trust", "Health Board" vs "Local Health Board".
-const NHS_STRUCTURAL = new Set(["nhs", "foundation", "foundationtrust", "trust", "ft", "local", "the", "and", "of"]);
+// "…NHS Trust" vs "…NHS Foundation Trust" or "…NHSFT", "Health Board" vs "Local Health Board".
+const NHS_STRUCTURAL = new Set(["nhs", "nhsft", "foundation", "foundationtrust", "trust", "ft", "local", "the", "and", "of"]);
+// Spellings of the same word: "Hospitals"/"Hospital", "Healthcare"/"Health".
+const SAME_WORD: Record<string, string> = { hospitals: "hospital", healthcare: "health" };
 const MIN_SIMILARITY = 0.75;
 
 /** Distinctive words of an NHS body's name: "University Hospitals Sussex NHS FT (279)" → sussex, university, hospital. */
 export function nhsTokens(name: string): Set<string> {
-  const cleaned = name.replace(/\([^)]*\)/g, " ");
+  const cleaned = name.replace(/\([^)]*\)/g, " ").replace(/national health service/gi, "NHS");
   return new Set(
     normaliseOrgName(cleaned)
       .split(" ")
-      .map((t) => (t === "hospitals" ? "hospital" : t))
+      .map((t) => SAME_WORD[t] ?? t)
       .filter((t) => t && !NHS_STRUCTURAL.has(t)),
   );
 }
 
-function similarity(a: Set<string>, b: Set<string>): number {
+/**
+ * Share of distinctive words in common. An advert naming the register's body plus the word
+ * "hospital" ("Chelsea and Westminster Hospital NHS FT" for "Chelsea & Westminster NHS FT")
+ * counts as a match.
+ */
+function similarity(employer: Set<string>, sponsor: Set<string>): number {
   let shared = 0;
-  for (const t of a) if (b.has(t)) shared++;
-  return shared / (a.size + b.size - shared || 1);
+  for (const t of employer) if (sponsor.has(t)) shared++;
+  const extra = [...employer].filter((t) => !sponsor.has(t));
+  if (shared === sponsor.size && shared >= 2 && extra.length === 1 && extra[0] === "hospital") return MIN_SIMILARITY;
+  return shared / (employer.size + sponsor.size - shared || 1);
 }
 
-const looksNhs = (name: string) => isNhsBody(name) || /\b(trust|hospital|health board)\b/i.test(name);
+const looksNhs = (name: string) => isNhsBody(name) || /\b(trust|hospitals?|health board|nhsft)\b/i.test(name);
 
 export type SponsorName = { id: number; name: string };
 

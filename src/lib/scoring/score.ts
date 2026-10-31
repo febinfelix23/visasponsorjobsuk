@@ -42,6 +42,8 @@ export type ScoreResult = {
   isGradScheme: boolean;
   sponsorability: Sponsorability;
   reasons: Reason[];
+  /** The reason code that settled the stamp (for reports; the page shows every reason). */
+  decidedBy: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
   salaryPeriod: SalaryPeriod | null;
@@ -144,13 +146,15 @@ export function scoreJob(input: ScoreInput): ScoreResult {
 
   let meetsNewEntrantRate: boolean | null = null;
   let meetsGeneralRate: boolean | null = null;
-  const result = (sponsorability: Sponsorability): ScoreResult => ({
+  // A hard stop records its reason just before returning, so by default the last one decided.
+  const result = (sponsorability: Sponsorability, decidedBy = reasons.at(-1)?.code ?? null): ScoreResult => ({
     socCode,
     field: reading?.field ?? input.aiField ?? fieldFromOccupation(socCode, input.title),
     seniority,
     isGradScheme,
     sponsorability,
     reasons,
+    decidedBy,
     salaryMin: parsed && !parsed.ceilingOnly ? parsed.min : null,
     salaryMax: parsed?.max ?? null,
     salaryPeriod: parsed?.period ?? null,
@@ -301,14 +305,18 @@ export function scoreJob(input: ScoreInput): ScoreResult {
   const offered = offerQuote !== null || signal.nhsStatement !== null;
 
   // The rules come first: what the ad says can't outweigh a failed or unconfirmed check.
-  if (meetsNewEntrantRate === false) return result("ineligible");
-  if (!input.licensedSponsor) return result("unknown");
-  if (unconfirmedNo || conditional || readerConditional) return result("check_with_employer");
-  if (occupation?.eligibility === "limited" || lowBand || meetsNewEntrantRate !== true) return result("check_with_employer");
-  if (offered) return result("sponsorship_mentioned");
+  const firstOf = (...codes: string[]) => reasons.find((r) => codes.includes(r.code))?.code ?? null;
+  const salaryCodes = ["salary_below_new_entrant", "salary_range_spans_rate", "salary_unknown", "salary_ceiling_only", "occupation_unknown"];
+  if (meetsNewEntrantRate === false) return result("ineligible", firstOf("salary_below_new_entrant"));
+  if (!input.licensedSponsor) return result("unknown", firstOf("sponsor_not_confirmed"));
+  if (unconfirmedNo || conditional || readerConditional) return result("check_with_employer", firstOf("ad_no_sponsorship_unconfirmed", "ad_sponsorship_conditional"));
+  if (occupation?.eligibility === "limited" || lowBand || meetsNewEntrantRate !== true) {
+    return result("check_with_employer", firstOf("occupation_limited", "nhs_band_below_5", ...salaryCodes));
+  }
+  if (offered) return result("sponsorship_mentioned", firstOf("ad_mentions_sponsorship", "nhs_sponsorship_statement"));
   if (signal.rightToWorkOnly) {
     reasons.push({ code: "asks_right_to_work", message: "The ad asks for existing right to work in the UK, so check with the employer whether they'd sponsor this role." });
     return result("check_with_employer");
   }
-  return result("likely_eligible");
+  return result("likely_eligible", firstOf("salary_meets_new_entrant", "national_pay_scale"));
 }
