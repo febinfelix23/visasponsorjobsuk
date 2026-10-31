@@ -30,6 +30,11 @@ const REASON_ROWS: Record<string, { rule: string; verdict: Verdict }> = {
   ad_no_sponsorship_unconfirmed: { rule: "What the ad says", verdict: "warn" },
   ad_sponsorship_maybe: { rule: "What the ad says", verdict: "warn" },
   asks_right_to_work: { rule: "What the ad says", verdict: "warn" },
+  ad_silent_on_sponsorship: { rule: "What the ad says", verdict: "warn" },
+  contract_ok: { rule: "Type of contract", verdict: "pass" },
+  contract_not_stated: { rule: "Type of contract", verdict: "warn" },
+  hours_ok: { rule: "Hours", verdict: "pass" },
+  hours_not_stated: { rule: "Hours", verdict: "warn" },
   self_employed: { rule: "Type of contract", verdict: "fail" },
   contractor: { rule: "Type of contract", verdict: "fail" },
   internship: { rule: "Type of contract", verdict: "fail" },
@@ -48,11 +53,16 @@ const ICON: Record<Verdict, { Icon: typeof Check; className: string; label: stri
   fail: { Icon: X, className: "bg-stamp-red text-white", label: "Doesn't meet this rule" },
 };
 
+/** The checklist's order, whatever order the rules ran in. */
+const RULE_ORDER = ["Location", "Sponsor licence", "What the ad says", "Type of contract", "Hours", "Salary", "Occupation", "Experience"];
+
 export function rowsFor(reasons: Reason[]): Row[] {
-  return reasons.flatMap((r) => {
-    const row = REASON_ROWS[r.code];
-    return row ? [{ ...row, message: r.message }] : [];
-  });
+  return reasons
+    .flatMap((r) => {
+      const row = REASON_ROWS[r.code];
+      return row ? [{ ...row, message: r.message }] : [];
+    })
+    .sort((a, b) => RULE_ORDER.indexOf(a.rule) - RULE_ORDER.indexOf(b.rule));
 }
 
 /** The job page's centrepiece: one line per Skilled Worker rule, with what we found. */

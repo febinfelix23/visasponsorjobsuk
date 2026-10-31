@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { formatContract, formatSalary, shortLocation } from "./format";
+import { BADGE, formatContract, formatExperience, formatSalary, shortLocation } from "./format";
 import { initials } from "./monogram";
 
 describe("formatContract", () => {
@@ -42,5 +42,22 @@ describe("initials", () => {
     assert.equal(initials("Accenture (UK) Limited"), "A");
     assert.equal(initials("LSEG"), "L");
     assert.equal(initials("3M United Kingdom PLC"), "3U");
+  });
+});
+
+describe("formatExperience", () => {
+  it("labels the experience the ad asks for", () => {
+    assert.equal(formatExperience("graduate_or_entry", null), "Graduate or entry level");
+    assert.equal(formatExperience("some_experience", 2), "Experience: 2+ years");
+    assert.equal(formatExperience("experienced", 1), "Experience: 1+ year");
+    assert.equal(formatExperience("experienced", null), "Experienced");
+    assert.equal(formatExperience("senior", 5), "Senior");
+    assert.equal(formatExperience(null, null), null);
+  });
+});
+
+describe("BADGE", () => {
+  it("calls a green offer what it is", () => {
+    assert.equal(BADGE.sponsorship_mentioned.label, "Sponsorship offered");
   });
 });

@@ -46,6 +46,9 @@ export function JobRow({ job, query, showEmployer = true }: { job: JobListItem; 
             {closing ?? formatAdded(job.firstSeenAt)}
           </span>
           {job.isGradScheme ? <Badge className="bg-teal-wash text-teal">Graduate scheme</Badge> : null}
+          {!job.isGradScheme && job.experienceLevel === "graduate_or_entry" ? <Badge className="bg-teal-wash text-teal">Entry level</Badge> : null}
+          {/* For people already working in the UK who aren't new entrants. */}
+          {job.meetsGeneralRate ? <Badge variant="outline">Meets the general rate</Badge> : null}
           {job.isNew ? <Badge variant="outline" className="border-teal/40 text-teal">New</Badge> : null}
         </p>
         <Stamp status={job.sponsorability} className="mt-3 sm:hidden" />

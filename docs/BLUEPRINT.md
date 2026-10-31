@@ -10,7 +10,8 @@ _Last updated: 2026-10-26 · Status: v5, premium decided: one-off passes, Telegr
 
 | Decision | Choice | What it changes |
 |---|---|---|
-| Audience | **UK graduates only** (Student → Skilled Worker, Graduate visa → Skilled Worker). No overseas applicants yet | Every user switches in-country, so they all qualify for **new-entrant salary rates**. One threshold model, not two. Lower scam exposure. Tone: "early career" |
+| Audience | **People already in the UK** (changed 2026-10-28): graduates switching from a Student or Graduate visa, and people seeking a new sponsored job. No overseas applicants yet | Green needs the **new-entrant rate**; every job also shows the **general rate**, and listings tag jobs that meet it (§2.2). Lower scam exposure. Tone: "early career" first |
+| Strict job checks (2026-10-28) | **Every ad read in full by an AI reader** whose facts must quote the ad; phrase rules stay as a second opinion. Casual, short, part-time and abroad jobs aren't listed; unread jobs wait | §2.2 (stamps), §3.5 (reading), §4.3 (cost); design in `docs/superpowers/specs/2026-10-28-strict-job-checks-design.md` |
 | Sectors | **Tech, Finance, Engineering, Healthcare** | Filter sponsors by SIC code and jobs by SOC code. Cuts the crawl from ~120k sponsors to a few thousand |
 | Team and budget | **Solo build, near-zero running cost** | Free tiers everywhere: GitHub Actions for scraping, Supabase + Vercel free tiers, rules before AI, no paid WhatsApp API (§4.3) |
 | Pricing | **Free job board + paid premium (changed 2026-10-26)** | Search, badges, job and sponsor pages stay free for everyone, like a normal job board. Premium is sold as **one-off passes** (§13.8), never subscriptions |
@@ -76,17 +77,22 @@ gov.uk sponsor CSV ──► Sponsor registry (deduped, enriched)
 ```
 
 ### 2.2 The differentiator: a sponsorability badge on every job
-| Badge | Rule (v1) |
-|---|---|
-| ✅ **Sponsorship mentioned** | The job text explicitly offers sponsorship (regex + LLM confirmation) |
-| 🟢 **Likely eligible** | Licensed Skilled Worker sponsor + salary ≥ **new-entrant** rate for that SOC code + occupation maps to an eligible SOC 2020 code + role is graduate/entry/junior level |
-| 🟡 **Check with employer** | Licensed sponsor, but salary is missing or the occupation is borderline |
-| ❌ **Hidden by default** | The text says "no sponsorship" / "must have right to work", or the salary is clearly below threshold |
+Rules updated 2026-10-28 (strict job checks). Checked in this order; the first that applies decides.
 
-Show the *reason* behind each badge (salary vs threshold, SOC code, sponsor rating A/B). That transparency is how we build trust. Always link to the employer's original posting.
+| Badge | Rule |
+|---|---|
+| ❌ **Not sponsorable** (not listed) | Based abroad; the ad or the phrase rules say "no sponsorship"; bank, locum, sessional, zero-hours, temporary, contractor, self-employed, internship or apprenticeship; fixed term under 12 months; part-time; salary below the new-entrant rate; an ineligible occupation |
+| ⚪ **Sponsor not confirmed** | Employer not matched to an **A-rated** Skilled Worker licence |
+| 🟡 **Check with employer** | A "no" we couldn't confirm in the ad's words; sponsorship depends on the role or applicant; salary missing, "up to" only, or spanning the rate; occupation limited, unknown or AI-only ineligible; NHS band below 5 |
+| ✅ **Sponsorship offered** (enum `sponsorship_mentioned`) | The ad offers sponsorship in quoted words, or the NHS sponsorship box is ticked, and nothing above applies |
+| 🟢 **Likely eligible** | The ad doesn't mention sponsorship and nothing above applies |
+
+Contract or hours **not stated** never hold a job back; the checklist says so. Every job shows both salary checks: the **new-entrant rate** (higher of £33,400 and 70% of the going rate; needed for green) and the **general rate** (higher of £41,700 and the going rate; listings tag jobs that meet it). Experience is a label ("Graduate or entry level", "Experience: 2+ years", "Senior") with its own filter, not a stamp. Jobs not yet read for their current text aren't listed; their page says "This job is being checked" and is `noindex`.
+
+Show the *reason* behind each badge as a checklist (location, licence, what the ad says with quotes, contract, hours, salary, occupation, experience). That transparency is how we build trust. Always link to the employer's original posting.
 
 ### 2.3 Audience, sectors and filters
-**One audience: UK graduates switching in-country.** There is no "experienced mode". Seniority filter: graduate scheme, entry level, junior, and mid-level up to about 3 years' experience. Senior roles are hidden by default.
+**Audience: people already in the UK** (changed 2026-10-28): graduates switching from a Student or Graduate visa first, and people seeking a new sponsored job. Filters: graduate schemes only, **graduate and entry level only** (from the experience the ad asks for), and senior roles hidden by default. The "Meets the general rate" tag serves people who aren't new entrants.
 
 **Sector scope**, mapped to codes (example SOC 2020 unit groups; verify each against the eligible occupations table):
 
@@ -185,8 +191,9 @@ Fallback chain for unknown sites:
 - **Dedup:** the same job appears on the ATS and the company site. Hash on (sponsor, normalised title, location).
 - **Seniority:** a rules-based classifier on the title ("graduate", "junior", "trainee", "associate", "senior", "lead", "principal") plus years-of-experience parsing. Drop senior roles early, before any AI call, to save cost.
 - **SOC 2020 mapping:** **rules first** (a keyword → SOC dictionary covers most titles in our 4 sectors). Fall back to an LLM with constrained output against the SOC list only for unknown titles, cached by normalised title so each distinct title is classified once. Then look up eligibility and the going rate in the Immigration Rules appendix tables (load them as a versioned reference table).
-- **Sponsorship text signals:** positive ("visa sponsorship available", "we can sponsor") / negative ("unable to sponsor", "must have the right to work without sponsorship").
-- **Output:** a `sponsorability` enum + a `reasons` JSON (see §2.2).
+- **Reading the ad (2026-10-28):** `read:jobs` sends each new or changed ad (whole text, NHS adverts included) to Claude Haiku 5.5, which returns sponsorship, contract, hours, salary, experience, location, closing date and occupation code, each with a quote from the ad. Quotes are checked against the ad; an unverified fact is dropped (an unverified "no" still stops a job going green). Readings are stored in `job_readings` by text hash, so an unchanged ad is never read twice. Capped at 3,000 reads a run and $15 a month in code.
+- **Sponsorship text signals:** the phrase rules (positive "visa sponsorship available", "we can sponsor"; negative "unable to sponsor", "must have the right to work without sponsorship") stay as a second opinion: a "no" from either side wins.
+- **Output:** a `sponsorability` enum + a `reasons` JSON (see §2.2), plus `experience_level`, `meets_new_entrant_rate` and `meets_general_rate`.
 
 ---
 
@@ -238,13 +245,14 @@ channel_posts       job_id, channel, external_post_id, posted_at, clicks
 ```
 Additional columns for the locked scope: `sponsors.sector`, `sponsors.in_scope`, `sponsors.sic_codes[]`, `jobs.sector`, `jobs.seniority`, `jobs.is_grad_scheme`, `jobs.closing_date`. Premium access comes from a `passes` table (one row per purchase, §13.6), not a `users.plan` flag: a user is premium while any pass is current.
 
-### 4.3 Monthly running cost (target ≈ £0–5)
+### 4.3 Monthly running cost (target ≈ £0–5, plus the AI reader at about £5–12, approved 2026-10-28)
 | Item | Cost |
 |---|---|
 | Vercel Hobby, Supabase Free, GitHub Actions, Sentry Free, Resend Free | £0 |
 | Telegram Bot API, Instagram Graph API, WhatsApp Channel (manual) | £0 |
 | LLM fallback (Haiku-class, cached, capped) | ~£0–5 |
 | Job classification: field of work + occupation code (Claude Haiku 5.5 at medium effort, reading the first 1,500 characters of the ad, cached per title and employer; about $0.10 per 1,000 jobs, so a full re-classification of ~11,400 is about $1.20) | ~£1–2/month |
+| AI reader: every new or changed ad read in full (Claude Haiku 5.5, about $0.00078 an ad; the first full read of ~16,000 live ads cost about $12.60). Capped at $15 a month in code; the run report projects the month and flags it before the cap, when the Batch API (half price) becomes worth it | ~£5–12/month |
 | AI board check for ambiguous job boards (Claude Opus 5.5, about $0.005 per board, once per board) | ~£1/month |
 | Domain | ~£10–15/year |
 | Stripe fees: about 1.5% + 20p per UK card payment (no monthly fee) | Per sale |

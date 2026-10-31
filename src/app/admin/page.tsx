@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { CopyBlock } from "@/components/admin/copy-block";
+import { formatExperience } from "@/components/site/format";
 import { Stamp } from "@/components/site/stamp";
 import { isAdmin } from "@/lib/admin/access";
 import { FIELD_LABEL } from "@/lib/scoring/fields";
@@ -126,7 +127,7 @@ async function AdminContent({ searchParams }: { searchParams: Promise<SearchPara
                     <span className="min-w-0">
                       <Link href={`/jobs/${j.slug}`} className="font-semibold underline-offset-4 hover:underline">{j.title}</Link>
                       <span className="block text-ink-soft">
-                        {j.employerName}, {FIELD_LABEL[j.field ?? ""] ?? "Other"}
+                        {[j.employerName, FIELD_LABEL[j.field ?? ""] ?? "Other", formatExperience(j.experienceLevel, j.experienceMinYears)].filter(Boolean).join(", ")}
                       </span>
                     </span>
                   </span>

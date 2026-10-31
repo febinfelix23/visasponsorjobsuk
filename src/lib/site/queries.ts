@@ -22,6 +22,8 @@ export type Filters = {
   show: "passes" | "all";
   includeSenior: boolean;
   gradSchemes: boolean;
+  /** Only jobs the ad describes as graduate or entry level. */
+  entryLevel: boolean;
   sort: Sort;
   page: number;
 };
@@ -43,6 +45,11 @@ export type JobListItem = {
   sponsorability: Sponsorability;
   seniority: string;
   isGradScheme: boolean;
+  /** From the ad: graduate_or_entry, some_experience, experienced or senior (null when not stated or unread). */
+  experienceLevel: string | null;
+  experienceMinYears: number | null;
+  /** The salary also meets the general rate, for people who aren't new entrants. */
+  meetsGeneralRate: boolean | null;
   closingDate: string | null;
   firstSeenAt: string;
   /** First seen in the last three days, judged when the (cached) query ran. */
@@ -62,6 +69,9 @@ export const listColumns = {
   sponsorability: jobs.sponsorability,
   seniority: jobs.seniority,
   isGradScheme: jobs.isGradScheme,
+  experienceLevel: jobs.experienceLevel,
+  experienceMinYears: jobs.experienceMinYears,
+  meetsGeneralRate: jobs.meetsGeneralRate,
   closingDate: jobs.closingDate,
   firstSeenAt: jobs.firstSeenAt,
   // Aliased so it can also be selected back out of a subquery (postCandidates).
@@ -84,6 +94,12 @@ const ukToday = sql`(now() at time zone 'Europe/London')::date`;
  */
 const isOpen = and(eq(jobs.status, "live"), or(isNull(jobs.closingDate), gte(jobs.closingDate, ukToday)))!;
 
+/**
+ * A job shown in listings, sponsor pages, the sitemap and posts: open, and read for its current
+ * text. Until the reader has checked the ad, its stamp rests on phrase rules alone, so it waits.
+ */
+const isListed = and(isOpen, isNotNull(jobs.readAt))!;
+
 const escapeLike = (s: string) => s.replace(/[%_\\]/g, "\\$&");
 
 const ORDER: Record<Sort, SQL[]> = {
@@ -93,10 +109,11 @@ const ORDER: Record<Sort, SQL[]> = {
 };
 
 function whereFor(f: Filters): SQL | undefined {
-  const parts: (SQL | undefined)[] = [isOpen];
+  const parts: (SQL | undefined)[] = [isListed];
   parts.push(f.show === "passes" ? inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]) : ne(jobs.sponsorability, "ineligible"));
   if (!f.includeSenior) parts.push(ne(jobs.seniority, "senior"));
   if (f.gradSchemes) parts.push(eq(jobs.isGradScheme, true));
+  if (f.entryLevel) parts.push(eq(jobs.experienceLevel, "graduate_or_entry"));
   // Filter by the kind of work, not the employer's industry: Monzo's software roles are Software & IT.
   if (f.field) parts.push(eq(jobs.field, f.field));
   if (f.location) parts.push(ilike(jobs.locationText, `%${escapeLike(f.location)}%`));
@@ -132,7 +149,7 @@ export async function fieldCounts(): Promise<Record<string, number>> {
   const rows = await getDb()
     .select({ field: jobs.field, n: sql<number>`count(*)::int` })
     .from(jobs)
-    .where(and(isOpen, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]), ne(jobs.seniority, "senior")))
+    .where(and(isListed, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]), ne(jobs.seniority, "senior")))
     .groupBy(jobs.field);
   return Object.fromEntries(rows.map((r) => [r.field ?? "other", r.n]));
 }
@@ -148,6 +165,9 @@ export type JobDetail = JobListItem & {
   isRemote: boolean;
   /** Past its closing date (UK time) but still on the board; the page says so. */
   closed: boolean;
+  /** Read for its current text. Unread jobs aren't listed; their page says they're being checked. */
+  read: boolean;
+  meetsNewEntrantRate: boolean | null;
   ats: string;
   sponsor: { slug: string; name: string; town: string; rating: string | null; status: string } | null;
 };
@@ -175,6 +195,8 @@ export async function getJob(slug: string): Promise<JobDetail | null> {
       isRemote: jobs.isRemote,
       status: jobs.status,
       closed: sql<boolean>`coalesce(${jobs.closingDate} < ${ukToday}, false)`,
+      readAt: jobs.readAt,
+      meetsNewEntrantRate: jobs.meetsNewEntrantRate,
       ats: jobSources.ats,
       sponsorId: sponsors.id,
       sponsorName: sponsors.name,
@@ -200,6 +222,8 @@ export async function getJob(slug: string): Promise<JobDetail | null> {
     postedAt: r.postedAt?.toISOString() ?? null,
     isRemote: r.isRemote,
     closed: r.closed,
+    read: r.readAt !== null,
+    meetsNewEntrantRate: r.meetsNewEntrantRate,
     ats: r.ats,
     sponsor: r.sponsorId
       ? { slug: sponsorSlug({ id: r.sponsorId, name: r.sponsorName! }), name: r.sponsorName!, town: r.sponsorTown!, rating: r.sponsorRating, status: r.sponsorStatus! }
@@ -214,7 +238,7 @@ export async function recentJobSlugs(limit = 50): Promise<string[]> {
   const rows = await getDb()
     .select({ slug: jobs.slug })
     .from(jobs)
-    .where(and(isOpen, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"])))
+    .where(and(isListed, inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"])))
     .orderBy(desc(jobs.firstSeenAt))
     .limit(limit);
   return rows.map((r) => r.slug);
@@ -242,7 +266,7 @@ export async function getSponsor(id: number): Promise<SponsorDetail | null> {
   const rows = await db
     .select(listColumns)
     .from(jobs)
-    .where(and(eq(jobs.sponsorId, id), isOpen, ne(jobs.sponsorability, "ineligible")))
+    .where(and(eq(jobs.sponsorId, id), isListed, ne(jobs.sponsorability, "ineligible")))
     .orderBy(badgeRank, desc(jobs.firstSeenAt))
     .limit(100);
   return {
@@ -265,7 +289,7 @@ export async function topSponsorIds(limit = 30): Promise<{ id: number; name: str
   return getDb()
     .select({ id: sponsors.id, name: sponsors.name })
     .from(sponsors)
-    .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isOpen))
+    .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isListed))
     .groupBy(sponsors.id, sponsors.name)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
@@ -287,7 +311,7 @@ export async function doctorJobs(): Promise<JobListItem[]> {
     .innerJoin(jobSources, eq(jobSources.id, jobs.sourceId))
     .where(
       and(
-        isOpen,
+        isListed,
         eq(jobSources.ats, "nhs_jobs"),
         eq(jobs.socCode, "2211"),
         sql`${jobs.title} ~* ${JUNIOR_DOCTOR_TITLE}`,
@@ -310,7 +334,7 @@ export async function siteStats(): Promise<{ jobs: number; sponsors: number; upd
       updatedAt: sql<string | null>`max(${jobs.lastSeenAt})::text`,
     })
     .from(jobs)
-    .where(isOpen);
+    .where(isListed);
   return row;
 }
 
@@ -337,7 +361,7 @@ export async function postCandidates(days: number): Promise<JobListItem[]> {
     .from(jobs)
     .where(
       and(
-        isOpen,
+        isListed,
         inArray(jobs.sponsorability, ["sponsorship_mentioned", "likely_eligible"]),
         notInArray(jobs.seniority, ["mid", "senior"]),
         isNotNull(jobs.field),
@@ -366,7 +390,7 @@ export async function clicksByChannel(days: number): Promise<{ source: string; c
   return rows.map((r) => ({ source: r.source ?? "direct", clicks: r.clicks }));
 }
 
-/** Everything the sitemap lists: live jobs that aren't ruled out, and sponsors with live jobs. */
+/** Everything the sitemap lists: listed jobs that aren't ruled out, and sponsors with listed jobs. */
 export async function sitemapEntries(): Promise<{
   jobs: { slug: string; updatedAt: string }[];
   sponsors: { id: number; name: string; updatedAt: string }[];
@@ -378,13 +402,13 @@ export async function sitemapEntries(): Promise<{
     db
       .select({ slug: jobs.slug, updatedAt: jobs.updatedAt })
       .from(jobs)
-      .where(and(isOpen, ne(jobs.sponsorability, "ineligible")))
+      .where(and(isListed, ne(jobs.sponsorability, "ineligible")))
       .orderBy(desc(jobs.firstSeenAt))
       .limit(45_000),
     db
       .select({ id: sponsors.id, name: sponsors.name, updatedAt: sql<string>`max(${jobs.updatedAt})::text` })
       .from(sponsors)
-      .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isOpen))
+      .innerJoin(jobs, and(eq(jobs.sponsorId, sponsors.id), isListed))
       .groupBy(sponsors.id, sponsors.name),
   ]);
   return {

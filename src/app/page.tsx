@@ -82,8 +82,8 @@ function Hero({ searchParams }: { searchParams: Promise<SearchParams> }) {
           Graduate jobs at UK employers licensed to sponsor visas
         </h1>
         <p className="mt-3 max-w-[38rem] text-[1.05rem] leading-relaxed text-white/80">
-          Every job is checked against the Skilled Worker rules for switching from a Student or Graduate visa: the licence, the
-          occupation and the new-entrant salary.
+          We read every ad in full and check it against the Skilled Worker rules: the sponsor licence, what the ad says about
+          sponsorship, the contract, the hours, the occupation and the salary.
         </p>
         <div className="mt-7 max-w-[56rem]">
           <Suspense fallback={<SearchForm />}>
@@ -208,9 +208,9 @@ function StampKey() {
       <dl className="mt-3 space-y-3 text-sm">
         {(
           [
-            ["sponsorship_mentioned", "The ad itself says sponsorship is available."],
-            ["likely_eligible", "Licensed sponsor, eligible occupation, and the salary meets the new-entrant rate."],
-            ["check_with_employer", "Licensed sponsor, but the ad doesn't show everything, often the salary."],
+            ["sponsorship_mentioned", "The ad says sponsorship is available, and every check we can make passes."],
+            ["likely_eligible", "Licensed sponsor, eligible occupation, and the salary meets the new-entrant rate. The ad doesn't mention sponsorship."],
+            ["check_with_employer", "Licensed sponsor, but we couldn't confirm everything from the ad, often the salary."],
           ] as const
         ).map(([s, text]) => (
           <div key={s}>

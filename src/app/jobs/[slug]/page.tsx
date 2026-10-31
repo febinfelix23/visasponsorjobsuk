@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { BADGE, formatAdded, formatClosing, formatContract, formatSalary, SECTOR_LABEL } from "@/components/site/format";
+import { BADGE, formatAdded, formatClosing, formatContract, formatExperience, formatSalary, SECTOR_LABEL } from "@/components/site/format";
 import { SponsorshipCheck } from "@/components/site/sponsorship-check";
 import { Stamp } from "@/components/site/stamp";
 import { OutboundLink } from "@/components/site/outbound-link";
@@ -31,15 +31,15 @@ export async function generateMetadata(props: PageProps<"/jobs/[slug]">): Promis
   // The page streams before the lookup finishes, so a 404 status can't be sent; keep it out of search instead.
   if (!job) return { title: "Job not found", robots: { index: false } };
   const title = `${job.title} at ${job.employerName}`;
-  const description = `${BADGE[job.sponsorability].label}: ${job.title} at ${job.employerName}${job.locationText ? `, ${job.locationText}` : ""}. See how this job measures up to the Skilled Worker visa rules.`;
+  const description = `${job.read ? `${BADGE[job.sponsorability].label}: ` : ""}${job.title} at ${job.employerName}${job.locationText ? `, ${job.locationText}` : ""}. See how this job measures up to the Skilled Worker visa rules.`;
   return {
     title,
     description,
     // Post links carry UTM tags; search engines should index the plain address.
     alternates: { canonical: `/jobs/${job.slug}` },
     openGraph: { type: "article", title, description, url: `/jobs/${job.slug}` },
-    // Not-sponsorable and closed jobs stay reachable from links but out of search results.
-    ...(job.sponsorability === "ineligible" || job.closed ? { robots: { index: false, follow: true } } : {}),
+    // Not-sponsorable, closed and not-yet-checked jobs stay reachable from links but out of search results.
+    ...(job.sponsorability === "ineligible" || job.closed || !job.read ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -65,6 +65,16 @@ async function MoreAtEmployer({ sponsorSlug, exclude, employer }: { sponsorSlug:
   );
 }
 
+/** A job whose current ad hasn't been read yet: new, or the employer changed it. */
+function BeingChecked() {
+  return (
+    <p role="status" className="mt-3 rounded-lg border border-line bg-paper p-4 text-[0.94rem]">
+      <strong>This job is being checked.</strong> We read every ad in full before we show a result, and this one is new or has just
+      changed. Check back in a few hours.
+    </p>
+  );
+}
+
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
@@ -83,10 +93,11 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
   const closing = formatClosing(job.closingDate);
   const source = job.ats === "nhs_jobs" ? "NHS Jobs" : `${job.employerName}'s careers site`;
   const fieldLabel = job.field ? FIELD_LABEL[job.field] : null;
+  const experience = formatExperience(job.experienceLevel, job.experienceMinYears);
 
   return (
     <>
-      {job.sponsorability !== "ineligible" && !job.closed ? (
+      {job.read && job.sponsorability !== "ineligible" && !job.closed ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jobPostingJsonLd(job)) }} />
       ) : null}
       <Breadcrumb>
@@ -126,8 +137,9 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
                 {job.locationText ? <span className="text-ink-soft">, {job.locationText}</span> : null}
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Stamp status={job.sponsorability} className="lg:hidden" />
+                {job.read ? <Stamp status={job.sponsorability} className="lg:hidden" /> : null}
                 {job.isGradScheme ? <Badge className="bg-teal-wash text-teal">Graduate scheme</Badge> : null}
+                {job.meetsGeneralRate ? <Badge variant="outline">Meets the general rate</Badge> : null}
                 {job.isRemote ? <Badge variant="outline">Remote</Badge> : null}
                 {job.isNew ? <Badge variant="outline" className="border-teal/40 text-teal">New</Badge> : null}
               </div>
@@ -149,20 +161,27 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
             <Fact label="Closing date">{closing ? closing.replace("Closes ", "") : "Not shown"}</Fact>
             <Fact label="Contract">{formatContract(job.employmentType) ?? (job.isRemote ? "Remote" : "Not shown")}</Fact>
             <Fact label="Field">{fieldLabel ?? "Not classified"}</Fact>
+            <Fact label="Experience">{experience ?? "Not stated"}</Fact>
             <Fact label="Employer's industry">{job.sector ? SECTOR_LABEL[job.sector] : "Not known"}</Fact>
             <Fact label="Added">{formatAdded(job.firstSeenAt).replace("Added ", "")}</Fact>
           </dl>
 
           <section aria-labelledby="check" className="mt-10">
             <h2 id="check" className="font-semi-expanded text-xl font-bold">Sponsorship check</h2>
-            <p className="mt-2 text-ink-soft">{BADGE[job.sponsorability].summary}</p>
-            <div className="mt-4">
-              <SponsorshipCheck reasons={job.reasons} />
-            </div>
-            <p className="mt-3 text-sm text-ink-soft">
-              Checked against the Skilled Worker rules for new entrants as of {rulesDate}. Ask the employer to confirm they&apos;ll sponsor
-              this role before you apply. This is not immigration advice.
-            </p>
+            {job.read ? (
+              <>
+                <p className="mt-2 text-ink-soft">{BADGE[job.sponsorability].summary}</p>
+                <div className="mt-4">
+                  <SponsorshipCheck reasons={job.reasons} />
+                </div>
+                <p className="mt-3 text-sm text-ink-soft">
+                  Checked against the Skilled Worker rules as of {rulesDate}. Ask the employer to confirm they&apos;ll sponsor this role
+                  before you apply. This is not immigration advice.
+                </p>
+              </>
+            ) : (
+              <BeingChecked />
+            )}
           </section>
 
           {job.snippet ? (
@@ -184,8 +203,14 @@ async function JobContent({ params }: { params: Promise<{ slug: string }> }) {
         {/* Desktop: the decision and the action stay in view while reading. */}
         <aside aria-label="Apply" className="hidden lg:block">
           <div className="sticky top-6 rounded-lg border border-line bg-white p-5">
-            <Stamp status={job.sponsorability} size="lg" />
-            <p className="mt-3 text-sm text-ink-soft">{BADGE[job.sponsorability].summary}</p>
+            {job.read ? (
+              <>
+                <Stamp status={job.sponsorability} size="lg" />
+                <p className="mt-3 text-sm text-ink-soft">{BADGE[job.sponsorability].summary}</p>
+              </>
+            ) : (
+              <p className="font-semibold">This job is being checked</p>
+            )}
             <dl className="mt-4 space-y-3 border-t border-line pt-4 text-[0.94rem] tabular">
               <Fact label="Salary">{salary ? `${salary} a year` : "Not shown"}</Fact>
               <Fact label="Closing date">{closing ? closing.replace("Closes ", "") : "Not shown"}</Fact>

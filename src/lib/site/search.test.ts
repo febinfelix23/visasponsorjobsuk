@@ -4,9 +4,9 @@ import { activeFilterCount, parseFilters, searchHref } from "./search";
 
 describe("parseFilters", () => {
   it("reads every filter and falls back to the defaults", () => {
-    assert.deepEqual(parseFilters({}), { q: undefined, location: undefined, field: undefined, show: "passes", includeSenior: false, gradSchemes: false, sort: "best", page: 1 });
-    const f = parseFilters({ q: " data ", location: "Leeds", field: "data", show: "all", senior: "1", grad: "1", sort: "salary", page: "3" });
-    assert.deepEqual(f, { q: "data", location: "Leeds", field: "data", show: "all", includeSenior: true, gradSchemes: true, sort: "salary", page: 3 });
+    assert.deepEqual(parseFilters({}), { q: undefined, location: undefined, field: undefined, show: "passes", includeSenior: false, gradSchemes: false, entryLevel: false, sort: "best", page: 1 });
+    const f = parseFilters({ q: " data ", location: "Leeds", field: "data", show: "all", senior: "1", grad: "1", entry: "1", sort: "salary", page: "3" });
+    assert.deepEqual(f, { q: "data", location: "Leeds", field: "data", show: "all", includeSenior: true, gradSchemes: true, entryLevel: true, sort: "salary", page: 3 });
   });
 
   it("ignores values it doesn't know", () => {
@@ -28,7 +28,7 @@ describe("searchHref", () => {
   });
 
   it("round-trips through parseFilters", () => {
-    const f = parseFilters({ q: "nurse", field: "healthcare", grad: "1", sort: "salary", page: "2" });
+    const f = parseFilters({ q: "nurse", field: "healthcare", grad: "1", entry: "1", sort: "salary", page: "2" });
     assert.deepEqual(parseFilters(Object.fromEntries(new URLSearchParams(searchHref(f).slice(2)))), f);
   });
 
@@ -41,5 +41,6 @@ describe("activeFilterCount", () => {
   it("counts the panel's filters that aren't defaults", () => {
     assert.equal(activeFilterCount(parseFilters({})), 0);
     assert.equal(activeFilterCount(parseFilters({ field: "data", grad: "1", q: "ignored", sort: "newest" })), 2);
+    assert.equal(activeFilterCount(parseFilters({ entry: "1" })), 1);
   });
 });

@@ -67,6 +67,10 @@ export function FilterPanel({ filters, counts, fields, utm }: PanelProps) {
             <Checkbox id={`${uid}-grad`} checked={filters.gradSchemes} onCheckedChange={(c) => apply({ gradSchemes: c })} />
             Graduate schemes only
           </Option>
+          <Option id={`${uid}-entry`}>
+            <Checkbox id={`${uid}-entry`} checked={filters.entryLevel} onCheckedChange={(c) => apply({ entryLevel: c })} />
+            Graduate and entry level only
+          </Option>
           <Option id={`${uid}-show-all`}>
             <Checkbox id={`${uid}-show-all`} checked={filters.show === "all"} onCheckedChange={(c) => apply({ show: c ? "all" : "passes" })} />
             Include jobs to check with the employer
@@ -80,7 +84,7 @@ export function FilterPanel({ filters, counts, fields, utm }: PanelProps) {
 
       {active > 0 ? (
         <Link
-          href={searchHref({ ...filters, field: undefined, show: "passes", includeSenior: false, gradSchemes: false }, 1, utm)}
+          href={searchHref({ ...filters, field: undefined, show: "passes", includeSenior: false, gradSchemes: false, entryLevel: false }, 1, utm)}
           scroll={false}
           className="inline-block px-2 text-sm font-semibold text-teal underline-offset-4 hover:underline"
         >

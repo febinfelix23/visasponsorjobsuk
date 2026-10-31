@@ -17,12 +17,21 @@ export const SECTOR_LABEL: Record<string, string> = {
 
 /** Badge wording: what we found, never a visa outcome. */
 export const BADGE: Record<Sponsorability, { label: string; tone: "teal" | "teal-strong" | "amber" | "grey" | "red"; summary: string }> = {
-  sponsorship_mentioned: { label: "Ad mentions sponsorship", tone: "teal-strong", summary: "The job ad itself says sponsorship is available." },
-  likely_eligible: { label: "Likely eligible", tone: "teal", summary: "Licensed sponsor, eligible occupation, and the salary meets the new-entrant rate." },
+  sponsorship_mentioned: { label: "Sponsorship offered", tone: "teal-strong", summary: "The ad says sponsorship is available, and every check we can make passes." },
+  likely_eligible: { label: "Likely eligible", tone: "teal", summary: "Licensed sponsor, eligible occupation, and the salary meets the new-entrant rate. The ad doesn't mention sponsorship." },
   check_with_employer: { label: "Check with employer", tone: "amber", summary: "Licensed sponsor, but we couldn't confirm every rule from the ad." },
   unknown: { label: "Sponsor not confirmed", tone: "grey", summary: "We couldn't match this employer to the sponsor register." },
   ineligible: { label: "Not sponsorable", tone: "red", summary: "Something in the ad or the rules rules out sponsorship." },
 };
+
+/** The experience the ad asks for, as a short label: "Graduate or entry level", "Experience: 2+ years". */
+export function formatExperience(level: string | null, minYears: number | null): string | null {
+  if (level === "graduate_or_entry") return "Graduate or entry level";
+  if (level === "senior") return "Senior";
+  if (level !== "some_experience" && level !== "experienced") return null;
+  if (minYears !== null && minYears > 0) return `Experience: ${minYears}+ ${minYears === 1 ? "year" : "years"}`;
+  return level === "experienced" ? "Experienced" : "Some experience";
+}
 
 /** Absolute dates: pages are prerendered and cached, so "3 days ago" would go stale. */
 export function formatAdded(iso: string): string {

@@ -242,6 +242,18 @@ export function scoreJob(input: ScoreInput): ScoreResult {
     reasons.push({ code: "part_time", message: "This is a part-time post, which this site doesn't list as sponsorable: the Skilled Worker salary rule applies to the pay actually received." });
     return result("ineligible");
   }
+  // What the reader found about contract and hours, for the checklist. Not stating them doesn't hold a job back.
+  if (reading) {
+    const said = (quote: string | null) => (quote ? ` (“${quote}”)` : "");
+    const { type, quote: contractQuote } = reading.contract;
+    if (type === "permanent") reasons.push({ code: "contract_ok", message: `The ad describes a permanent contract${said(contractQuote)}.` });
+    else if (type === "fixed_term") reasons.push({ code: "contract_ok", message: `The ad describes a fixed-term contract${months !== null ? ` of ${months} months` : ""}${said(contractQuote)}.` });
+    else reasons.push({ code: "contract_not_stated", message: "The ad doesn't say whether the contract is permanent or fixed-term." });
+    const { pattern, quote: hoursQuote } = reading.hours;
+    if (pattern === "full_time") reasons.push({ code: "hours_ok", message: `The ad describes full-time hours${said(hoursQuote)}.` });
+    else if (pattern === "full_or_part_time") reasons.push({ code: "hours_ok", message: `The ad offers full-time or part-time hours${said(hoursQuote)}.` });
+    else reasons.push({ code: "hours_not_stated", message: "The ad doesn't state the working hours." });
+  }
 
   // An AI-chosen code can misfile a role (a customer success manager as customer service),
   // so on its own it never rules a job out: it only asks the person to check.
@@ -302,6 +314,9 @@ export function scoreJob(input: ScoreInput): ScoreResult {
   if (offerQuote) reasons.push({ code: "ad_mentions_sponsorship", message: `The ad mentions sponsorship: “${offerQuote}”` });
   if (signal.nhsStatement) reasons.push({ code: "nhs_sponsorship_statement", message: `The employer ticked NHS Jobs' Certificate of Sponsorship option for this post: “${signal.nhsStatement}”` });
   if (!reading && signal.hedged && !signal.positive) reasons.push({ code: "ad_sponsorship_maybe", message: `The ad says sponsorship might be possible: “${signal.hedged}”` });
+  if (status === "not_mentioned" && !signal.nhsStatement && !signal.positive) {
+    reasons.push({ code: "ad_silent_on_sponsorship", message: "The ad doesn't mention sponsorship either way, so ask the employer whether they'd sponsor this role." });
+  }
   const offered = offerQuote !== null || signal.nhsStatement !== null;
 
   // The rules come first: what the ad says can't outweigh a failed or unconfirmed check.

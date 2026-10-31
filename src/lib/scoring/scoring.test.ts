@@ -465,6 +465,11 @@ describe("scoreJob", () => {
     for (const code of emitted) assert.equal(rowsFor([{ code, message: "x" }]).length, 1, `${code} has no row in sponsorship-check.tsx`);
   });
 
+  it("lists the checklist in rule order, whatever order the rules ran in", () => {
+    const rows = rowsFor(["experience_graduate", "salary_meets_new_entrant", "hours_ok", "contract_ok", "ad_silent_on_sponsorship", "licensed_sponsor"].map((code) => ({ code, message: "x" })));
+    assert.deepEqual(rows.map((r) => r.rule), ["Sponsor licence", "What the ad says", "Type of contract", "Hours", "Salary", "Experience"]);
+  });
+
   it("never states a visa outcome", () => {
     const r = scoreJob({ ...base, description: "Salary Range £48,500" });
     assert.ok(r.reasons.every((x) => !/you will (get|be granted)|guarantee|you qualify|eligible for a visa/i.test(x.message)));
@@ -603,6 +608,25 @@ describe("scoreJob with the AI reader's facts", () => {
     assert.equal(decided({ salaryText: "£20,000" }), "salary_below_new_entrant");
     assert.equal(decided({ reading: reading({ location: { place: "abroad", quote: "Based in Sydney, Australia." } }) }), "location_outside_uk");
     assert.equal(decided({ reading: reading() }), "salary_meets_new_entrant");
+  });
+
+  it("records contract, hours and the ad's silence as checklist facts without changing the stamp", () => {
+    const codes = (over: Partial<Reading>) => {
+      const r = scoreJob({ ...dev, salaryText: "£50,000", reading: reading(over) });
+      return { stamp: r.sponsorability, codes: r.reasons.map((x) => x.code), reasons: r.reasons };
+    };
+    const silent = codes({});
+    assert.equal(silent.stamp, "likely_eligible");
+    assert.ok(silent.codes.includes("contract_not_stated") && silent.codes.includes("hours_not_stated") && silent.codes.includes("ad_silent_on_sponsorship"));
+    const stated = codes({ contract: { type: "permanent", fixedTermMonths: null, quote: "Permanent" }, hours: { pattern: "full_time", hoursPerWeek: 37.5, quote: "Full time" } });
+    assert.equal(stated.stamp, "likely_eligible");
+    assert.match(stated.reasons.find((x) => x.code === "contract_ok")!.message, /permanent/i);
+    assert.match(stated.reasons.find((x) => x.code === "hours_ok")!.message, /full-time/i);
+    const fixed = codes({ contract: { type: "fixed_term", fixedTermMonths: 18, quote: "18 month fixed term" } });
+    assert.match(fixed.reasons.find((x) => x.code === "contract_ok")!.message, /fixed-term contract of 18 months/);
+    // Without a reading there's nothing to report about contract or hours.
+    const unread = scoreJob({ ...dev, salaryText: "£50,000" }).reasons.map((x) => x.code);
+    assert.ok(!unread.some((c) => c.startsWith("contract_") || c.startsWith("hours_") || c === "ad_silent_on_sponsorship"));
   });
 
   it("scores readings stored before the location fact existed", () => {

@@ -24,6 +24,7 @@ export function parseFilters(sp: SearchParams): Filters {
     show: one("show") === "all" ? "all" : "passes",
     includeSenior: one("senior") === "1",
     gradSchemes: one("grad") === "1",
+    entryLevel: one("entry") === "1",
     sort: SORT_KEYS.includes(sort) ? sort : "best",
     page: Number.isInteger(page) && page > 1 ? Math.min(page, 200) : 1,
   };
@@ -38,6 +39,7 @@ export function filterQuery(f: Filters, page = f.page, utm = ""): string {
   if (f.show === "all") p.set("show", "all");
   if (f.includeSenior) p.set("senior", "1");
   if (f.gradSchemes) p.set("grad", "1");
+  if (f.entryLevel) p.set("entry", "1");
   if (f.sort !== "best") p.set("sort", f.sort);
   if (page > 1) p.set("page", String(page));
   return p.toString();
@@ -49,4 +51,4 @@ export const searchHref = (f: Filters, page = f.page, utm = "") => {
 };
 
 /** How many of the panel's filters differ from the defaults: the count on the phone's Filters button. */
-export const activeFilterCount = (f: Filters) => [f.field, f.show === "all", f.includeSenior, f.gradSchemes].filter(Boolean).length;
+export const activeFilterCount = (f: Filters) => [f.field, f.show === "all", f.includeSenior, f.gradSchemes, f.entryLevel].filter(Boolean).length;
