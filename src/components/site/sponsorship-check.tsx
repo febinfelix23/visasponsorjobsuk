@@ -8,6 +8,7 @@ type Row = { rule: string; verdict: Verdict; message: string };
 /** Which rule each scoring reason speaks to, and whether it passes. */
 const REASON_ROWS: Record<string, { rule: string; verdict: Verdict }> = {
   licensed_sponsor: { rule: "Sponsor licence", verdict: "pass" },
+  location_outside_uk: { rule: "Location", verdict: "fail" },
   sponsor_not_confirmed: { rule: "Sponsor licence", verdict: "warn" },
   national_pay_scale: { rule: "Salary", verdict: "pass" },
   salary_meets_new_entrant: { rule: "Salary", verdict: "pass" },

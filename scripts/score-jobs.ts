@@ -72,6 +72,7 @@ async function main() {
           employmentType: jobs.employmentType,
           sector: jobs.sector,
           employerName: jobs.employerName,
+          locationText: jobs.locationText,
           ats: jobSources.ats,
           sponsorName: sponsors.name,
           sponsorStatus: sponsors.status,
@@ -109,6 +110,7 @@ async function main() {
           salaryPeriod: r.salaryPeriod,
           employmentType: r.employmentType,
           sector: r.sector,
+          locationText: r.locationText,
           isNhsJobs: r.ats === "nhs_jobs",
           // A B-rated sponsor can't assign new Certificates of Sponsorship until it's back to A.
           licensedSponsor: r.sponsorStatus === "active" && r.sponsorSkilledWorker === true && r.sponsorRating === "A",

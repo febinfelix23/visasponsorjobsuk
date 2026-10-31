@@ -60,6 +60,8 @@ salary: the base pay for this role. min and max as numbers (£45k = 45000), peri
 
 experience.level: "graduate_or_entry" (graduate schemes, entry level, newly qualified, no experience needed), "some_experience" (up to about 2 years asked for), "experienced" (3 or more years, or "proven experience" in the role), "senior" (senior, lead, principal, head of, consultant doctor, manager of a team), or "not_stated". min_years when a number of years is asked for. Read the person specification's essential criteria too.
 
+location.place: where the job itself is based. "uk" when the advert places it in the UK (a UK town, "Remote (UK)"); "abroad" when it's based outside the UK (another country's city, "you must be authorised to work in Australia", "remote within Germany"); "uk_or_abroad" when the advert offers a choice that includes the UK; "not_stated" otherwise. The employer's other offices don't count: only where this role is based. Quote the words that say where.
+
 closing_date.date: the application deadline as YYYY-MM-DD when stated, with its quote.
 
 occupation.soc: the best-fitting SOC 2020 code from the list below for the work itself (not the employer's industry), or "" when none fits. occupation.field: the kind of work.

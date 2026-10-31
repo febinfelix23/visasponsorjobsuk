@@ -11,6 +11,8 @@ import { quoteIsInAd } from "./quotes";
 export const SPONSORSHIP = ["offered", "offered_with_conditions", "not_offered", "not_offered_with_conditions", "not_mentioned"] as const;
 export const CONTRACT = ["permanent", "fixed_term", "bank", "locum", "sessional", "zero_hours", "temporary", "contractor", "self_employed", "internship", "apprenticeship", "not_stated"] as const;
 export const HOURS = ["full_time", "part_time", "full_or_part_time", "not_stated"] as const;
+/** Where the job is based: "uk_or_abroad" is a choice of locations including the UK. */
+export const LOCATION = ["uk", "abroad", "uk_or_abroad", "not_stated"] as const;
 export const EXPERIENCE = ["graduate_or_entry", "some_experience", "experienced", "senior", "not_stated"] as const;
 const PERIODS = ["year", "month", "week", "day", "hour"] as const;
 const BASIS = ["actual", "full_time_equivalent", "not_stated"] as const;
@@ -28,6 +30,7 @@ export type Reading = {
   salary: { min: number; max: number; period: (typeof PERIODS)[number]; basis: (typeof BASIS)[number]; upToOnly: boolean; quote: string } | null;
   experience: { level: ExperienceLevel; minYears: number | null; quote: string | null };
   closingDate: string | null;
+  location: { place: (typeof LOCATION)[number]; quote: string | null };
   socCode: string | null;
   field: FieldKey | null;
 };
@@ -82,6 +85,12 @@ export const READING_SCHEMA = {
       required: ["date", "quote"],
       additionalProperties: false,
     },
+    location: {
+      type: "object",
+      properties: { place: { type: "string", enum: LOCATION }, quote: nullableString },
+      required: ["place", "quote"],
+      additionalProperties: false,
+    },
     occupation: {
       type: "object",
       properties: { soc: { type: "string" }, field: { type: "string", enum: FIELDS.map((f) => f.key) } },
@@ -89,7 +98,7 @@ export const READING_SCHEMA = {
       additionalProperties: false,
     },
   },
-  required: ["sponsorship", "contract", "hours", "salary", "experience", "closing_date", "occupation"],
+  required: ["sponsorship", "contract", "hours", "salary", "experience", "closing_date", "location", "occupation"],
   additionalProperties: false,
 } as const;
 
@@ -133,6 +142,8 @@ export function parseReading(answer: string, ad: string): Reading | null {
   const date = text(raw.closing_date?.date);
   const closingDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(date)) && inAd(text(raw.closing_date?.quote)) ? date : null;
   const soc = text(raw.occupation?.soc);
+  const locationQuote = text(raw.location?.quote);
+  const place = inAd(locationQuote) ? oneOf(LOCATION, raw.location?.place) : null;
 
   return {
     sponsorship: { status, verified: status === "not_mentioned" || quotes.length > 0, quotes },
@@ -141,6 +152,7 @@ export function parseReading(answer: string, ad: string): Reading | null {
     salary,
     experience: { level: experienceLevel ?? "not_stated", minYears: experienceLevel ? numberIn(raw.experience?.min_years, 0, 40) : null, quote: experienceLevel ? experienceQuote : null },
     closingDate,
+    location: { place: place ?? "not_stated", quote: place ? locationQuote : null },
     socCode: soc && getOccupation(soc) ? soc : null,
     field: isFieldKey(raw.occupation?.field) ? raw.occupation.field : null,
   };

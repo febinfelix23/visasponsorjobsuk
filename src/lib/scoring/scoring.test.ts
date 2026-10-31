@@ -479,6 +479,7 @@ const reading = (over: Partial<Reading> = {}): Reading => ({
   salary: null,
   experience: { level: "not_stated", minYears: null, quote: null },
   closingDate: null,
+  location: { place: "not_stated", quote: null },
   socCode: null,
   field: null,
   ...over,
@@ -583,5 +584,19 @@ describe("scoreJob with the AI reader's facts", () => {
     assert.equal(r.sponsorability, "sponsorship_mentioned");
     assert.match(r.reasons.find((x) => x.code === "ad_mentions_sponsorship")!.message, /We can sponsor visas/);
   });
-});
 
+  it("doesn't list a job based abroad, whether the reader or the stored location shows it", () => {
+    const abroad = scoreJob({ ...dev, salaryText: "£50,000", reading: reading({ location: { place: "abroad", quote: "This is a remote position based in Victoria, Australia." } }) });
+    assert.equal(abroad.sponsorability, "ineligible");
+    assert.match(abroad.reasons.find((r) => r.code === "location_outside_uk")!.message, /Victoria, Australia/);
+    assert.equal(scoreJob({ ...dev, salaryText: "£50,000", locationText: "Zurich, Switzerland" }).sponsorability, "ineligible");
+    assert.equal(scoreJob({ ...dev, salaryText: "£50,000", locationText: "Dublin, Ireland; London" }).sponsorability, "likely_eligible");
+    assert.equal(scoreJob({ ...dev, salaryText: "£50,000", reading: reading({ location: { place: "uk_or_abroad", quote: "x" } }) }).sponsorability, "likely_eligible");
+  });
+
+  it("scores readings stored before the location fact existed", () => {
+    const older: Partial<Reading> = reading();
+    delete older.location;
+    assert.equal(scoreJob({ ...dev, salaryText: "£50,000", reading: older as Reading }).sponsorability, "likely_eligible");
+  });
+});

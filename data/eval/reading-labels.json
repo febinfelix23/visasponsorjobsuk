@@ -1,0 +1,908 @@
+{
+ "labelledOn": "2026-10-30",
+ "by": "Claude, from the ads as stored on 2026-10-30 (#18350 hours corrected after review); founder spot-check pending",
+ "notes": "sponsorship: no | cond | yes | none. contract: blocked (bank, locum, sessional, zero-hours, temporary, freelance, internship, or a fixed term under 12 months) | ok | ? (too vague). hours: pt (stated hours under 35 a week, a part-time pattern or a set number of sessions) | ok | ?. No ad text is stored here: the repo is public. abroad: true marks an ad based outside the UK (Verkada, Victoria, Australia: found by the founder's spot-check); every other ad is expected not to be read as abroad.",
+ "labels": [
+  {
+   "id": 38660,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 7990,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71696,
+   "sponsorship": "no",
+   "contract": "?",
+   "hours": "ok"
+  },
+  {
+   "id": 50313,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 534,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 38979,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 2416,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok",
+   "abroad": true
+  },
+  {
+   "id": 4360,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17865,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18405,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 6637,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 62034,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 74362,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "?"
+  },
+  {
+   "id": 18685,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 2181,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 45461,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 42250,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18060,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 7690,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18594,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 72760,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 76253,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17560,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17122,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 2162,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 60750,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 29738,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 17727,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 537,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 61336,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 38657,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 451,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 1062,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17915,
+   "sponsorship": "cond",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 38669,
+   "sponsorship": "no",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16285,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 60255,
+   "sponsorship": "yes",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 16622,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 39346,
+   "sponsorship": "yes",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 18608,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 18673,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16066,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18471,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 38976,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18440,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17186,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 77529,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18221,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18741,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 74716,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 29259,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16481,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 15872,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16914,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 28691,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17953,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 75996,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18630,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17617,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18066,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72870,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16234,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 73201,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "pt"
+  },
+  {
+   "id": 6032,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 6175,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 5158,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73261,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 2908,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71583,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73652,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 7959,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 75824,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 18140,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71613,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73635,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 2801,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 6174,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16416,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 4702,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73624,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 43390,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72542,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 671,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 71619,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 71465,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "pt"
+  },
+  {
+   "id": 72506,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 60435,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 60788,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 62154,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72739,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 4807,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72033,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 18350,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 15713,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16072,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 15618,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73360,
+   "sponsorship": "none",
+   "contract": "?",
+   "hours": "ok"
+  },
+  {
+   "id": 2939,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73297,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "pt"
+  },
+  {
+   "id": 30380,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 15150,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 50497,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72349,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 7825,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 8109,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 388,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 3127,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71263,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71402,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 5258,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 8265,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 8294,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 1209,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 71419,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 5042,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72328,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 1898,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 73802,
+   "sponsorship": "none",
+   "contract": "blocked",
+   "hours": "ok"
+  },
+  {
+   "id": 15136,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 72799,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "?"
+  },
+  {
+   "id": 70577,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 4010,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 4241,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 6974,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 1700,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 1359,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 1586,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 3129,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 50478,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 50365,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17881,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 77097,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 522,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18843,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 17070,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 40303,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 29093,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 40229,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "?"
+  },
+  {
+   "id": 18372,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 30318,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16466,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "?"
+  },
+  {
+   "id": 18681,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "pt"
+  },
+  {
+   "id": 17832,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 60818,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 40668,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 16727,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 75279,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 18441,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "ok"
+  },
+  {
+   "id": 15661,
+   "sponsorship": "none",
+   "contract": "ok",
+   "hours": "?"
+  },
+  {
+   "id": 17681,
+   "sponsorship": "yes",
+   "contract": "ok",
+   "hours": "ok"
+  }
+ ]
+}

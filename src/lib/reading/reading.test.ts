@@ -4,6 +4,8 @@ import { quoteIsInAd } from "./quotes";
 import { parseReading } from "./schema";
 import { quoteSource, readerInput, readingCostUsd } from "./read-job";
 import { budgetLeftUsd, projectMonthUsd } from "./budget";
+import { emptyReading, evaluateReadings, passesGate, type EvalLabel } from "./eval";
+import type { Reading } from "./schema";
 
 // Invented ad text; the repo is public, so no scraped adverts in tests.
 const AD = `Specialist Physiotherapist – Band 6
@@ -115,6 +117,14 @@ describe("parseReading", () => {
     assert.deepEqual([r.hours.hoursPerWeek, r.contract.fixedTermMonths], [null, null]);
   });
 
+  it("reads where the job is based, and drops an unproven 'abroad'", () => {
+    const ad = `${AD}\nThis is a remote position based in Victoria, Australia.`;
+    const abroad = parseReading(answer({ location: { place: "abroad", quote: "This is a remote position based in Victoria, Australia." } }), ad)!;
+    assert.deepEqual(abroad.location, { place: "abroad", quote: "This is a remote position based in Victoria, Australia." });
+    assert.equal(parseReading(answer({ location: { place: "abroad", quote: "Based in Sydney" } }), ad)!.location.place, "not_stated");
+    assert.equal(parseReading(answer(), AD)!.location.place, "not_stated");
+  });
+
   it("returns nothing for an answer that isn't JSON", () => {
     assert.equal(parseReading("not json", AD), null);
   });
@@ -162,5 +172,61 @@ describe("reading budget", () => {
   it("stops reading once the month's spend reaches the cap", () => {
     assert.equal(budgetLeftUsd(14.2), 15 - 14.2);
     assert.equal(budgetLeftUsd(15.3), 0);
+  });
+});
+
+describe("reader evaluation", () => {
+  const label = (id: number, sponsorship: string, contract = "ok", hours = "ok") => ({ id, sponsorship, contract, hours }) as EvalLabel;
+  const seen = (id: number, over: Partial<Reading> = {}, rulesSayNo = false) => ({ id, reading: { ...emptyReading(), ...over }, rulesSayNo });
+
+  it("counts a 'no' as caught when the reader or the phrase rules find it", () => {
+    const labels = [label(1, "no"), label(2, "no"), label(3, "no"), label(4, "none")];
+    const results = [
+      seen(1, { sponsorship: { status: "not_offered", verified: true, quotes: ["x"] } }),
+      seen(2, {}, true),
+      seen(3),
+      seen(4, { sponsorship: { status: "not_offered", verified: true, quotes: ["x"] } }),
+    ];
+    const m = evaluateReadings(labels, results);
+    assert.deepEqual([m.noCaught, m.noTotal, m.noMissed], [2, 3, [3]]);
+    assert.deepEqual(m.falseNo, [4]);
+    assert.equal(m.noCaughtByReader, 1);
+  });
+
+  it("scores contract and hours as blocking or not, skipping labels marked unclear", () => {
+    const labels = [label(1, "none", "blocked", "pt"), label(2, "none", "ok", "ok"), label(3, "none", "?", "?"), label(4, "none", "blocked", "ok")];
+    const results = [
+      seen(1, { contract: { type: "locum", fixedTermMonths: null, quote: "x" }, hours: { pattern: "part_time", hoursPerWeek: 20, quote: "x" } }),
+      seen(2, { contract: { type: "fixed_term", fixedTermMonths: 24, quote: "x" } }),
+      seen(3, { contract: { type: "bank", fixedTermMonths: null, quote: "x" } }),
+      // A 3-month fixed term blocks too.
+      seen(4, { contract: { type: "fixed_term", fixedTermMonths: 3, quote: "x" } }),
+    ];
+    const m = evaluateReadings(labels, results);
+    assert.deepEqual([m.contractRight, m.contractTotal, m.hoursRight, m.hoursTotal], [3, 3, 3, 3]);
+  });
+
+  it("flags any 'no' or conditional ad read as an offer, the mistake that could make a job green", () => {
+    const labels = [label(1, "cond"), label(2, "no"), label(3, "yes"), label(4, "cond")];
+    const offered = { sponsorship: { status: "offered" as const, verified: true, quotes: ["x"] } };
+    const results = [seen(1, offered), seen(2, offered, true), seen(3, offered), seen(4, { sponsorship: { status: "not_offered_with_conditions", verified: true, quotes: ["x"] } })];
+    assert.deepEqual(evaluateReadings(labels, results).falseOffer, [1, 2]);
+  });
+
+  it("counts jobs based abroad caught, and UK jobs wrongly read as abroad", () => {
+    const labels = [{ ...label(1, "none"), abroad: true }, label(2, "none"), label(3, "none")];
+    const abroad = { location: { place: "abroad" as const, quote: "x" } };
+    const m = evaluateReadings(labels, [seen(1, abroad), seen(2, abroad), seen(3)]);
+    assert.deepEqual([m.abroadCaught, m.abroadTotal, m.falseAbroad], [1, 1, [2]]);
+  });
+
+  it("passes the gate only at 98% of 'no' caught, 95% on contract and hours, and no false offers or false 'abroad'", () => {
+    const ok = { noCaught: 49, noTotal: 50, contractRight: 95, contractTotal: 100, hoursRight: 19, hoursTotal: 20, falseOffer: [], abroadCaught: 1, abroadTotal: 1, falseAbroad: [] };
+    assert.equal(passesGate(ok), true);
+    assert.equal(passesGate({ ...ok, noCaught: 48 }), false);
+    assert.equal(passesGate({ ...ok, contractRight: 94 }), false);
+    assert.equal(passesGate({ ...ok, falseOffer: [7] }), false);
+    assert.equal(passesGate({ ...ok, abroadCaught: 0 }), false);
+    assert.equal(passesGate({ ...ok, falseAbroad: [7] }), false);
   });
 });

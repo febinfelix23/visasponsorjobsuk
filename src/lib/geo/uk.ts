@@ -31,8 +31,13 @@ const FOREIGN = new RegExp(
 // "Boston, MA", "Washington, DC": a two-letter US state or Canadian province code after a comma.
 const US_STATE_CODE = /,\s*(A[LKZR]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY]|ON|BC|QC|AB)\b/;
 // Workday-style prefixes: "US - Gaithersburg - MD", "IN-Bangalore".
-const FOREIGN_PREFIX = /^\s*(us|usa|in|de|fr|es|ie|nl|ca|au|sg|cn|jp|pl|pt|it|ch|se|dk)\s*[-–—:]/i;
+// "In-Office" and "In-person" aren't India.
+const FOREIGN_PREFIX = /^\s*(us|usa|in(?!-?\s*(office|person))|de|fr|es|ie|nl|ca|au|sg|cn|jp|pl|pt|it|ch|se|dk)\s*[-–—:]/i;
 const UK_PREFIX = /^\s*(gb|uk)\s*[-–—:]/i;
+/** A full UK postcode: "SE5 8AZ", "EC2A 4NE". */
+const UK_POSTCODE = /\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/;
+/** Major UK cities that, named anywhere in a list, place the job at least partly in the UK. */
+const UK_CITY_IN_LIST = /\b(london|manchester|edinburgh|glasgow|leeds|bristol|cardiff|belfast|liverpool|sheffield|nottingham|newcastle upon tyne)\b/i;
 
 /** True when a free-text job location is in the UK. "Remote" with no country is not. */
 export function isUkLocation(location: string | null | undefined): boolean {
@@ -41,7 +46,7 @@ export function isUkLocation(location: string | null | undefined): boolean {
   if (!text) return false;
 
   const withoutFalseFriends = text.replace(new RegExp(UK_FALSE_FRIENDS.source, "gi"), " ");
-  if (UK_PREFIX.test(text) || UK_COUNTRY.test(withoutFalseFriends)) return true;
+  if (UK_PREFIX.test(text) || UK_COUNTRY.test(withoutFalseFriends) || UK_POSTCODE.test(text)) return true;
   if (FOREIGN_PREFIX.test(text) || FOREIGN.test(text) || US_STATE_CODE.test(text)) return false;
 
   const segments = text
@@ -57,6 +62,24 @@ export function isUkLocation(location: string | null | undefined): boolean {
       if (UK_TOWNS.has(place)) return !AMBIGUOUS_TOWNS.has(place);
     }
     return false;
+  });
+}
+
+/** Big cities abroad that share no name with a UK town (so not Melbourne, Perth or Boston). */
+const FOREIGN_CITY = /\b(berlin|paris|amsterdam|munich|zurich|dublin|madrid|barcelona|lisbon|stockholm|copenhagen|warsaw|toronto|vancouver|montreal|sydney|bangalore|bengaluru|tokyo|seoul|san francisco|seattle|chicago|los angeles|houston|atlanta|denver|miami|austin|tel aviv)\b/i;
+
+/**
+ * True when every place in a location is clearly outside the UK ("Melbourne, Australia",
+ * "Berlin", "Toronto; New York"). False when any part is in the UK, and when it can't tell
+ * ("Remote", "EMEA", a bare "Melbourne", which is also a town in Derbyshire).
+ */
+export function isAbroad(location: string | null | undefined): boolean {
+  const parts = (location ?? "").split(/;|\||\s+or\s+/i).map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 0) return false;
+  return parts.every((part) => {
+    if (isUkLocation(part) || UK_CITY_IN_LIST.test(part)) return false;
+    const withoutFalseFriends = part.replace(new RegExp(UK_FALSE_FRIENDS.source, "gi"), " ");
+    return FOREIGN.test(part) || FOREIGN_PREFIX.test(part) || US_STATE_CODE.test(part) || FOREIGN_CITY.test(withoutFalseFriends) || UK_FALSE_FRIENDS.test(part);
   });
 }
 

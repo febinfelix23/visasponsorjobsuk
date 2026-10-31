@@ -1,4 +1,5 @@
 import type { ContractType, ExperienceLevel, Reading } from "@/lib/reading/schema";
+import { isAbroad } from "@/lib/geo/uk";
 import { getOccupation, RULES_UPDATED_AT, type Occupation } from "./occupations";
 import { annualise, parseSalary, plausibleAnnual, salaryFromDescription, type ParsedSalary, type SalaryPeriod } from "./salary";
 import { classifySeniority, type Seniority } from "./seniority";
@@ -21,6 +22,8 @@ export type ScoreInput = {
   salaryPeriod: SalaryPeriod | null;
   employmentType: string | null;
   sector: string | null;
+  /** The job's location as the board gives it. */
+  locationText?: string | null;
   /** AI classification for this title, when one exists (scripts/classify-jobs.ts). */
   aiSocCode?: string | null;
   aiField?: string | null;
@@ -173,6 +176,14 @@ export function scoreJob(input: ScoreInput): ScoreResult {
       const asked = experience.minYears ? `${experience.minYears}+ years of experience` : experience.level === "senior" ? "a senior level of experience" : "previous experience";
       reasons.push({ code: "experience_required", message: `The ad asks for ${asked}.` });
     }
+  }
+
+  // Only jobs based in the UK are listed. The board's own offices can't vouch for a job based abroad.
+  // Readings stored before 2026-10-31 have no location fact.
+  const abroadQuote = reading?.location?.place === "abroad" ? reading.location.quote : null;
+  if (abroadQuote || isAbroad(input.locationText)) {
+    reasons.push({ code: "location_outside_uk", message: `This job is based outside the UK${abroadQuote ? `: “${abroadQuote}”` : ` (${input.locationText})`}.` });
+    return result("ineligible");
   }
 
   // Hard stops: what the ad says first. A "no" from the reader or the phrase rules wins over any "yes".

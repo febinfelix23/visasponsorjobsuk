@@ -1,4 +1,4 @@
-import { isUkLocation } from "@/lib/geo/uk";
+import { isAbroad, isUkLocation } from "@/lib/geo/uk";
 import { requestJson } from "@/lib/http";
 import { limited } from "../limits";
 import { capDescription, htmlToText, parseDate } from "../text";
@@ -16,6 +16,17 @@ type GreenhouseJob = {
   content?: string;
 };
 
+/**
+ * A UK job: its own location is in the UK, or, when that's unclear ("Remote"), one of its
+ * offices is. A job based abroad stays out whatever its offices are called: a Melbourne,
+ * Australia job with a "Melbourne" office isn't in Derbyshire.
+ */
+export function greenhouseJobIsUk(j: Pick<GreenhouseJob, "location" | "offices">): boolean {
+  if (isAbroad(j.location?.name)) return false;
+  const places = [j.location?.name, ...(j.offices ?? []).flatMap((o) => [o.name, o.location])];
+  return places.some((p) => isUkLocation(p));
+}
+
 /** One request returns every job with its description (content=true). */
 export const greenhouse: Adapter = async (source) => {
   const url = `https://boards-api.greenhouse.io/v1/boards/${source.identifier}/jobs?content=true`;
@@ -25,10 +36,7 @@ export const greenhouse: Adapter = async (source) => {
   const jobs = (body as { jobs?: GreenhouseJob[] } | null)?.jobs ?? [];
 
   return jobs
-    .filter((j) => {
-      const places = [j.location?.name, ...(j.offices ?? []).flatMap((o) => [o.name, o.location])];
-      return places.some((p) => isUkLocation(p));
-    })
+    .filter(greenhouseJobIsUk)
     .map((j) =>
       emptyJob({
         externalId: String(j.id),

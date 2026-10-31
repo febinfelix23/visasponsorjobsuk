@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { advertStatus, elementById, parseAdvert, parseSearchXml } from "./adapters/nhs-jobs";
 import { approximatePostedOn, ukFacetFilter } from "./adapters/workday";
+import { greenhouseJobIsUk } from "./adapters/greenhouse";
 import { DETAIL_VERSION, dueBefore, jobSlug, knownForDetail, RECRAWL_HOURS, settleMissing, uniqueJobs } from "./pipeline";
 import { htmlToText, snippetOf } from "./text";
 import { emptyJob } from "./types";
@@ -121,6 +122,22 @@ describe("Workday", () => {
     assert.equal(approximatePostedOn("Posted 3 Days Ago", now)?.toISOString(), "2026-10-19T12:00:00.000Z");
     assert.equal(approximatePostedOn("Posted 30+ Days Ago", now)?.toISOString(), "2026-09-22T12:00:00.000Z");
     assert.equal(approximatePostedOn("Posted Today", now), now);
+  });
+});
+
+describe("Greenhouse UK filter", () => {
+  const job = (location: string, offices: string[]) => ({ location: { name: location }, offices: offices.map((name) => ({ name })) });
+
+  it("drops a job based abroad even when one of its offices has a UK town's name (Verkada, Melbourne)", () => {
+    assert.equal(greenhouseJobIsUk(job("Melbourne, Australia", ["Melbourne"])), false);
+    assert.equal(greenhouseJobIsUk(job("Zurich, Switzerland", ["London", "Zurich"])), false);
+  });
+
+  it("keeps UK jobs, and uses the offices when the job's own location is unclear", () => {
+    assert.equal(greenhouseJobIsUk(job("London", [])), true);
+    assert.equal(greenhouseJobIsUk(job("Dublin, Ireland; London", ["Dublin", "London"])), true);
+    assert.equal(greenhouseJobIsUk(job("Remote", ["London"])), true);
+    assert.equal(greenhouseJobIsUk(job("Remote", ["New York"])), false);
   });
 });
 
